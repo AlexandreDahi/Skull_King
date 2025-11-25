@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
-    private Bet startBettingPhase(){
+    private void startBettingPhase(){
         
     }
 
-    private startPlayingPhase(){
+    private void startPlayingPhase(){
 
     }
 }
