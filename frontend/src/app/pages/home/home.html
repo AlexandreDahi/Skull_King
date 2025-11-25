@@ -1,13 +1,53 @@
-<div class="min-h-screen flex flex-col items-center justify-center  text-white">
 
-  <h1 class="text-5xl font-bold mb-6">Skull King Online</h1>
-  <p class="text-lg text-gray-300 mb-8">Welcome! Choose a room to join the game.</p>
 
-  <button
-    (click)="goToRooms()"
-    class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 transition shadow-lg text-lg font-semibold"
-  >
-    View Rooms
-  </button>
+  <!-- Conteneur centré -->
+  <div class="max-w-4xl mx-auto py-10 px-6">
 
-</div>
+    <!-- Carte centrale (style panneau) -->
+    <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+
+      <!-- HEADER avec bouton Créer -->
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center space-x-3">
+          <img src="/images/skullking_logo_icon.png" class="h-20 w-20" />
+          <h1 class="text-4xl font-bold tracking-wide">Skull King Online</h1>
+        </div>
+
+        <button 
+          class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-xl shadow-lg transition">
+          + Créer une Room
+        </button>
+      </div>
+
+      <!-- LISTE DES ROOMS -->
+      <div class="space-y-4">
+
+        <!-- CARD ROOM -->
+        <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold">Room #1 - Les Pirates Fous</h2>
+            <p class="text-gray-300 text-sm">Joueurs : 2 / 6</p>
+          </div>
+
+          <button 
+            class="bg-green-500 hover:bg-green-600 text-black font-semibold px-5 py-2 rounded-lg shadow-md transition">
+            Rejoindre
+          </button>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold">Room #2 - Kraken Squad</h2>
+            <p class="text-gray-300 text-sm">Joueurs : 4 / 6</p>
+          </div>
+
+          <button 
+            class="bg-green-500 hover:bg-green-600 text-black font-semibold px-5 py-2 rounded-lg shadow-md transition">
+            Rejoindre
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
