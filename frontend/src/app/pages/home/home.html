@@ -1,0 +1,57 @@
+<div class="body">
+<app-navbar></app-navbar>
+<!-- Conteneur centré -->
+<div class="max-w-4xl mx-auto py-6 px-4 md:py-10 md:px-6">
+
+  <!-- Carte centrale (style panneau) -->
+  <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+
+    <!-- HEADER avec bouton Créer -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
+
+      <!-- Logo + Titre -->
+      <div class="flex items-center space-x-3">
+        <img src="/images/skullking_logo_icon.png"
+             class="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20" />
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide">
+          Skull King Online
+        </h1>
+      </div>
+
+      <!-- Bouton Créer Room -->
+      <button 
+        type="button"
+        (click)="goToRooms()"
+        class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
+              px-4 py-2 sm:px-6 sm:py-2 rounded-xl shadow-lg transition 
+              self-start md:self-auto flex items-center space-x-2 cursor-pointer">
+        <mat-icon>add</mat-icon>
+        <span>Créer une Room</span>
+      </button>
+    </div>
+
+    <!-- LISTE DES ROOMS -->
+    <div class="space-y-4 max-h-80 sm:max-h-96 overflow-y-auto pr-2 scrollbar-pirate">
+
+      <!-- CARD ROOM -->
+      <app-room-card 
+        title="Les Pirates Fous" 
+        [players]="2" 
+        [maxPlayers]="6">
+      </app-room-card>
+
+      <app-room-card 
+        title="Kraken Squad" 
+        [players]="1"
+        [maxPlayers]="8">
+      </app-room-card>
+   
+      <app-room-card 
+        title="Capitaines Intrépides" 
+        [players]="4"
+        [maxPlayers]="5">
+      </app-room-card>
+    </div>
+  </div>
+</div>
+</div>

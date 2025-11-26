@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+/* Scrollbar  */
+.scrollbar-grey::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-grey::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 8px;
+}
+
+.scrollbar-grey::-webkit-scrollbar-thumb {
+  background: rgba(180, 180, 180, 0.8);
+  border-radius: 8px;
+}
+
+.scrollbar-grey::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 200, 200, 0.9);
+}
+
+/* Firefox */
+.scrollbar-grey {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(180, 180, 180, 0.8) rgba(255, 255, 255, 0.1);
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
