@@ -2,11 +2,6 @@
 
 @import "tailwindcss";
 
-body {
-  @apply bg-cover bg-center bg-no-repeat;
-  background-image: url('/images/background1.jpg');
-}
-
 /* Scrollbar  */
 .scrollbar-grey::-webkit-scrollbar {
   width: 8px;
@@ -32,3 +27,5 @@ body {
   scrollbar-color: rgba(180, 180, 180, 0.8) rgba(255, 255, 255, 0.1);
 }
 
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,3 +1,5 @@
+<div class="body">
+<app-navbar></app-navbar>
 <!-- Conteneur centré -->
 <div class="max-w-4xl mx-auto py-6 px-4 md:py-10 md:px-6">
 
@@ -18,12 +20,14 @@
 
       <!-- Bouton Créer Room -->
       <button 
+        type="button"
+        (click)="goToRooms()"
         class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
-               px-4 py-2 sm:px-6 sm:py-2 rounded-xl shadow-lg transition 
-               self-start md:self-auto">
-        + Créer une Room
+              px-4 py-2 sm:px-6 sm:py-2 rounded-xl shadow-lg transition 
+              self-start md:self-auto flex items-center space-x-2 cursor-pointer">
+        <mat-icon>add</mat-icon>
+        <span>Créer une Room</span>
       </button>
-
     </div>
 
     <!-- LISTE DES ROOMS -->
@@ -47,7 +51,7 @@
         [players]="4"
         [maxPlayers]="5">
       </app-room-card>
-
     </div>
   </div>
+</div>
 </div>
