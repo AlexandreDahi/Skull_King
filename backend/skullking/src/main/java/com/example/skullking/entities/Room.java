@@ -1,0 +1,61 @@
+package com.example.skullking.entities;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class Room {
+
+    private UUID uuid;
+    private String name;
+
+    private Player host;
+    private List<Player> guestsList;
+
+
+    public Room() {
+        this.uuid = UUID.randomUUID();
+        this.host = new Player();
+        this.guestsList = new ArrayList<>();
+        this.name = "";
+    }
+
+    public UUID getUuid() {
+        return this.uuid;
+    }
+
+    public void addGuest(Player player) {
+
+        if (!this.guestsList.contains(player)) {
+
+            this.guestsList.add(player);
+        }
+    }
+
+    public void deleteGuest(Player player) {
+
+        this.guestsList.remove(player);
+    }
+
+    public int countPlayers() {
+
+        // the host + the guests
+        return 1 + this.guestsList.size();
+    }
+
+    public void setHost(Player host) {
+        this.host = host;
+    }
+
+    public Player getHost() {
+        return this.host;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
