@@ -9,6 +9,7 @@ public class RoomDTOForGuests {
     public UUID uuid;
     public String name;
     public int nbPlayers;
+    public String hostName;
 
 
 
@@ -17,6 +18,7 @@ public class RoomDTOForGuests {
         this.uuid = room.getUuid();
         this.name = room.getName();
         this.nbPlayers = room.countPlayers();
+        this.hostName = room.getHost().getName();
     }
 
 }
