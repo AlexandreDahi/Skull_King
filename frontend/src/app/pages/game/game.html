@@ -1,5 +1,8 @@
 <div class="host">
     <div class="text"> Skull King</div>
-    <app-cards></app-cards>
+    <app-cards 
+    *ngFor="let id of cardIds"
+    [id]="id">
+</app-cards>
 
 </div>
