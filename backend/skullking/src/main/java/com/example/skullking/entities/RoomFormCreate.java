@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class RoomCreationForm {
+public class RoomFormCreate {
 
     @Schema(
         description = "Room's name",
@@ -12,10 +12,15 @@ public class RoomCreationForm {
         requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(min=2, max=30)
     @NotNull
-    public String name;
+    public String roomName;
 
 
-    /*RoomCreationForm() {
-        this.name = "";
-    }*/
+    @Schema(
+        description = "Player's name",
+        example = "The Captain",
+        requiredMode = Schema.RequiredMode.REQUIRED)
+    @Size(min=2, max=30)
+    @NotNull
+    public String hostName;
+
 }

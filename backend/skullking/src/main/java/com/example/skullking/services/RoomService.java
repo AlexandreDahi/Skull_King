@@ -1,9 +1,7 @@
 package com.example.skullking.services;
 
+import com.example.skullking.entities.Player;
 import com.example.skullking.entities.Room;
-import com.example.skullking.entities.RoomCreationForm;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,11 +19,12 @@ public class RoomService {
         this.roomsList = new ArrayList<>();
     }
 
-    public Room createRoom(String name) {
+    public Room createRoom(String roomName, String hostName) {
 
         Room room = new Room();
 
-        room.setName(name);
+        room.setName(roomName);
+        room.getHost().setName(hostName);
 
         roomsList.add(room);
 
@@ -40,6 +39,36 @@ public class RoomService {
 
     public List<Room> getRoomsList() {
         return roomsList;
+    }
+
+
+    public Player addPlayer(UUID roomUuid, String playerName) {
+
+        Room room = this.roomsList
+                .stream()
+                .filter(r -> r.getUuid().equals(roomUuid))
+                .toList()
+                .getFirst();
+
+        Player newPlayer = new Player();
+        newPlayer.setName(playerName);
+
+
+        room.addGuest(newPlayer);
+
+        return newPlayer;
+    }
+
+
+    public boolean isRoomExisting(UUID roomUuid) {
+
+        long roomCount = this.roomsList
+                .stream()
+                .filter(r -> r.getUuid().equals(roomUuid))
+                .count();
+
+
+        return roomCount != 0;
     }
 
 }

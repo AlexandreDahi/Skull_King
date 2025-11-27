@@ -1,8 +1,6 @@
 package com.example.skullking.controllers;
 
-import com.example.skullking.entities.Room;
-import com.example.skullking.entities.RoomCreationForm;
-import com.example.skullking.entities.RoomDTOForGuests;
+import com.example.skullking.entities.*;
 import com.example.skullking.services.RoomService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/rooms")
@@ -23,11 +22,12 @@ public class RoomController {
 
     @Operation(summary = "Create a new room")
     @PostMapping
-    public ResponseEntity<Room> createRoom(@Valid @RequestBody RoomCreationForm roomCreationForm) {
+    public ResponseEntity<Room> createRoom(@Valid @RequestBody RoomFormCreate roomFormCreate) {
 
-        System.out.println("name : " + roomCreationForm.name);
-        String roomName = roomCreationForm.name;
-        Room room = this.roomService.createRoom(roomName);
+        String roomName = roomFormCreate.roomName;
+        String hostName = roomFormCreate.hostName;
+
+        Room room = this.roomService.createRoom(roomName, hostName);
 
         return ResponseEntity.status(201).body(room);
     }
@@ -44,6 +44,21 @@ public class RoomController {
 
 
         return ResponseEntity.status(200).body(publicRooms);
+    }
+
+    @PutMapping("/{uuid}/join")
+    public ResponseEntity<Player> joinRoom(@PathVariable UUID uuid, @Valid @RequestBody RoomFormJoin roomFormJoin) {
+
+
+        if(!roomService.isRoomExisting(uuid)){
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Player player = roomService.addPlayer(uuid, roomFormJoin.playerName);
+
+
+        return ResponseEntity.ok(player);
+
     }
 
 
