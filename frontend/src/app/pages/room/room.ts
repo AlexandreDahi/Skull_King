@@ -27,7 +27,8 @@ export class Room {
   }
   
   createRoom() {
-    this.roomsService.createRoom(this.name).subscribe({
+    const hostName = "The Captain";
+    this.roomsService.createRoom(this.name, hostName).subscribe({
       next: (res) => {
         console.log('Room créée !', res);
         this.router.navigate(['/game']);
