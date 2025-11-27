@@ -16,13 +16,16 @@ export class RoomService {
 
   // Création d'une room avec roomName + hostName
   createRoom(roomName: string, hostName: string): Observable<any> {
-    return this.http.post(this.apiUrl, { roomName, hostName }).pipe(
-      tap(() => this.getRooms()) // recharge la liste automatiquement
-    );
+    return this.http.post(this.apiUrl, { roomName, hostName });
   }
 
   // Récupération de la liste des rooms
   getRooms(): void {
     this.http.get<any[]>(this.apiUrl).subscribe(data => this.rooms.next(data));
+  }
+  
+  // Rejoindre une room avec roomId + playerName
+  joinRoom(roomId: string, playerName: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${roomId}/join`, { playerName });
   }
 }

@@ -1,0 +1,71 @@
+<div class="body">
+  <app-navbar></app-navbar>
+
+  <!-- Conteneur centré -->
+  <div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
+
+    <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+
+      <!-- HEADER -->
+      <div class="flex items-center gap-4 mb-8">
+        <!-- Chevron retour -->
+      <button 
+        (click)="cancel()"
+        class="p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 
+              transition shadow-md text-white text-2xl leading-none cursor-pointer">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+        <h1 class="text-3xl md:text-4xl font-bold">
+          Rejoindre <span class="text-teal-400 ">{{ title }}</span>
+        </h1>
+      </div>
+
+      <!-- Informations de la room -->
+      <div class="mb-6 p-4 rounded-xl bg-white/10 border border-white/20 text-gray-200">
+        <p class="text-sm text-gray-400">ID de la Room : {{ roomId }}</p>
+        <p>Capitaine : <span class="font-semibold">{{ hostName }}</span></p>
+        <p>Pirates embarqués : {{ players }}/{{ maxPlayers }}</p>
+        
+      </div>
+
+      <!-- FORMULAIRE -->
+      <form class="space-y-6" (ngSubmit)="joinGame()" >
+
+        <!-- Nom du joueur -->
+        <div class="flex flex-col">
+          <label class="text-gray-200 font-semibold mb-1">Nom du pirate</label>
+          <input
+            type="text"
+            [(ngModel)]="playerName"
+            name="playerName"
+            placeholder="Ex: Barbe Rousse"
+            class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-gray-300"
+            required
+          />
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-6">
+
+          <button
+            type="submit"
+            class="bg-green-500 hover:bg-green-600 text-black font-semibold 
+                   px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer">
+            Rejoindre la Room
+          </button>
+
+          <button
+            type="button"
+            (click)="cancel()"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold 
+                   px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer">
+            Annuler
+          </button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

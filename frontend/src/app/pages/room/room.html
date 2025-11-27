@@ -1,7 +1,7 @@
 <div class="body">
   <app-navbar></app-navbar>
 <!-- Conteneur centré -->
-<div class="max-w-4xl mx-auto py-6 px-4 md:py-10 md:px-6">
+<div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
 
   <!-- Carte centrale (style panneau) -->
   <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
@@ -36,6 +36,20 @@
           placeholder="Ex: Pirates fous"
           class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
                  focus:outline-none focus:ring-2 focus:ring-gray-300"
+          required
+        />
+      </div>
+
+      <!-- Nom de l'hôte -->
+      <div class="flex flex-col">
+        <label class="text-gray-200 font-semibold mb-1">Nom du capitaine</label>
+        <input
+          type="text"
+          [(ngModel)]="hostName"
+          name="hostName"
+          placeholder="Ex: Jack la terreur"
+          class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
+                focus:outline-none focus:ring-2 focus:ring-gray-300"
           required
         />
       </div>

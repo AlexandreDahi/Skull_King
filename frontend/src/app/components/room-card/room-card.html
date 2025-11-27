@@ -1,13 +1,21 @@
 <div class=" bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
     <div>
-        <h2 class="text-lg sm:text-xl font-semibold">Room - {{ title }}</h2>
-        <p class="text-gray-300 text-sm sm:text-base">Joueurs : {{ players }} / {{ maxPlayers }}</p>
+        <h2 class="text-lg sm:text-xl font-semibold">Room #{{roomNumber}} - {{ title }} </h2>
+        <div class="flex items-center text-gray-300 text-sm sm:text-base">
+            <mat-icon class="mr-1">supervisor_account</mat-icon>
+            {{ players }} / {{ maxPlayers }}
+            <span class="mx-2">|</span>
+            <span class="text-red-400 text-sm sm:text-base">Capitaine {{ hostName }}</span>
+        </div>
     </div>
-
-    <button 
-        class="bg-green-500 hover:bg-green-600 text-black font-semibold 
-                px-4 py-2 sm:px-5 sm:py-2 rounded-lg shadow-md transition cursor-pointer">
-        Rejoindre
-    </button>
+    <div> 
+        <button 
+            (click)="joinRoom()"
+            class="bg-green-500 hover:bg-green-600 text-black font-semibold 
+                    px-4 py-2 sm:px-5 sm:py-2 rounded-lg shadow-md transition cursor-pointer">
+            Rejoindre
+        </button>
+       
+    </div>
 </div>
 
