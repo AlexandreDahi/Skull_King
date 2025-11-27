@@ -5,11 +5,7 @@ import { Game } from './pages/game/game';
 export const routes: Routes = [
   {path: '', component:HomeComponent,},
   {path: 'room', component:Room,},
-  {
-    path: 'game',
-    loadComponent: () =>
-      import('./pages/home/home').then(m => m.HomeComponent),
-  },
+  { path : 'game',component: Game },
   {
     path: 'rooms',
     loadComponent: () =>

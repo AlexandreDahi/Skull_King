@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { Navbar } from '../../components/navbar/navbar';
+import { RoomService } from '../../service/room/room.service';
 
 @Component({
   selector: 'app-room',
@@ -15,20 +16,28 @@ export class Room {
   name = '';
   maxPlayers = 6;
 
-  constructor(private router: Router) {}
-
-  createRoom() {
-    console.log('Création de room : ', this.name, this.maxPlayers);
-
-    // plus tard l'appel API ici
-    // this.roomsService.createRoom(...)
-
-    this.router.navigate(['/']);
-  }
-
+  
+  constructor(
+    private router: Router,
+    private roomsService: RoomService
+  ) {}
+  
   cancel() {
     this.router.navigate(['/']);
   }
-
-
+  
+  createRoom() {
+    this.roomsService.createRoom(this.name).subscribe({
+      next: (res) => {
+        console.log('Room créée !', res);
+        this.router.navigate(['/game']);
+      },
+      error: (err) => {
+        console.error('Erreur de création de room :', err);
+      }
+    });
+  }
 }
+
+
+
