@@ -1,0 +1,27 @@
+<div class = " backdrop-blur-md bg-black/40">
+
+    <div *ngIf="!isBetPlaced" class = "place-bet-container">
+        <h1 class = "text-white text-center py-5 text-2xl font-bold"   >Place Your Bet</h1>
+
+            <p style="font-family: 'Pirata One'" class = "numberBetted" >{{value}}</p>
+        
+            <div>
+                <button matFab aria-label="add button" (click)="decrease()">
+                    <mat-icon class="black-icon">remove</mat-icon>
+                </button>
+
+                <button matFab aria-label="add button" class="m-1"(click)="increase()">
+                    <mat-icon class="black-icon">add</mat-icon>
+                </button>
+            </div>
+        
+            <button matButton="filled" (click)="placeBet()">Place Bet</button>
+    </div>
+
+    <div *ngIf="isBetPlaced" class = "place-bet-container">
+        <h1 class = "text-white text-center py-5 text-2xl font-bold">Your bet is : </h1>
+            <p style="font-family: 'Pirata One'" class = "numberBetted" >{{value}}</p>
+            <h2> Good luck ! </h2>
+    </div>
+            
+</div>
