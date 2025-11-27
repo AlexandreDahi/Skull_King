@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-game',
-  imports: [Cards,CommonModule, PlaceBet, ExpandablePlaceBet],
+  imports: [Cards,CommonModule, PlaceBet, ExpandablePlaceBet, ],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
