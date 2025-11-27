@@ -46,6 +46,7 @@ public class RoomController {
         return ResponseEntity.status(200).body(publicRooms);
     }
 
+    @Operation(summary = "Return an id and a token to join a game through the websocket")
     @PutMapping("/{uuid}/join")
     public ResponseEntity<Player> joinRoom(@PathVariable UUID uuid, @Valid @RequestBody RoomFormJoin roomFormJoin) {
 
