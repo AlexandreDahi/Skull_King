@@ -7,7 +7,5 @@ export const routes: Routes = [
   {path: '', component:HomeComponent,},
   {path: 'room', component:Room,},
   { path : 'join-room/:id',component: JoinRoom },
-  { path : 'game',component: Game },
-
   { path : 'game/:id',component: Game }
 ];

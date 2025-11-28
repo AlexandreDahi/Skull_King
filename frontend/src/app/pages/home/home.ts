@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
 
   rooms: any[] = [];  // <-- liste des rooms
   loading = true;
+  filteredRooms: any[] = []; // <-- liste des rooms filtrées
 
   constructor(
     private router: Router,
@@ -26,11 +27,16 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+
     this.roomService.rooms$.subscribe(data => {
       this.rooms = data;
-      this.loading = false; 
+
+      this.filteredRooms = data.filter(room => room.nbPlayers < 8);
+
+      this.loading = false;
     });
-    this.roomService.getRooms(); 
+
+    this.roomService.getRooms();
   }
 
   goToRooms() {

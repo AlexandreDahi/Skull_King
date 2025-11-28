@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { RoomService } from '../../service/room/room.service';
 import { FormsModule } from '@angular/forms';  
+
 @Component({
   selector: 'app-join-room',
   imports: [MatIconModule , Navbar,FormsModule],

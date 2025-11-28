@@ -37,12 +37,12 @@
           <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-yellow-500"></div>
         </div>
        <!-- Message si aucune room -->
-        <div *ngIf="rooms.length === 0" class="text-center text-white/70 italic text-xl">
+        <div *ngIf="filteredRooms.length === 0" class="text-center text-white/70 italic text-xl">
           La mer est calme… aucune partie en vue ! ⚓
         </div>
         <!-- CARD ROOM DYNAMIQUE -->
         <app-room-card 
-          *ngFor="let room of rooms; let i = index"
+          *ngFor="let room of filteredRooms; let i = index"
           [title]="room.name"
           [hostName]="room.hostName"
           [players]="room.nbPlayers"
