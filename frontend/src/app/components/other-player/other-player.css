@@ -1,0 +1,68 @@
+.bet-container{
+    background-image: url("/images/betSeparation.png");
+    height:50px;
+    width:50px;
+    background-size: cover;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row: 1fr 1fr;
+}
+#scoreBetted{
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+    font-family: 'Pirata One';
+    color: white;
+    justify-self: center;
+    align-self: center;
+    font-size:30px;
+
+
+}
+#scoreObtained{
+    grid-column: 2 /2;
+    grid-row: 2 / 2;
+    font-family: 'Pirata One';
+    color: white;
+    justify-self: center;
+    align-self: center;
+    font-size:30px;
+
+}
+.scoreNumber{
+    font-size: 40px;
+    color: white;
+}
+
+.scoreContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    width:100%;
+}
+
+.right-player > .bet-container{
+    order : 1;
+}
+.right-player >.player-name{
+    order : 2;
+}
+.left-player{
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+
+}
+.right-player{
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    padding-left: 0px;
+    padding-right: 10px;
+}
+.top-player{
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+
+}
