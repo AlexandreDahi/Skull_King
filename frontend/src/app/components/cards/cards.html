@@ -1,4 +1,10 @@
-<div class="card" cdkDrag>
+<div class="card" 
+  [class.is-dragging]="isDragging"
+  cdkDrag
+  (cdkDragStarted)="onDragStart()"
+  (cdkDragEnded)="onDragEnd()"
+  >
+  
   <img [src]="card.image" alt="{{ card.name }}">
 </div>
 
