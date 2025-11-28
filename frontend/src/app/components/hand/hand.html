@@ -1,0 +1,13 @@
+<div class="hand">
+  <app-cards 
+    *ngFor="let id of cardIds; let i = index"
+    [id]="id"
+
+    (dragState)="onDragStateChange(i, $event)"
+
+    class="card-on-arc"
+    [style.left.px]=" ComputeCardXIndex(i)"
+    [style.bottom.px]="ComputeCardYIndex(i)"
+    [style.transform]="draggingIndex === i ? 'none' : ComputeRotateTransform(i)"
+  ></app-cards>
+</div>
