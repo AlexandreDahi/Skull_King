@@ -2,7 +2,7 @@
 
         <app-place-bet *ngIf="isExpanded"></app-place-bet>
     
-    <button class =  "backdrop-blur-md bg-black/40 w-full button-container " (click)="toggleExpand()"><p>Place Bet</p>
+    <button class =  "backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold" (click)="toggleExpand()"><p>Place Bet</p>
         <mat-icon class="black-icon">
             {{ isExpanded ? 'expand_less' : 'expand_more' }}
         </mat-icon>

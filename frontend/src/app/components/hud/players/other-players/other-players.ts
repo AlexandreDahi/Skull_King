@@ -1,6 +1,6 @@
 import { Component,AfterViewInit} from '@angular/core';
 import { OtherPlayer } from '../other-player/other-player';
-import { Direction } from '../../service/direction.enum';
+import { Direction } from '../../../../service/direction.enum';
 import { CommonModule,  } from '@angular/common';
 
 @Component({

@@ -1,0 +1,10 @@
+.expandable-leaderboard-container{
+    width :250px;
+}
+.button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* TODO : maybe change this, i am not satisfied*/
+    align-items: center;
+    cursor: pointer;
+}

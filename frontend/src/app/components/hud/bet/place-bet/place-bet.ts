@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { StoreService } from '../../service/store/store.service';
+import { StoreService } from '../../../../service/store/store.service';
 
 @Component({
   selector: 'app-place-bet',

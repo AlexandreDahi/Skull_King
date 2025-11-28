@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Direction } from '../../service/direction.enum';
+import { Direction } from '../../../../service/direction.enum';
 import { CommonModule } from '@angular/common';
 
 @Component({
