@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { PlaceBet } from '../../components/place-bet/place-bet';
-import { ExpandablePlaceBet } from '../../components/expandable-place-bet/expandable-place-bet';
 import { Cards } from '../../components/cards/cards';
 import { CommonModule } from '@angular/common';
-
+import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-display';
 @Component({
   selector: 'app-game',
-  imports: [Cards,CommonModule, PlaceBet, ExpandablePlaceBet],
+  imports: [Cards,CommonModule,HeadUpDisplay ],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })

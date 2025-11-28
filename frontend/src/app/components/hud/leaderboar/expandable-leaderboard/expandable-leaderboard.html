@@ -1,0 +1,12 @@
+<div class = "expandable-leaderboard-container ">
+
+        <app-leaderboard *ngIf="isExpanded"></app-leaderboard>
+    
+    <button class =  "backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold" (click)="toggleExpand()"><p>leaderboard</p>
+        <mat-icon class="black-icon">
+            {{ isExpanded ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+    </button> 
+</div>
+
+    

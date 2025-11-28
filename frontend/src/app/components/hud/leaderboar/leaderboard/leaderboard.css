@@ -1,0 +1,17 @@
+.leaderboard{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.player-results{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    
+}
+.all-players-results{
+    width: 80%;
+}

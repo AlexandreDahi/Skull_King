@@ -6,5 +6,5 @@
     flex-direction: row;
     justify-content: center; /* TODO : maybe change this, i am not satisfied*/
     align-items: center;
-
+    cursor: pointer;
 }

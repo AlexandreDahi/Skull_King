@@ -51,18 +51,18 @@
     order : 2;
 }
 .left-player{
-    border-top-right-radius: var(--radius-sm);
-    border-bottom-right-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
 
 }
 .right-player{
-    border-top-left-radius: var(--radius-sm);
-    border-bottom-left-radius: var(--radius-sm);
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
     padding-left: 0px;
     padding-right: 10px;
 }
 .top-player{
-    border-bottom-left-radius: var(--radius-sm);
-    border-bottom-right-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
 
 }
