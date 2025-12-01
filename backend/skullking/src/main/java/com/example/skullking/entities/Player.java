@@ -1,7 +1,9 @@
 package com.example.skullking.entities;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 public class Player {
@@ -10,6 +12,10 @@ public class Player {
     private String token;
 
     private String name;
+
+
+    private List<Integer> roundResultsList;
+    private List<Integer> formerGamesResults;
 
 
     private static String generateRandomToken() {
@@ -28,6 +34,8 @@ public class Player {
         this.name = "";
         this.uuid = UUID.randomUUID();
         this.token = generateRandomToken();
+        this.roundResultsList = new ArrayList<>();
+        this.formerGamesResults = new ArrayList<>();
     }
 
     public UUID getUuid() {
@@ -45,5 +53,13 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Integer> getRoundResultsList() {
+        return roundResultsList;
+    }
+
+    public List<Integer> getFormerGamesResults() {
+        return formerGamesResults;
     }
 }
