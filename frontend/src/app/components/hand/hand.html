@@ -1,6 +1,9 @@
 <div class="hand">
-  <app-cards 
+  <div cdkDropList class="hand_drop_card"
+  (cdkDropListDropped)="drop($event)">
+    <app-cards 
     *ngFor="let id of cardIds; let i = index"
+    cdkDrag
     [id]="id"
 
     (dragState)="onDragStateChange(i, $event)"
@@ -9,5 +12,7 @@
     [style.left.px]=" ComputeCardXIndex(i)"
     [style.bottom.px]="ComputeCardYIndex(i)"
     [style.transform]="draggingIndex === i ? 'none' : ComputeRotateTransform(i)"
-  ></app-cards>
+    ></app-cards>
+  </div>
+  
 </div>

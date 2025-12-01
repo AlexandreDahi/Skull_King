@@ -6,6 +6,7 @@
     grid-template-rows: 1fr 5fr;
     width: 100vw;
     height: 50vh;
+    z-index: 0;
 }
 
 .item{

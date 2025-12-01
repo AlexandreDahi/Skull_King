@@ -4,6 +4,7 @@ import { ExpandablePlaceBet } from '../../components/expandable-place-bet/expand
 import { Hand } from '../../components/hand/hand';
 import {OtherPlayers} from '../../components/other-players/other-players';
 import { CommonModule } from '@angular/common';
+import { OtherPlayers } from '../../components/other-players/other-players';
 
 @Component({
   selector: 'app-game',
