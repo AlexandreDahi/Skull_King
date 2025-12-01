@@ -14,6 +14,7 @@ import { RoomService } from '../../service/room/room.service';
 })
 export class Room {
   name = '';
+  hostName = '';
   maxPlayers = 6;
 
   
@@ -27,17 +28,19 @@ export class Room {
   }
   
   createRoom() {
-    const hostName = "The Captain";
-    this.roomsService.createRoom(this.name, hostName).subscribe({
-      next: (res) => {
-        console.log('Room créée !', res);
-        this.router.navigate(['/game']);
-      },
-      error: (err) => {
-        console.error('Erreur de création de room :', err);
-      }
-    });
-  }
+  this.roomsService.createRoom(this.name, this.hostName).subscribe({
+    next: (res) => {
+      console.log('Room créée !', res);
+      
+      const roomId = res.uuid;   
+
+      this.router.navigate(['/game', roomId]);  
+    },
+    error: (err) => {
+      console.error('Erreur de création de room :', err);
+    }
+  });
+}
 }
 
 
