@@ -12,7 +12,7 @@ import {CdkDrag,CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/dr
 })
 export class Hand {
   // Liste des IDs des cartes dans la main (ordre = position)
-  cardIds: number[] = [1,2,3,2,1,0,4,4,1];
+  cardIds: number[] = [70,71,72,73];
 
   private radius = 700;       // change pour arrondir plus/moins en px
   private stepAngleDeg = 7;  // écart angulaire entre chaque carte en degrés
