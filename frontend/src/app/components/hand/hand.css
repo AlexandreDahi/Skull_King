@@ -1,0 +1,9 @@
+.hand {
+  position: relative;
+  height: 300px;  /* hauteur obligatoire pour laisser de la place à l’arc */
+}
+
+app-cards {
+  position: absolute;
+  transition: transform 0.2s;
+}

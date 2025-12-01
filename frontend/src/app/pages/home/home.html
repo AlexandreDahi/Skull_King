@@ -1,7 +1,7 @@
 <div class="body">
 <app-navbar></app-navbar>
 <!-- Conteneur centré -->
-<div class="max-w-4xl mx-auto py-6 px-4 md:py-10 md:px-6">
+<div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
 
   <!-- Carte centrale (style panneau) -->
   <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
@@ -31,19 +31,26 @@
     </div>
 
     <!-- LISTE DES ROOMS -->
-    <div class="space-y-4 max-h-80 sm:max-h-96 overflow-y-auto pr-2 scrollbar-pirate">
+    <div class="space-y-4 max-h-80 sm:max-h-96 overflow-y-auto pr-2 scrollbar-grey">
+       <!-- Loader -->
+        <div *ngIf="loading" class="flex justify-center items-center h-40">
+          <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-yellow-500"></div>
+        </div>
        <!-- Message si aucune room -->
-        <div *ngIf="rooms.length === 0" class="text-center text-white/70 italic text-xl">
+        <div *ngIf="filteredRooms.length === 0" class="text-center text-white/70 italic text-xl">
           La mer est calme… aucune partie en vue ! ⚓
         </div>
-      <!-- CARD ROOM DYNAMIQUE -->
-      <app-room-card 
-        *ngFor="let room of rooms"
-        [title]="room.name"
-        [players]="room.nbPlayers"
-        [maxPlayers]="8" 
-      >
-      </app-room-card>
+        <!-- CARD ROOM DYNAMIQUE -->
+        <app-room-card 
+          *ngFor="let room of filteredRooms; let i = index"
+          [title]="room.name"
+          [hostName]="room.hostName"
+          [players]="room.nbPlayers"
+          [maxPlayers]="8"
+          [roomNumber]="i + 1"  
+          [roomId]="room.uuid"
+        >
+        </app-room-card>
     </div>
   </div>
 </div>
