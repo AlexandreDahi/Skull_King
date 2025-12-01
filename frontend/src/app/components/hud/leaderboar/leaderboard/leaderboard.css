@@ -5,11 +5,13 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    padding-top: 10px;
 }
 .player-results{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    margin-bottom: 10px;
     
 }
 .all-players-results{
