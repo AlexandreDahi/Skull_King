@@ -1,12 +1,8 @@
 
 .host {
-  display: block;
-  height: 100vh;
+  @apply bg-cover bg-center bg-no-repeat;
   background-image: url('/images/background2.jpg');
-  background-size: cover;
-  background-position: center;
-  /* position: fixed;
-  width: 100%; */
+  min-height: 100vh;
 }
 
 .text {
@@ -22,8 +18,23 @@
 
 app-hand {
   position: absolute;
-  bottom: 150px;
+  bottom: 100px;
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+app-drop-zone {
+  position: absolute;
+  top: 40%;              /* centre vertical */
+  left: 50%;             /* centre horizontal */
+  transform: translate(-50%, -50%);
+  z-index: 20;           /* au-dessus du fond, mais sous la main si tu veux */
+  display: block;
+  pointer-events: auto;  /* pour être sûr que CDK détecte les drops */
+   backdrop-filter: blur(1px);       /* flou */
+  background: rgba(0, 0, 0, 0.144);  /* fond sombre transparent */
+  border-color: rgba(255, 255, 255, 0.5);
+  transition: 0.2s ease;
+  border-radius: 10px;
 }

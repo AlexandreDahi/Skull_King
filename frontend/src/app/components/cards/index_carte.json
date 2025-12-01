@@ -2,28 +2,28 @@
     "index_carte": [
         {
         "name": "Skull King",
-        "image": "/images/cards_spreads/skull_king_card.png",
+        "image": "/images/cards/spe/img5.jpg",
         "id": 0,
         "type": "special",
         "description": "Le Skull King permet de gagner contre toutes les autres cartes, sauf les sirènes qui peuvent le capturer. Le Skull King remporte 30 point par capture de pirates"
         },
         {
         "name": "Sirène 1",
-        "image": "/images/cards_spreads/sirene.png",
+        "image": "/images/cards/spe/img11.jpg",
         "id": 1,
         "type": "special",
         "description": "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
         },
         {
         "name": "Sirène 2",
-        "image": "/images/cards_spreads/sirene.png",
+        "image": "/images/cards/spe/img15.jpg",
         "id": 2,
         "type": "special",
         "description":  "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
         },
         {
         "name": "Pirate Rascal",
-        "image": "/images/cards_spreads/pirate_Rascal.png",
+        "image": "/images/cards/spe/img27.jpg",
         "id": 3,
         "type": "special",
         "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
@@ -31,7 +31,7 @@
         },
         {
         "name":"fuite",
-        "image": "/images/cards_spreads/fuite.png",
+        "image": "/images/cards/spe/img52.jpg",
         "id": 4,
         "type": "special",
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."

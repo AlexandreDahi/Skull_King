@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @Component({
   selector: 'app-hand',
-  imports: [CommonModule,Cards],
+  imports: [CommonModule,Cards, DragDropModule],
   templateUrl: './hand.html',
   styleUrl: './hand.css',
 })
@@ -50,5 +51,13 @@ export class Hand {
     this.draggingIndex = dragging ? index : null;
   }
 
-
+  removeCard(cardId: number) {
+    const index = this.cardIds.indexOf(cardId);
+    if (index !== -1) {
+      this.cardIds.splice(index, 1);
+      
+      // recalcul de l’arc
+      this.arcAngleRad = this.ComputeArcRad(this.cardIds.length);
+    }
+  }
 }

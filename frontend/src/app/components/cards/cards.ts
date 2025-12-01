@@ -24,7 +24,7 @@ export class Cards {
     // console.log("Card créée ID =", this.id, " → ", this.card);
   }
 
-  // 🔎 Fonction qui récupère une carte par son ID
+  // Fonction qui récupère une carte par son ID
   getCardById(id: number) {
     return this.jsonData.find(carte => carte.id === id);
   }

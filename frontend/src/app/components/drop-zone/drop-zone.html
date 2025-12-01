@@ -1,0 +1,13 @@
+<div 
+  cdkDropList
+  id="dropzone"
+  (cdkDropListDropped)="onDrop($event)"
+  class="drop-zone w-64 h-70 mx-auto border-3 border-dashed border-stone-500 rounded-xl
+         flex items-center justify-center text-gray-300 text-lg"
+>
+
+  <div *ngFor="let c of cardsInZone" class="text-white">
+    Carte ID : {{ c }}
+  </div>
+
+</div>
