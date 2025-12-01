@@ -20,7 +20,7 @@ public class RoomController {
 
     @Autowired RoomService roomService;
 
-    @Operation(summary = "Create a new room")
+    @Operation(summary = "Create a new room and returns the credentials for the host to join")
     @PostMapping
     public ResponseEntity<Room> createRoom(@Valid @RequestBody RoomFormCreate roomFormCreate) {
 

@@ -1,10 +1,12 @@
 <div 
   cdkDropList
   [cdkDropListConnectedTo]="['dropzone']"
+  (cdkDropListDropped)="drop($event)"
   class="hand"
 >
   <app-cards 
     *ngFor="let id of cardIds; let i = index"
+    cdkDrag
     [id]="id"
     [cdkDragData]="id"
     (dragState)="onDragStateChange(i, $event)"

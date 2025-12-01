@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
+import {CdkDrag,CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @Component({
   selector: 'app-hand',
-  imports: [CommonModule,Cards, DragDropModule],
+  imports: [CommonModule, Cards, CdkDrag, CdkDropList, DragDropModule],
   templateUrl: './hand.html',
-  styleUrl: './hand.css',
+  styleUrl: './hand.css'
 })
 export class Hand {
   // Liste des IDs des cartes dans la main (ordre = position)
-  cardIds: number[] = [1,2,3,2,1,0,4,4,1];
+  cardIds: number[] = [70,71,72,73];
 
   private radius = 700;       // change pour arrondir plus/moins en px
   private stepAngleDeg = 7;  // écart angulaire entre chaque carte en degrés
@@ -48,7 +49,36 @@ export class Hand {
 
   draggingIndex: number | null = null;
   onDragStateChange(index: number, dragging: boolean) {
-    this.draggingIndex = dragging ? index : null;
+    console.log('dragging', dragging);
+    if (dragging) {
+      this.draggingIndex = index;
+    } else {
+      // drag terminé → remettre la carte à sa position
+      this.draggingIndex = null;
+      this.resetCardPosition(index);
+    }
+  }
+
+  moveElement<T>(array: T[], selceted_card_id: number, hoovered_card_id: number): T[] {
+    const element = array.splice(selceted_card_id, 1)[0]; // retire l'élément
+    array.splice(hoovered_card_id, 0, element);             // insère à la nouvelle position
+    return array;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.cardIds, event.previousIndex, event.currentIndex);
+    console.log('new order', this.cardIds);
+  }
+
+
+  resetCardPosition(index: number) {
+    // Ici tu recalcules les positions initiales
+    // ou tu forces Angular à recalculer via le binding
+    this.arcAngleRad = this.ComputeArcRad(this.cardIds.length);
+    this.stepAngleRad = this.ComputeStepRad(this.stepAngleDeg);
+    this.ComputeCardXIndex(index);
+    this.ComputeCardYIndex(index);
+    this.ComputeRotateTransform(index);
   }
 
   removeCard(cardId: number) {
