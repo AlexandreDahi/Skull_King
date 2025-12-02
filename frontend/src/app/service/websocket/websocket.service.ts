@@ -24,8 +24,9 @@ export class WebSocketService {
     private playerToken = ""
 
 
-    private publicChannel = new Observable<IMessage>()
+    private publicChannel  = new Observable<IMessage>()
     private privateChannel = new Observable<IMessage>()
+    private lobbyChannel   = new Observable<IMessage>()
 
 
     private activateWebSocket() {
@@ -45,12 +46,17 @@ export class WebSocketService {
         this.playerToken = playerToken
 
         this.publicChannel = this.rxStomp.watch({
-            destination: `/rooms/${this.roomUuid}/`
+            destination: `/app/rooms/${this.roomUuid}/`
         })
 
 
         this.privateChannel = this.rxStomp.watch({
-            destination: `/rooms/${this.roomUuid}/users/${this.playerUuid}/${this.playerToken}`
+            destination: `/app/rooms/${this.roomUuid}/users/${this.playerUuid}/${this.playerToken}`
+        })
+
+
+        this.lobbyChannel = this.rxStomp.watch({
+            destination: `/app/rooms/${this.roomUuid}/lobby-events`
         })
 
     }

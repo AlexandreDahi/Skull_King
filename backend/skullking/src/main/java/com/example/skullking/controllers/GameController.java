@@ -1,8 +1,11 @@
 package com.example.skullking.controllers;
 
 
+import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.gameEvents.BaseEvent;
+import com.example.skullking.entities.gameEvents.JoinGameEvent;
 import com.example.skullking.entities.gameEvents.SendBetEvent;
+import com.example.skullking.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,6 +14,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,11 +23,12 @@ import java.util.UUID;
 
 class Message {
 
-    public String content;
+    public String type;
+    public Object data;
 
 
-    public Message(String content) {
-        this.content = content;
+    public Message(String type) {
+        this.type = type;
     }
 }
 
@@ -38,16 +43,33 @@ public class GameController {
         this.template = template;
     }
 
+    @Autowired
+    private RoomService roomService;
 
-    @MessageMapping("/rooms/{roomUuid}/users/{userUuid}")
+
+    @MessageMapping("/rooms/{roomUuid}/users/{userUuid}/get-players")
     //@SendTo("/topic/messages")
-    public void join(@DestinationVariable String roomUuid, @DestinationVariable String userUuid, @Payload BaseEvent message) {
+    public void getPlayers(
+            @DestinationVariable UUID roomUuid,
+            @DestinationVariable String userUuid,
+            @Payload JoinGameEvent joinGameEvent
+    ) {
 
-        boolean isMyObj = message instanceof SendBetEvent;
+        // check room existence
+        // Check user identity
 
-        System.out.println("castable ? " + isMyObj);
 
-        this.template.convertAndSend("/topic/messages", new Message("roome : " + roomUuid + ", user : " + userUuid));
+        List<PlayerDTOForPublic> playerList =  roomService
+                .getRoom(roomUuid)
+                .getPlayers()
+                .stream()
+                .map(PlayerDTOForPublic::new)
+                .toList();
+
+        this.template.convertAndSend(
+            "/rooms/" + roomUuid + "/lobby-events",
+            new Message("roome : " + roomUuid + ", user : " + userUuid)
+        );
         //return new Message("room : " + roomUuid + ", user : " + userUuid);
     }
 }

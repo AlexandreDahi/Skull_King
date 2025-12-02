@@ -51,6 +51,14 @@ public class Room {
         return this.host;
     }
 
+    public List<Player> getPlayers() {
+
+        ArrayList<Player> copiedList = new ArrayList<>(this.guestsList);
+        copiedList.add(this.host);
+
+        return copiedList;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -71,4 +71,13 @@ public class RoomService {
         return roomCount != 0;
     }
 
+    public Room getRoom(UUID roomUuid) {
+
+        return this.roomsList
+            .stream()
+            .filter(r -> r.getUuid().equals(roomUuid))
+            .toList()
+            .getFirst();
+    }
+
 }
