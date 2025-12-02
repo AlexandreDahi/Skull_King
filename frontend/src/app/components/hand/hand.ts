@@ -4,7 +4,6 @@ import { Cards } from '../../components/cards/cards';
 import {CdkDrag,CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
-
 @Component({
   selector: 'app-hand',
   imports: [CommonModule, Cards, CdkDrag, CdkDropList, DragDropModule],
@@ -13,10 +12,15 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 })
 export class Hand {
   // Liste des IDs des cartes dans la main (ordre = position)
-  cardIds: number[] = [70,71,72,73];
+  cardIds: number[] = [57,58,59,60,61,62,64,65,66,71,72,73,63];
+  // cardIds: number[] = [43,44,45,46,47,48,49,50,51,52,53,54,55,56];
+  // cardIds: number[] = [29,30,31,32,33,34,35,36,37,38,39,40,41,42];
+  // cardIds: number[] = [15,16,17,18,19,20,21,22,23,24,25,26,27,28];
+  // cardIds: number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+  // cardIds: number[] = [1,15,29,43,57,59];
 
-  private radius = 700;       // change pour arrondir plus/moins en px
-  private stepAngleDeg = 7;  // écart angulaire entre chaque carte en degrés
+  private radius = 800;       // change pour arrondir plus/moins en px
+  private stepAngleDeg = 5;  // écart angulaire entre chaque carte en degrés
 
   ComputeArcRad(card_id_lenght:number): number {
     return ((card_id_lenght-1)*this.stepAngleDeg* Math.PI) / 180;
@@ -29,13 +33,13 @@ export class Hand {
  
   ComputeCardXIndex(i: number): number {
     const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-    return Math.round(Math.sin(angle) * this.radius);
+    return Math.round(Math.sin(angle) * this.radius) - 56;
   }
 
   ComputeCardYIndex(i: number): number {
     const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
     // Position verticale (profondeur de l’arc)
-    const y = Math.cos(angle) * this.radius;
+    const y = Math.cos(angle) * this.radius ;
 
     // Normalisation : la carte la plus basse = 0px
     return Math.round(y - this.radius);
@@ -54,7 +58,6 @@ export class Hand {
       this.draggingIndex = index;
     } else {
       // drag terminé → remettre la carte à sa position
-      this.draggingIndex = null;
       this.resetCardPosition(index);
     }
   }
@@ -69,7 +72,6 @@ export class Hand {
     moveItemInArray(this.cardIds, event.previousIndex, event.currentIndex);
     console.log('new order', this.cardIds);
   }
-
 
   resetCardPosition(index: number) {
     // Ici tu recalcules les positions initiales
