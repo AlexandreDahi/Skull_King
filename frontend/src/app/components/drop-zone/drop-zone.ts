@@ -19,7 +19,7 @@ export class DropZone {
   onDrop(event: CdkDragDrop<any>) {
     if (event.previousContainer !== event.container) {
       const droppedCardId = event.item.data; // doit être l'ID
-      console.log("Carte déposée :", droppedCardId);
+      console.log("Carte déposée dans la drop zone :", droppedCardId);
 
       this.cardsInZone.push(droppedCardId); // ajoute dans la zone
       this.cardDropped.emit(droppedCardId);

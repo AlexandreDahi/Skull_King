@@ -1,8 +1,8 @@
 .hand {
-  z-index: 1;
+
   position: relative;
   height: 300px;  /* hauteur obligatoire pour laisser de la place à l’arc */
-  z-index : 1000;
+  z-index : 1;
 }
 
 app-cards {
