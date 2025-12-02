@@ -29,19 +29,6 @@ export class Cards {
     return this.jsonData.find(carte => carte.id === id);
   }
 
-  isDragging = false;
-
-  @Output() dragState = new EventEmitter<boolean>();
-
-  onDragStart() {
-    this.isDragging = true;
-    this.dragState.emit(true);
-  }
-
-  onDragEnd() {
-    this.isDragging = false;
-    this.dragState.emit(false);
-  }
 
   
 }

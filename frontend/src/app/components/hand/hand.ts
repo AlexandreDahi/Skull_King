@@ -51,45 +51,11 @@ export class Hand {
     return `rotate(${(angle * 180) / Math.PI}deg)`;
   }
 
-  draggingIndex: number | null = null;
-  onDragStateChange(index: number, dragging: boolean) {
-    console.log('dragging', dragging);
-    if (dragging) {
-      this.draggingIndex = index;
-    } else {
-      // drag terminé → remettre la carte à sa position
-      this.resetCardPosition(index);
-    }
-  }
 
-  moveElement<T>(array: T[], selceted_card_id: number, hoovered_card_id: number): T[] {
-    const element = array.splice(selceted_card_id, 1)[0]; // retire l'élément
-    array.splice(hoovered_card_id, 0, element);             // insère à la nouvelle position
-    return array;
-  }
+
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cardIds, event.previousIndex, event.currentIndex);
     console.log('new order', this.cardIds);
-  }
-
-  resetCardPosition(index: number) {
-    // Ici tu recalcules les positions initiales
-    // ou tu forces Angular à recalculer via le binding
-    this.arcAngleRad = this.ComputeArcRad(this.cardIds.length);
-    this.stepAngleRad = this.ComputeStepRad(this.stepAngleDeg);
-    this.ComputeCardXIndex(index);
-    this.ComputeCardYIndex(index);
-    this.ComputeRotateTransform(index);
-  }
-
-  removeCard(cardId: number) {
-    const index = this.cardIds.indexOf(cardId);
-    if (index !== -1) {
-      this.cardIds.splice(index, 1);
-      
-      // recalcul de l’arc
-      this.arcAngleRad = this.ComputeArcRad(this.cardIds.length);
-    }
   }
 }
