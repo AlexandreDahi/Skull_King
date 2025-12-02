@@ -1,0 +1,20 @@
+package com.example.skullking.entities.game.cards;
+
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+public class Deck {
+    private Random random = new Random();
+    Map<UUID, Card> cards;
+
+    public Card removeRandomCard(){
+        int randomIndex = random.nextInt(cards.size());
+        if (cards.containsKey(randomIndex)){
+            return cards.remove(randomIndex);
+        }
+        return null;
+
+    }
+
+}
