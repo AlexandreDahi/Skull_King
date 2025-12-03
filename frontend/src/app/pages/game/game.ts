@@ -20,7 +20,7 @@ export class Game {
 
   onCardDropped(cardId: number) {
     console.log("Carte déposée :", cardId);
-    this.hand.removeCard(cardId); // retire la carte de la main
+    
   }
 
 }

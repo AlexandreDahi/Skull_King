@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import data from './index_carte.json';
 
 @Component({
@@ -13,35 +13,33 @@ export class Cards {
 
   @Input() id!: number;
 
-  // Le JSON complet importé
-  jsonData = data.index_carte;
-  
-  // La carte sélectionnée
-  card: any;
+  // Emet l'état du drag
+  @Output() dragState = new EventEmitter<boolean>();
 
-  ngOnInit() {
-    this.card = this.getCardById(this.id);
-    // console.log("Card créée ID =", this.id, " → ", this.card);
-  }
-
-  // Fonction qui récupère une carte par son ID
-  getCardById(id: number) {
-    return this.jsonData.find(carte => carte.id === id);
-  }
+  // Nouveau : émet l'ID de la carte au drag start
+  @Output() dragStartedCard = new EventEmitter<number>();
 
   isDragging = false;
 
-  @Output() dragState = new EventEmitter<boolean>();
+  jsonData = data.index_carte;
+  card: any;
+
+  ngOnInit() {
+    this.card = this.jsonData.find(c => c.id === this.id);
+  }
 
   onDragStart() {
     this.isDragging = true;
     this.dragState.emit(true);
+
+    // 🔥 log l'ID de la carte
+    console.log("[Card] Drag started for card ID =", this.id);
+    this.dragStartedCard.emit(this.id);
   }
 
   onDragEnd() {
     this.isDragging = false;
     this.dragState.emit(false);
+    console.log("[Card] Drag ended for card ID =", this.id);
   }
-
-  
 }

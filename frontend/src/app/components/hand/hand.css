@@ -1,12 +1,32 @@
 .hand {
-
   position: relative;
-  height: 300px;  /* hauteur obligatoire pour laisser de la place à l’arc */
-  z-index : 1;
+  height: 300px;
 }
 
 app-cards {
   position: absolute;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
+.card-on-arc {
+  cursor: grab;
+  z-index: var(--z-index);
+  display: block;
+}
+
+/* Drag state */
+.cdk-drag-dragging {
+  cursor: grabbing;
+  z-index: 2000 !important;
+  transform: translateY(-20px) !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0; /* cache l’original pendant le drag */
+}
+
+.cdk-drag-preview {
+
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  border-radius: 8px;
+}

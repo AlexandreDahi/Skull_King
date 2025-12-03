@@ -1,28 +1,47 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Cards } from '../cards/cards';
 
 @Component({
   selector: 'app-drop-zone',
   standalone: true,
-  imports: [DragDropModule, CommonModule],
+  imports: [CommonModule, DragDropModule, Cards],
   templateUrl: './drop-zone.html',
   styleUrl: './drop-zone.css',
 })
 export class DropZone {
 
-  @Output() cardDropped = new EventEmitter<number>();
+  /** Les listes auxquelles cette drop-zone est connectée */
+  @Input() connectedLists: string[] = [];
 
-  // les cartes réellement dans la drop-zone
+  /** Les cartes actuellement dans la drop-zone (ID de cartes) */
   cardsInZone: number[] = [];
-
-  onDrop(event: CdkDragDrop<any>) {
-    if (event.previousContainer !== event.container) {
-      const droppedCardId = event.item.data; // doit être l'ID
-      console.log("Carte déposée dans la drop zone :", droppedCardId);
-
-      this.cardsInZone.push(droppedCardId); // ajoute dans la zone
-      this.cardDropped.emit(droppedCardId);
+    ngOnInit() {
+      console.log("DropZone connectedLists =", this.connectedLists);
     }
+
+    ngAfterViewInit() {
+      console.log("Hand → connected to dropzone");
+    }
+  /** Gestion principale du drop */
+  onDrop(event: CdkDragDrop<number[]>) {
+    console.log("🔥 onDrop déclenché !", event);
+  
+    if (event.previousContainer === event.container) return;
+    console.log("Dragged card ID (cdkDragData) :", event.item.data);
+    console.log("From container data :", event.previousContainer.data);
+    console.log("From index :", event.item.data.index);
+    console.log("From Id :", event.item.data.id);
+    
+    // transfert exact de la carte sélectionnée
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data, 
+      event.item.data.index, // L’index réel dans la main
+      event.currentIndex      // La position dans la dropzone
+    );
+
+    console.log("DropZone → cartes :", this.cardsInZone);
   }
 }
