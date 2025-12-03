@@ -70,6 +70,10 @@ export class WebSocketService {
         return this.privateChannel
     }
 
+    getLobbyChannel() {
+        return this.lobbyChannel
+    }
+
 
 
     
