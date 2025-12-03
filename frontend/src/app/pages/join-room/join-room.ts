@@ -4,6 +4,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { RoomService } from '../../service/room/room.service';
+import { WebSocketService } from '../../service/websocket/websocket.service';
 import { FormsModule } from '@angular/forms';  
 
 @Component({
@@ -23,10 +24,15 @@ export class JoinRoom implements OnInit {
 
   playerName = '';
 
-  constructor(private route: ActivatedRoute, private router: Router, private roomService: RoomService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private roomService: RoomService,
+    private wsService: WebSocketService
+  ) {}
 
   ngOnInit(): void {
-    // Récupération de l’UUID dans l’URL
+    // Récupération de l'UUID dans l'URL
     this.roomId = this.route.snapshot.paramMap.get('id')!;
 
     // Récupération des query params envoyés depuis RoomCard
@@ -45,13 +51,21 @@ export class JoinRoom implements OnInit {
     }
 
     this.roomService.joinRoom(this.roomId, this.playerName).subscribe({
-      next: () => {
-        // Redirection vers la partie après l'ajout du joueur
-        this.router.navigate(['/game', this.roomId]);
+      next: (res) => {
+        console.log('Room rejointe !', res);
+        
+        // Stocker les informations du joueur
+        const playerUuid = res.playerUuid;
+        const playerToken = res.playerToken;
+        
+        // Connecter au WebSocket
+        this.wsService.joinRoom(this.roomId, playerUuid, playerToken);
+        
+        // Rediriger vers le lobby au lieu du jeu
+        this.router.navigate(['/lobby', this.roomId]);
       },
       error: (err) => {
-        console.error(err);
-        alert("Impossible de rejoindre la room...");
+        console.error('Erreur lors de la jonction :', err);
       }
     });
   }

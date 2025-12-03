@@ -22,6 +22,7 @@ export class WebSocketService {
     private roomUuid = ""
     private playerUuid = ""
     private playerToken = ""
+    private isPlayerAdmin = false
 
 
     private publicChannel  = new Observable<IMessage>()
@@ -35,7 +36,7 @@ export class WebSocketService {
 
     } 
 
-    joinRoom(roomUuid: string, playerUuid: string, playerToken: string) {
+    joinRoom(roomUuid: string, playerUuid: string, playerToken: string, isAdmin: boolean = false) {
 
         if (!this.rxStomp.active) {
             this.activateWebSocket()
@@ -44,21 +45,31 @@ export class WebSocketService {
         this.roomUuid = roomUuid
         this.playerUuid = playerUuid
         this.playerToken = playerToken
+        this.isPlayerAdmin = isAdmin
+
+        console.log('🔌 WebSocket joinRoom:', {
+            roomUuid,
+            playerUuid,
+            playerToken,
+            isAdmin
+        });
 
         this.publicChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/`
+            destination: `/topic/rooms/${this.roomUuid}`
         })
 
 
         this.privateChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/users/${this.playerUuid}/${this.playerToken}`
+            destination: `/user/queue/rooms/${this.roomUuid}`
         })
 
 
+        // Changement ici : écouter sur /rooms/{uuid}/lobby-events au lieu de /topic/rooms/{uuid}/lobby
         this.lobbyChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/lobby-events`
+            destination: `/rooms/${this.roomUuid}/lobby-events`
         })
 
+        console.log('✅ Channels configurés');
     }
 
 
@@ -70,10 +81,24 @@ export class WebSocketService {
         return this.privateChannel
     }
 
+    getLobbyChannel() {
 
+        if (!this.rxStomp.active) {
+            this.activateWebSocket()
+        }
+        
+        return this.lobbyChannel
+    }
 
-    
-   
+    isAdmin(): boolean {
+        return this.isPlayerAdmin
+    }
 
-
+    sendLobbyMessage(message: any) {
+        console.log('📤 Envoi message lobby:', message);
+        this.rxStomp.publish({
+            destination: `/app/rooms/${this.roomUuid}/lobby`,
+            body: JSON.stringify(message)
+        })
+    }
 }
