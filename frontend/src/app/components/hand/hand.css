@@ -3,30 +3,32 @@
   height: 300px;
 }
 
-app-cards {
-  position: absolute;
-  transition: transform 0.2s ease;
-}
-
 .card-on-arc {
   cursor: grab;
-  z-index: var(--z-index);
-  display: block;
+  display: inline-block; /* pas absolute */
+  transition: transform 0.25s ease-in-out;
 }
 
-/* Drag state */
 .cdk-drag-dragging {
   cursor: grabbing;
   z-index: 2000 !important;
-  transform: translateY(-20px) !important;
+  /* translation “lift” pour visualiser le drag */
+  transform: translateY(-30px) !important;
 }
 
 .cdk-drag-placeholder {
-  opacity: 0; /* cache l’original pendant le drag */
+  opacity: 0; /* cache la position originale pendant le drag */
 }
 
 .cdk-drag-preview {
-
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
   border-radius: 8px;
+}
+
+.card-on-arc.cdk-drag-preview {
+  transition: none !important; /* pas d’animation sur preview */
+}
+
+.card-on-arc.cdk-drag-placeholder {
+  opacity: 0 !important;
 }

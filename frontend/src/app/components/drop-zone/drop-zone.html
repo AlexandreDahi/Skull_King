@@ -1,61 +1,28 @@
-<!-- <div
-  cdkDropList
-  #dropList="cdkDropList"
-  id="dropzone"
-  [cdkDropListData]="cardsInZone"
-  [cdkDropListConnectedTo]="connectedLists"
-  (cdkDropListDropped)="onDrop($event)"
-  class="drop-zone w-64 h-70 mx-auto border-3 border-dashed border-stone-500 rounded-xl
-         flex items-center justify-center text-gray-300 text-lg"
->
-
-  <div
-    *ngFor="let id of cardsInZone; let i = index"
-    cdkDrag
-    class="dropped-card"
-  >
-    <app-cards [id]="id"></app-cards>
-  </div>
-
-</div> -->
-
-<!-- Drop-zone: chaque carte droppée reste draggable, mais on le met sur app-cards -->
-<!-- <div
-  cdkDropList
-  id="dropzone"
-  [cdkDropListData]="cardsInZone"
-  [cdkDropListConnectedTo]="['handList']"
-  (cdkDropListDropped)="onDrop($event)"
-  class="drop-zone "
->
-  <app-cards
-    *ngFor="let id of cardsInZone; let i = index"
-    cdkDrag
-    [id]="id"
-    [cdkDragData]="id"
-    class="dropped-card "
-  ></app-cards>
-</div> -->
-
-
 <div
   cdkDropList
   cdkDropListDisabled="true"
+  [cdkDropListSortingDisabled]="true"
   #dropList="cdkDropList"
   id="dropzone"
   [cdkDropListData]="cardsInZone"
   [cdkDropListConnectedTo]="['handList']"
   (cdkDropListDropped)="onDrop($event)"
-  class="drop-zone w-64 h-70 mx-auto border-3 border-dashed border-stone-500 rounded-xl
+  class="drop-zone w-140 h-80 mx-auto border-3 border-dashed border-stone-500 rounded-xl
          relative flex items-center justify-center text-gray-300 text-lg"
 >
   <div
     *ngFor="let id of cardsInZone; let i = index"
     cdkDrag
     [cdkDragData]="id"
-    class="absolute top-0 left-0"
-    [style.transform]="'translate('+i*10+'px,'+i*5+'px)'"
+    class="absolute card-stack"
+    [style.zIndex]="i + 1"
+    [style.transform]="
+      'translate(' + ((i - (cardsInZone.length - 1) / 2) * 50) + 'px,' +
+      ((i - (cardsInZone.length - 1) / 2) * 2) + 'px) ' +
+      'rotate(' + ((i - (cardsInZone.length - 1) / 2) * 1) + 'deg)'
+    "
   >
     <app-cards [id]="id"></app-cards>
   </div>
 </div>
+

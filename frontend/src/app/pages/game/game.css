@@ -31,7 +31,6 @@ app-drop-zone {
   transform: translate(-50%, -50%);
   z-index: 20;           /* au-dessus du fond, mais sous la main si tu veux */
   display: block;
-  pointer-events: auto;  /* pour être sûr que CDK détecte les drops */
    backdrop-filter: blur(1px);       /* flou */
   background: rgba(0, 0, 0, 0.144);  /* fond sombre transparent */
   border-color: rgba(255, 255, 255, 0.5);
