@@ -11,9 +11,8 @@ import { Cards } from '../cards/cards';
   styleUrl: './drop-zone.css',
 })
 export class DropZone {
-
+  @Input() cardsInZone: number[] = [];
   @Input() connectedLists: string[] = [];
-  cardsInZone: number[] = [];
 
   onDrop(event: CdkDragDrop<number[]>) {
     if (event.previousContainer === event.container) return;

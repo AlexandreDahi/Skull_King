@@ -1,12 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
 import {
   CdkDragDrop,
-  moveItemInArray,
   CdkDragStart,
-  CdkDragMove,
-  CdkDragEnd,
   DragDropModule
 } from '@angular/cdk/drag-drop';
 
@@ -18,59 +15,38 @@ import {
 })
 export class Hand {
 
-  cardIds: number[] = [57, 58, 59, 62, 63, 64, 65, 66];
-
-  private radius = 900;       
-  private stepAngleDeg = 4;  
-
-  private arcAngleRad = this.ComputeArcRad(this.cardIds.length);
-  private stepAngleRad = this.ComputeStepRad(this.stepAngleDeg);
-
+  @Input() cardIds: number[] = [];
   draggingIndex: number | null = null;
+
+  @Output() playCardEvent = new EventEmitter<number>();
+
+  flyingCardId: number | null = null;
 
   /* ---------------------------
      Calcul positions cartes sur l'arc
      --------------------------- */
-  ComputeArcRad(length: number): number {
-    return ((length - 1) * this.stepAngleDeg * Math.PI) / 180;
+  computeArcTransform(i: number): string {
+    const n = this.cardIds.length;
+
+    if (n === 1) {
+      return `translate(0,0) rotate(0deg)`;
+    }
+    // index centré sur 0
+    const center = (n - 1) / 2;
+    const offset = i - center;
+
+    // Chevauchement constant
+    const overlap = -40; // px de translation horizontale (carte suivante avance un peu)
+    const curveStrength = -3; // Courbure verticale
+    const rotationStrength = 5; // Rotation légère
+
+    const x = offset * overlap ;
+    const y = Math.pow(offset, 2) * -curveStrength +50; // courbe douce en U
+    const rotation = offset * rotationStrength;
+
+    return `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
   }
 
-  ComputeStepRad(stepDeg: number): number {
-    return (stepDeg * Math.PI) / 180;
-  }
-
-  // ComputeCardXIndex(i: number): number {
-  //   const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-  //   return Math.round(Math.sin(angle) * this.radius) - 56;
-  // }
-
-  // ComputeCardYIndex(i: number): number {
-  //   const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-  //   const y = Math.cos(angle) * this.radius;
-  //   return Math.round(y - this.radius);
-  // }
-
-  // ComputeRotateTransform(i: number): string {
-  //   const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-  //   return `rotate(${(angle * 180) / Math.PI}deg)`;
-  // }
-
-computeArcTransform(i: number): string {
-  const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-
-  // rayon horizontal/vertical pour contrôler la forme de l'éventail
-  const radiusX = -300;  // contrôle l'espacement horizontal
-  const radiusY = 150;  // contrôle la hauteur de l'arc (plus petit = plus serré)
-
-  // position relative de la carte
-  const x = Math.sin(angle) * radiusX;
-  const y = Math.cos(angle) * radiusY ; // le "-" inverse le U pour qu’il pointe vers le bas
-
-  // rotation de la carte
-  const rotation = (angle * 180) / Math.PI;
-
-  return `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-}
   /* ---------------------------
      Hand drag events
      --------------------------- */
@@ -78,18 +54,7 @@ computeArcTransform(i: number): string {
     this.draggingIndex = index;
   }
 
-  onCdkDragMoved(event: CdkDragMove, index: number) {
-    // Optionnel : tu peux utiliser event.pointerPosition pour suivi personnalisé
-  }
-
-  onCdkDragEnded(event: CdkDragEnd, index: number) {
-    // Reset de la position de la carte dans l’éventail
-    this.draggingIndex = null;
-    this.recalculateArc();
-    console.log("Drag ended for card index:", index); 
-  }
-
- drop(event: CdkDragDrop<number[]>) {
+  drop(event: CdkDragDrop<number[]>) {
     if (event.previousContainer !== event.container) {
       // Drop vers dropzone
       const card = this.cardIds[event.previousIndex];
@@ -99,11 +64,41 @@ computeArcTransform(i: number): string {
   }
 
   /* ---------------------------
-     Recalcul arc pour toutes les cartes
+     Double click events
      --------------------------- */
-  recalculateArc() {
-    this.arcAngleRad = this.ComputeArcRad(this.cardIds.length);
-    this.stepAngleRad = this.ComputeStepRad(this.stepAngleDeg);
-  }
+  playCard(index: number, event: MouseEvent) {
+    const cardId = this.cardIds[index];
 
+    // récupérer la position de la carte
+    const cardElement = (event.target as HTMLElement).closest('.card-on-arc') as HTMLElement;
+    if (!cardElement) return;
+
+    const rect = cardElement.getBoundingClientRect();
+
+    // appliquer l’animation
+    this.flyingCardId = cardId;
+    cardElement.style.position = 'fixed';
+    cardElement.style.left = `${rect.left}px`;
+    cardElement.style.top = `${rect.top}px`;
+    cardElement.style.transition = 'all 0.5s ease-in-out';
+
+    const dropZone = document.getElementById('dropzone');
+    if (!dropZone) return;
+    const dzRect = dropZone.getBoundingClientRect();
+
+    const deltaX = dzRect.left + dzRect.width / 2 - rect.left - rect.width / 2;
+    const deltaY = dzRect.top + dzRect.height / 2 - rect.top - rect.height / 2;
+
+    // lancer l’animation
+    requestAnimationFrame(() => {
+      cardElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.8) rotate(0deg)`;
+    });
+
+    // après l’animation, mettre à jour les tableaux
+    setTimeout(() => {
+      this.cardIds.splice(index, 1);
+      this.playCardEvent.emit(cardId);
+      this.flyingCardId = null;
+    }, 500); // durée = 0.5s
+  }
 }

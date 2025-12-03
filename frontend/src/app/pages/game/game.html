@@ -1,5 +1,5 @@
 <div class="host">
-    <app-drop-zone></app-drop-zone>
-    <app-hand></app-hand>
-    <app-other-players></app-other-players>
+  <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
+  <app-hand [cardIds]="handCards" (playCardEvent)="onCardPlayed($event)"></app-hand>
+  <app-other-players></app-other-players>
 </div>
