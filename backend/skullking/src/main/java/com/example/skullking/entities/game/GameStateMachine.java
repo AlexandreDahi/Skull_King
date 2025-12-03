@@ -12,8 +12,9 @@ public class GameStateMachine {
     GameState gameState = new GameState();
 
 
-    public void startGame(List<Player> players){
+    public boolean startGame(List<Player> players){
         startBettingPhase();
+        return this.gameState.startGame(players);
     }
 
     public boolean receiveBetPlayer(BetPlayer betPlayer) {
@@ -23,8 +24,9 @@ public class GameStateMachine {
         gameState.recordBet(betPlayer.getPlayerId(), betPlayer.getBetAmount());
         if ( gameState.isPhaseFinished()){
             this.endBettingPhase();
+            this.gameState.cancelTimer();
         }
-        broadcastGameState(" placed a bet of " + betPlayer);
+        //broadcastGameState(" placed a bet of " + betPlayer);
         return true;
     }
 
@@ -36,8 +38,9 @@ public class GameStateMachine {
 
         if( gameState.isPhaseFinished()){
             this.endPlayingPhase();
+            this.gameState.cancelTimer();
         }
-        broadcastGameState(" placed a bet of " + GamePhase);
+        //broadcastGameState(" placed a bet of " + GamePhase);
         return true;
     }
 
@@ -46,6 +49,7 @@ public class GameStateMachine {
 
     private boolean startBettingPhase(){
         //Broadcast that i need bets
+        this.gameState.setCurrentPhase(GamePhase.Betting);
         this.gameState.schedulePhaseTimeout(GamePhase.Betting,this.BETTING_ROUND_MAX_DURATION, this::endBettingPhase);
         return true;
     }
@@ -56,7 +60,8 @@ public class GameStateMachine {
     }
 
     private boolean startPlayingPhase(){
-
+        this.gameState.setCurrentPhase(GamePhase.Playing);
+        return true;
     }
 
     private boolean startPlayerPlayingPhase(){
@@ -66,6 +71,7 @@ public class GameStateMachine {
     private boolean endPlayerPlayingPhase(){
         if (this.gameState.isPhaseFinished()){
             this.endPlayingPhase();
+            this.gameState.endPlayingPhase();
         } else{
             this.startPlayerPlayingPhase();
         }
@@ -84,6 +90,6 @@ public class GameStateMachine {
     }
 
     private boolean endGame(){
-
+        return true;
     }
 }

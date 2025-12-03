@@ -4,10 +4,7 @@ import com.example.skullking.entities.Player;
 import com.example.skullking.entities.game.cards.Card;
 import com.example.skullking.entities.game.cards.CardManager;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -19,8 +16,11 @@ public class GameState {
     private GamePhase currentPhase;
     private int currentRound = 1;
     private final Map<Player, Integer> bets = new HashMap<>();
-    private final Map<Player, Card> cardPlayed = new HashMap<>();
+    private final Map<Player, Card> cardPlayed = new LinkedHashMap<>();
+    private final Map<Player,Integer> roundWon = new HashMap<>();
+
     private final CardManager cardManager = new CardManager();
+    private final GameLogic gameLogic = new GameLogic();
     Map<UUID,Player> players ;
     int NUMBER_OF_ROUND = 10;
 
@@ -33,13 +33,17 @@ public class GameState {
         return true;
     }
 
-    public  boolean recordCardPlayed(UUID playerId, UUID uuidCardPlayed){
-        Card cardPlayed = this.cardManager.playCard(playerId, uuidCardPlayed);
+    public  boolean recordCardPlayed(UUID playerId, int uuidCardPlayed){
+        Card cardChosen = this.cardManager.playCard(playerId, uuidCardPlayed);
+        List<Card> cardPlayed = new ArrayList<>(this.cardPlayed.values());
         if (cardPlayed == null){
             return false;
         }
-        this.cardPlayed.put(players.get(playerId),cardPlayed);
-        return true;
+        if (this.gameLogic.isCardPlayedLegal(cardPlayed, cardChosen,this.cardManager.getPlayerHand(playerId))){
+            this.cardPlayed.put(players.get(playerId),cardChosen);
+            return true;
+        }
+        return false;
     }
 
     public boolean recordBet(UUID playerId, Integer bet){
@@ -55,7 +59,7 @@ public class GameState {
         }, seconds, TimeUnit.SECONDS);
     }
 
-    private void cancelTimer(){
+    public void cancelTimer(){
         if(this.scheduledTask != null) {
             this.scheduledTask.cancel(false);
         }
@@ -78,6 +82,9 @@ public class GameState {
     public boolean isGameOver() {return currentRound > 10; }
 
 
+    public void endPlayingPhase() {
+        
+    }
 }
 
 

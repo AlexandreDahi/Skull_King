@@ -1,0 +1,595 @@
+{
+    "index_carte": [
+        {
+        "name": "1 violet",
+        "image":"/images/cards/violet/violet_1.jpg",
+        "id": 1,
+        "suite": "violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 1"
+        },
+        {
+        "name": "2 violet",
+        "image":"/images/cards/violet/violet_2.jpg",
+        "id": 2,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 2"
+        },
+        {
+        "name": "3 violet",
+        "image":"/images/cards/violet/violet_3.jpg",
+        "id": 3,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 3"
+        },
+        {
+        "name": "4 violet",
+        "image":"/images/cards/violet/violet_4.jpg",
+        "id": 4,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 4"
+        },
+        {
+        "name": "5 violet",
+        "image":"/images/cards/violet/violet_5.jpg",
+        "id": 5,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 5"
+        },
+        {
+        "name": "6 violet",
+        "image":"/images/cards/violet/violet_6.jpg",
+        "id": 6,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 6"
+        },
+        {
+        "name": "7 violet",
+        "image":"/images/cards/violet/violet_7.jpg",
+        "id": 7,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 7"
+        },
+        {
+        "name": "8 violet",
+        "image":"/images/cards/violet/violet_8.jpg",
+        "id": 8,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 8"
+        },
+        {
+        "name": "9 violet",
+        "image":"/images/cards/violet/violet_9.jpg",
+        "id": 9,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 9"
+        },
+        {
+        "name": "10 violet",
+        "image":"/images/cards/violet/violet_10.jpg",
+        "id": 10,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 10"
+        },
+        {
+        "name": "11 violet",
+        "image":"/images/cards/violet/violet_11.jpg",
+        "id": 11,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 11"
+        },
+        {
+        "name": "12 violet",
+        "image":"/images/cards/violet/violet_12.jpg",
+        "id": 12,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 12"
+        },
+        {
+        "name": "13 violet",
+        "image":"/images/cards/violet/violet_13.jpg",
+        "id": 13,
+        "suite":"violet",
+        "type": ["violet"],
+        "description": "Carte de couleur violet avec une valeur de 13"
+        },
+        {
+        "name": "14 violet",
+        "image":"/images/cards/violet/violet_14.jpg",
+        "id": 14,
+        "suite":"violet",
+        "type": ["violet","14"],
+        "description": "Carte de couleur violet avec une valeur de 14"
+        },
+        {
+        "name":"1 vert",
+        "image":"/images/cards/vert/vert_1.jpg",
+        "id": 15,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 1"
+        },
+        {
+        "name":"2 vert",
+        "image":"/images/cards/vert/vert_2.jpg",
+        "id": 16,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 2"
+        },
+        {
+        "name":"3 vert",
+        "image":"/images/cards/vert/vert_3.jpg",
+        "id": 17,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 3"
+        },
+        {
+        "name":"4 vert",
+        "image":"/images/cards/vert/vert_4.jpg",
+        "id": 18,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 4"
+        },
+        {
+        "name":"5 vert",
+        "image":"/images/cards/vert/vert_5.jpg",
+        "id": 19,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 5"
+        },
+        {
+        "name":"6 vert",
+        "image":"/images/cards/vert/vert_6.jpg",
+        "id": 20,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 6"
+        },
+        {
+        "name":"7 vert",
+        "image":"/images/cards/vert/vert_7.jpg",
+        "id": 21,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 7"
+        },
+        {
+        "name":"8 vert",
+        "image":"/images/cards/vert/vert_8.jpg",
+        "id": 22,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 8"
+        },
+        {
+        "name":"9 vert",
+        "image":"/images/cards/vert/vert_9.jpg",
+        "id": 23,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 9"
+        },
+        {
+        "name":"10 vert",
+        "image":"/images/cards/vert/vert_10.jpg",
+        "id": 24,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 10"
+        },
+        {
+        "name":"11 vert",
+        "image":"/images/cards/vert/vert_11.jpg",
+        "id": 25,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 11"
+        },
+        {
+        "name":"12 vert",
+        "image":"/images/cards/vert/vert_12.jpg",
+        "id": 26,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 12"
+        },
+        {
+        "name":"13 vert",
+        "image":"/images/cards/vert/vert_13.jpg",
+        "id": 27,
+        "suite":"vert",
+        "type": ["vert"],
+        "description": "Carte de couleur vert avec une valeur de 13"
+        },
+        {
+        "name":"14 vert",
+        "image":"/images/cards/vert/vert_14.jpg",
+        "id": 28,
+        "suite":"vert",
+        "type": ["vert","14"],
+        "description": "Carte de couleur vert avec une valeur de 14"
+        },
+        {
+        "name":"1 noir",
+        "image":"/images/cards/noir/noir_1.jpg",
+        "id": 29,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 1"
+        },
+        {
+        "name":"2 noir",
+        "image":"/images/cards/noir/noir_2.jpg",
+        "id": 30,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 2"
+        },
+        {
+        "name":"3 noir",
+        "image":"/images/cards/noir/noir_3.jpg",
+        "id": 31,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 3"
+        },
+        {
+        "name":"4 noir",
+        "image":"/images/cards/noir/noir_4.jpg",
+        "id": 32,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 4"
+        },
+        {
+        "name":"5 noir",
+        "image":"/images/cards/noir/noir_5.jpg",
+        "id": 33,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 5"
+        },
+        {
+        "name":"6 noir",
+        "image":"/images/cards/noir/noir_6.jpg",
+        "id": 34,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 6"
+        },
+        {
+        "name":"7 noir",
+        "image":"/images/cards/noir/noir_7.jpg",
+        "id": 35,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 7"
+        },
+        {
+        "name":"8 noir",
+        "image":"/images/cards/noir/noir_8.jpg",
+        "id": 36,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 8"
+        },
+        {
+        "name":"9 noir",
+        "image":"/images/cards/noir/noir_9.jpg",
+        "id": 37,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 9"
+        },
+        {
+        "name":"10 noir",
+        "image":"/images/cards/noir/noir_10.jpg",
+        "id": 38,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 10"
+        },
+        {
+        "name":"11 noir",
+        "image":"/images/cards/noir/noir_11.jpg",
+        "id": 39,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 11"
+        },
+        {
+        "name":"12 noir",
+        "image":"/images/cards/noir/noir_12.jpg",
+        "id": 40,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 12"
+        },
+        {
+        "name":"13 noir",
+        "image":"/images/cards/noir/noir_13.jpg",
+        "id": 41,
+        "suite":"noir",
+        "type": ["noir"],
+        "description": "Carte de couleur noir avec une valeur de 13"
+        },
+        {
+        "name":"14 noir",
+        "image":"/images/cards/noir/noir_14.jpg",
+        "id": 42,
+        "suite":"noir",
+        "type": ["noir","14"],
+        "description": "Carte de couleur noir avec une valeur de 14"
+        },
+        {
+        "name":"1 jaune",
+        "image":"/images/cards/jaune/jaune_1.jpg",
+        "id": 43,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 1"
+        },
+        {
+        "name":"2 jaune",
+        "image":"/images/cards/jaune/jaune_2.jpg",
+        "id": 44,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 2"
+        },
+        {
+        "name":"3 jaune",
+        "image":"/images/cards/jaune/jaune_3.jpg",
+        "id": 45,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 3"
+        },
+        {
+        "name":"4 jaune",
+        "image":"/images/cards/jaune/jaune_4.jpg",
+        "id": 46,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 4"
+        },
+        {
+        "name":"5 jaune",
+        "image":"/images/cards/jaune/jaune_5.jpg",
+        "id": 47,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 5"
+        },
+        {
+        "name":"6 jaune",
+        "image":"/images/cards/jaune/jaune_6.jpg",
+        "id": 48,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 6"
+        },
+        {
+        "name":"7 jaune",
+        "image":"/images/cards/jaune/jaune_7.jpg",
+        "id": 49,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 7"
+        },
+        {
+        "name":"8 jaune",
+        "image":"/images/cards/jaune/jaune_8.jpg",
+        "id": 50,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 8"
+        },
+        {
+        "name":"9 jaune",
+        "image":"/images/cards/jaune/jaune_9.jpg",
+        "id": 51,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 9"
+        },
+        {
+        "name":"10 jaune",
+        "image":"/images/cards/jaune/jaune_10.jpg",
+        "id": 52,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 10"
+        },
+        {
+        "name":"11 jaune",
+        "image":"/images/cards/jaune/jaune_11.jpg",
+        "id": 53,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 11"
+        },
+        {
+        "name":"12 jaune",
+        "image":"/images/cards/jaune/jaune_12.jpg",
+        "id": 54,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 12"
+        },
+        {
+        "name":"13 jaune",
+        "image":"/images/cards/jaune/jaune_13.jpg",
+        "id": 55,
+        "suite":"jaune",
+        "type": ["jaune"],
+        "description": "Carte de couleur jaune avec une valeur de 13"
+        },
+        {
+        "name":"14 jaune",
+        "image":"/images/cards/jaune/jaune_14.jpg",
+        "id": 56,
+        "suite":"jaune",
+        "type": ["jaune","14"],
+        "description": "Carte de couleur jaune avec une valeur de 14"
+        },
+        {
+        "name": "Skull King",
+        "image": "/images/cards/spe/skull_king.jpg",
+        "id": 57,
+        "suite":"special",
+        "type":["special", "skullKing"],
+        "description": "Le Skull King permet de gagner contre toutes les autres cartes, sauf les sirènes qui peuvent le capturer. Le Skull King remporte 30 point par capture de pirates"
+        },
+        {
+        "name": "Sirène 1",
+        "image": "/images/cards/spe/sirene_1.jpg",
+        "id": 58,
+        "suite":"special",
+        "type": ["special","mermaid"],
+        "description": "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
+        },
+        {
+        "name": "Sirène 2",
+        "image": "/images/cards/spe/sirene_2.jpg",
+        "id": 59,
+        "suite":"special",
+        "type": ["special","mermaid"],
+        "description":  "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
+        },
+        {
+        "name": "Pirate Rascal le flambeur",
+        "image": "/images/cards/spe/pirate_rascal.jpg",
+        "id": 60,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de parier 0, 10 ou 20 point supplémentaire en cas de victoire. Soustraits en cas de défaite."
+        },
+        {
+        "name":"Pirate Juanita Jade",
+        "image": "/images/cards/spe/pirate_juanita.jpg",
+        "id": 61,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de regarder les cartes de la pioche (les cartes non distrivuées)"
+        },
+        {
+        "name":"Pirate Rosie la douce",
+        "image": "/images/cards/spe/pirate_rosie.jpg",
+        "id": 62,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de choisir qui commencera le tour suivant."
+        },
+        {
+        "name":"Pirate Will le bandit",
+        "image": "/images/cards/spe/pirate_will.jpg",
+        "id": 63,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de prendre les deux premières cartes de la poche et de les échanger avec les cartes de sa main."
+        },
+        {
+        "name":"Pirate Harry le géant",
+        "image": "/images/cards/spe/pirate_harry.jpg",
+        "id": 64,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de modifier son nombre de pari de +1, -1 ou rien."
+        },
+        {
+        "name":"Pirate Tigresse",
+        "image": "/images/cards/spe/pirate_fuite_tigresse.jpg",
+        "id": 65,
+        "suite":"special",
+        "type": ["special","pirate"],
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "pouvoir":  "Permet de choisir de joueur un pirate ou une fuite."
+        },
+        {
+        "name":"fuite 1",
+        "image": "/images/cards/spe/fuite.jpg",
+        "id": 66,
+        "suite":"special",
+        "type": ["special","doNotDecideSuit"],
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        },
+        {
+        "name":"fuite 2",
+        "image": "/images/cards/spe/fuite.jpg",
+        "id": 67,
+        "suite":"special",
+        "type": ["special","doNotDecideSuit"],
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        },
+        {
+        "name":"fuite 3",
+        "image": "/images/cards/spe/fuite.jpg",
+        "id": 68,
+        "suite":"special",
+        "type": ["special","doNotDecideSuit"],
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        },
+        {
+        "name":"fuite 4",
+        "image": "/images/cards/spe/fuite.jpg",
+        "id": 69,
+        "suite":"special",
+        "type": ["special","doNotDecideSuit"],
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        },
+        {
+        "name":"butin 1",
+        "image": "/images/cards/spe/butin.jpg",
+        "id": 70,
+        "suite":"special",
+        "type": ["special"],
+        "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        },
+        {
+        "name":"butin 2",
+        "image": "/images/cards/spe/butin.jpg",
+        "id": 71,
+        "suite":"special",
+        "type": ["special","doNotDecideSuit"],
+        "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        },
+        {
+        "name":"baleine",
+        "image": "/images/cards/spe/baleine.jpg",
+        "id": 72,
+        "suite":"special",
+        "type": ["special"],
+        "description": "La carte baleine annule les effets des cartes spéciales jouées dans le même tour. La première carte jouer de plus haute valeur remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        },
+        {
+        "name":"kraken",
+        "image": "/images/cards/spe/kraken.jpg",
+        "id": 73,
+        "suite":"special",
+        "type": ["special"],
+        "description":"Le kraken annule le tour, aucun joueur ne remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        }
+
+    ]
+}

@@ -3,7 +3,7 @@ package com.example.skullking.entities.game;
 import java.util.UUID;
 
 public class CardPlayer {
-    private UUID cardId;
+    private int cardId;
     private UUID playerId;
 
     public UUID getPlayerId() {
@@ -14,11 +14,11 @@ public class CardPlayer {
         this.playerId = playerId;
     }
 
-    public UUID getCardId() {
+    public int getCardId() {
         return cardId;
     }
 
-    public void setCardId(UUID cardId) {
+    public void setCardId(int cardId) {
         this.cardId = cardId;
     }
 }

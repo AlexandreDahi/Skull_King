@@ -7,6 +7,7 @@ public class CardManager {
     Deck deck;
     Map<UUID,Hand> playerHands;
 
+
     public boolean drawCard(UUID playerId){
         Card removedCard = this.deck.removeRandomCard();
         if (removedCard == null){
@@ -31,14 +32,21 @@ public class CardManager {
         }
         return false;
     }
-    public Card playCard(UUID playerId, UUID cardId){
+    public Card playCard(UUID playerId, int cardId){
         if (!playerHands.containsKey(playerId)){
             return null;
         } else  {
-            Hand hand = playerHands.get(cardId);
+            Hand hand = playerHands.get(playerId);
             return hand.cards.getOrDefault(cardId, null);
         }
     }
 
+    public Hand getPlayerHand(UUID playerId){
+        if (!playerHands.containsKey(playerId)){
+            return null;
+        } else  {
+            return playerHands.get(playerId);
+        }
+    }
 
 }

@@ -4,6 +4,7 @@ import com.example.skullking.entities.Player;
 import com.example.skullking.entities.game.BetPlayer;
 import com.example.skullking.entities.game.CardPlayer;
 import com.example.skullking.entities.game.GameState;
+import com.example.skullking.entities.game.GameStateMachine;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Service
 public class GameService {
 
-    private Map<UUID, GameState> gameStateMap = new HashMap<> ();
+    private Map<UUID, GameStateMachine> gameStateMap = new HashMap<> ();
 
     public boolean startGame(UUID roomUuid, List<Player> players){
         if (this.gameStateMap.containsKey(roomUuid)){
