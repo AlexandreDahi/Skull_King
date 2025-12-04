@@ -1,5 +1,27 @@
 <div class="host">
+  <!-- BOX D'INFO AU-DESSUS DE LA DROPZONE -->
+  <div 
+    class="absolute top-[18%] left-1/2 -translate-x-1/2 
+          px-4 py-2 rounded-xl bg-black/40 backdrop-blur-md 
+          border border-white/20 text-white font-medium 
+          flex items-center gap-3 pointer-events-none z-30 shadow-lg">
+
+    <div class="flex items-center gap-2">
+      <mat-icon>sports_esports</mat-icon>
+      Attente du Joueur 2
+    </div>
+  </div>
+
   <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
   <app-hand [cardIds]="handCards" (playCardEvent)="onCardPlayed($event)"></app-hand>
   <app-head-up-display></app-head-up-display>
+  <app-player-panel
+  [round]="round"
+  [totalRounds]="totalRounds"
+  [timer$]="timer$"
+  [timerProgress$]="timerProgress$"
+  [tricksWon]="tricksWon"
+  [score]="score"
+  [scorePopped]="scorePopped">
+</app-player-panel>
 </div>

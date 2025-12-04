@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import data from './index_carte.json';
 
 @Component({
@@ -7,7 +6,7 @@ import data from './index_carte.json';
   standalone: true,
   templateUrl: './cards.html',
   styleUrl: './cards.css',
-  imports: [DragDropModule],
+  imports: [],
 })
 export class Cards {
 
