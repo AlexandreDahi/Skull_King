@@ -80,4 +80,17 @@ public class RoomService {
             .getFirst();
     }
 
+    public void removePlayer(UUID roomUuid, UUID playerUuid) {
+        Room room = getRoom(roomUuid);
+
+        if (room == null) {
+            throw new RuntimeException("Room not found: " + roomUuid);
+        }
+
+        // Retirer le joueur de la liste
+        room.deleteGuest(playerUuid);
+
+        System.out.println("✅ Joueur " + playerUuid + " retiré de la room " + roomUuid);
+    }
+
 }

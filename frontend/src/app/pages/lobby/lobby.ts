@@ -24,9 +24,8 @@ export class Lobby implements OnInit, OnDestroy {
     isAdmin: boolean = false;
     roomName: string = '';
     roomUuid: string = '';
+    playerUuid: string = '';
     private lobbySubscription?: Subscription;
-    private publicSubscription?: Subscription;
-    private intervalId?: any;
     private isDestroyed = false;
 
     constructor(
@@ -39,16 +38,18 @@ export class Lobby implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
+        this.playerUuid = this.wsService.getPLayerUuid();
         this.isAdmin = this.wsService.isAdmin();
         
         console.log('=== LOBBY INIT ===');
         console.log('Room UUID:', this.roomUuid);
+        console.log('Player UUID:', this.playerUuid);
         console.log('Is Admin:', this.isAdmin);
         
-        // Chargement initial
+        // ✅ Chargement initial UNE SEULE FOIS
         this.loadPlayers();
         
-        // S'abonner au canal du lobby pour les événements
+        // ✅ S'abonner au WebSocket pour les mises à jour en temps réel
         this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
             next: (message) => {
                 if (this.isDestroyed) return;
@@ -63,16 +64,14 @@ export class Lobby implements OnInit, OnDestroy {
             error: (err) => console.error('❌ Erreur lobby channel:', err)
         });
 
-        // Polling toutes les 5 secondes
-        this.intervalId = setInterval(() => {
-            if (!this.isDestroyed) {
-                this.loadPlayers();
-            }
-        }, 5000);
+        // ❌ SUPPRIMER LE POLLING
+        // Plus besoin de setInterval !
     }
 
     private loadPlayers() {
         if (this.isDestroyed) return;
+        
+        console.log('🔄 Chargement initial des joueurs...');
         
         this.roomService.getPlayers(this.roomUuid).subscribe({
             next: (players: any[]) => {
@@ -102,34 +101,21 @@ export class Lobby implements OnInit, OnDestroy {
         console.log('📥 Type de message WebSocket:', data.type);
         
         switch(data.type) {
-            case 'NEW_PLAYER_EVENT':
-                console.log('➕ Nouveau joueur via WebSocket');
-                this.loadPlayers();
-                break;
+            case 'LOBBY_UPDATE':
+                // ✅ Mise à jour complète de la liste via WebSocket
+                console.log('🔄 Mise à jour du lobby:', data.players.length, 'joueurs');
+                console.log('Joueurs:', data.players);
+                this.players = data.players.map((p: any) => ({
+                    uuid: p.uuid,
+                    name: p.name,
+                    isAdmin: p.isAdmin || false
+                }));
                 
-            case 'PLAYER_JOINED':
-                console.log('➕ Joueur ajouté');
-                if (data.data && !this.players.find(p => p.uuid === data.data.uuid)) {
-                    this.players.push({
-                        uuid: data.data.uuid,
-                        name: data.data.name,
-                        isAdmin: data.data.isAdmin || false
-                    });
-                    this.cdr.detectChanges();
-                }
-                break;
-                
-            case 'PLAYER_LEFT':
-                console.log('➖ Joueur parti');
-                if (data.playerUuid) {
-                    this.players = this.players.filter(p => p.uuid !== data.playerUuid);
-                    this.cdr.detectChanges();
-                }
+                this.cdr.detectChanges();
                 break;
                 
             case 'GAME_STARTED':
                 console.log('🎮 PARTIE LANCÉE ! Redirection vers /game/' + this.roomUuid);
-                // ✅ TOUS les joueurs (admin et invités) sont redirigés automatiquement
                 this.router.navigate(['/game', this.roomUuid]);
                 break;
                 
@@ -142,15 +128,10 @@ export class Lobby implements OnInit, OnDestroy {
         console.log('🧹 Nettoyage du lobby');
         this.isDestroyed = true;
         
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-        }
+        // ❌ Plus besoin de clearInterval
         
         if (this.lobbySubscription) {
             this.lobbySubscription.unsubscribe();
-        }
-        if (this.publicSubscription) {
-            this.publicSubscription.unsubscribe();
         }
     }
 
@@ -168,7 +149,6 @@ export class Lobby implements OnInit, OnDestroy {
         
         console.log('🚀 Envoi du signal START_GAME au serveur...');
         
-        // Envoyer le message via WebSocket
         this.wsService.sendLobbyMessage({
             type: 'START_GAME'
         });
@@ -178,10 +158,15 @@ export class Lobby implements OnInit, OnDestroy {
 
     leaveLobby() {
         console.log('👋 Départ du lobby');
-        
-        // Optionnel : envoyer un message de départ
-        this.wsService.sendLobbyMessage({
-            type: 'LEAVE_LOBBY'
+        // ✅ Appel HTTP pour quitter (nécessaire pour côté serveur)
+        this.roomService.leaveRoom(this.roomUuid, this.playerUuid).subscribe({
+            next: () => {
+                console.log('✅ Déconnexion réussie');
+                // Le WebSocket notifiera automatiquement les autres joueurs
+            },
+            error: (err) => {
+                console.error('❌ Erreur déconnexion:', err);
+            }
         });
         
         this.router.navigate(['/']);

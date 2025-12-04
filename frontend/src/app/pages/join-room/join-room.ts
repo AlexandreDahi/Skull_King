@@ -55,8 +55,8 @@ export class JoinRoom implements OnInit {
         console.log('Room rejointe !', res);
         
         // Stocker les informations du joueur
-        const playerUuid = res.playerUuid;
-        const playerToken = res.playerToken;
+        const playerUuid = res.uuid;
+        const playerToken = res.token;
         
         // Connecter au WebSocket
         this.wsService.joinRoom(this.roomId, playerUuid, playerToken);

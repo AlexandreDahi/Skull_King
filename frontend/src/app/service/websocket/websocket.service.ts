@@ -74,7 +74,9 @@ export class WebSocketService {
         console.log('   - Private: /user/queue/rooms/' + this.roomUuid);
         console.log('   - Lobby: /topic/rooms/' + this.roomUuid + '/lobby-events');
     }
-
+    getPLayerUuid() {
+        return this.playerUuid
+    }
 
     getPublicChannel() {
         return this.publicChannel
