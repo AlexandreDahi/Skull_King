@@ -13,7 +13,7 @@
   </div>
 
   <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
-  <app-hand [cardIds]="handCards" (playCardEvent)="onCardPlayed($event)"></app-hand>
+  <app-hand [nonPlayableCardIds]="nonPlayableCards" [cardIds]="handCards" (playCardEvent)="onCardPlayed($event)"></app-hand>
   <app-head-up-display></app-head-up-display>
   <app-player-panel
   [round]="round"

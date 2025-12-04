@@ -16,6 +16,8 @@ import {
 export class Hand {
 
   @Input() cardIds: number[] = [];
+  @Input() nonPlayableCardIds: number[] = [];
+
   draggingIndex: number | null = null;
 
   @Output() playCardEvent = new EventEmitter<number>();
@@ -101,4 +103,6 @@ export class Hand {
       this.flyingCardId = null;
     }, 500); // durée = 0.5s
   }
+
+  
 }

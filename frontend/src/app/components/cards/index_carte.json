@@ -465,42 +465,42 @@
         "name":"fuite 1",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 66,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 2",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 67,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 3",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 68,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 4",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 69,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
         },
         {
         "name":"butin 1",
         "image": "/images/cards/spe/butin.jpg",
         "id": 70,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
         },
         {
         "name":"butin 2",
         "image": "/images/cards/spe/butin.jpg",
         "id": 71,
-        "type": "special",
+        "type": "fuite",
         "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
         },
         {

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 import { BehaviorSubject } from 'rxjs';
+import data from '../../components/cards/index_carte.json';
 
 @Component({
   selector: 'app-game',
@@ -16,7 +17,7 @@ import { BehaviorSubject } from 'rxjs';
 export class Game implements OnInit {
   
   /* --- GAME DATA --- */
-  handCards: number[] = [24, 3, 15, 65, 42];
+  handCards: number[] = [24, 3, 15, 65, 42,68,72,4,8,12];
   dropZoneCards: number[] = [];
 
   round: number = 1;
@@ -97,5 +98,37 @@ resetTimer() {
     this.tricksWon++;
     this.increaseScore(20); // exemple
   }
-}
+  /* --------------------------
+      Restreint les cartes jouables
+  ----------------------------*/
+  jsonData = data.index_carte;
 
+  getPlayableCards(dropZoneCards: number[]): number[] {
+    if (dropZoneCards.length === 0) {
+      return [];
+    }
+
+    // cherche le premier type non 'fuite' parmi les cartes du drop zone (si toutes 'fuite', on garde la dernière trouvée)
+    let i = 0;
+    let type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
+    while (type === 'fuite' && i < dropZoneCards.length - 1) {
+      i++;
+      type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
+    }
+
+    if (!type) return [];
+
+    // ...existing code...
+    if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
+
+    // autorise les cartes du même type que la carte leader + toujours 'speciale' et 'fuite'
+    const allowed = new Set([type, 'special', 'fuite']);
+    return this.handCards.filter(id => {
+      const t = this.jsonData.find(c => c.id === id)?.type;
+      return !(t != null && allowed.has(t));
+    });
+  }
+  get nonPlayableCards(): number[] {
+    return this.getPlayableCards(this.dropZoneCards);
+  }
+}

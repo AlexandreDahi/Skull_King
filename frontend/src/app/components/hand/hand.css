@@ -36,3 +36,10 @@
   pointer-events: none; /* pour éviter de gêner le drag pendant l’animation */
   z-index: 9999 !important;
 }
+
+/* ...existing code... */
+.card-on-arc.grayed {
+  filter: grayscale(80%);
+  opacity: 0.9;
+  /* si tu veux empêcher les interactions visuelles mais garder le drag, ne pas mettre pointer-events:none */
+}
