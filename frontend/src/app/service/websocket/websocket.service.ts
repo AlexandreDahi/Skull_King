@@ -64,12 +64,15 @@ export class WebSocketService {
         })
 
 
-        // Changement ici : écouter sur /rooms/{uuid}/lobby-events au lieu de /topic/rooms/{uuid}/lobby
+        // ✅ Ajouter /topic pour correspondre au backend
         this.lobbyChannel = this.rxStomp.watch({
-            destination: `/rooms/${this.roomUuid}/lobby-events`
+            destination: `/topic/rooms/${this.roomUuid}/lobby-events`  // ← AJOUTER /topic
         })
 
-        console.log('✅ Channels configurés');
+        console.log('✅ Channels configurés:');
+        console.log('   - Public: /topic/rooms/' + this.roomUuid);
+        console.log('   - Private: /user/queue/rooms/' + this.roomUuid);
+        console.log('   - Lobby: /topic/rooms/' + this.roomUuid + '/lobby-events');
     }
 
 

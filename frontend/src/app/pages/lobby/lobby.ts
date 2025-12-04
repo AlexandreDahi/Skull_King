@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../service/websocket/websocket.service';
@@ -34,7 +34,7 @@ export class Lobby implements OnInit, OnDestroy {
         private roomService: RoomService,
         private route: ActivatedRoute,
         private router: Router,
-        private cdr: ChangeDetectorRef  // Ajout pour forcer la détection de changement
+        private cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit() {
@@ -45,13 +45,10 @@ export class Lobby implements OnInit, OnDestroy {
         console.log('Room UUID:', this.roomUuid);
         console.log('Is Admin:', this.isAdmin);
         
-        // 1. CHARGEMENT IMMÉDIAT
-        console.log('🔵 Chargement #1 - Immédiat');
+        // Chargement initial
         this.loadPlayers();
         
-        
-        // S'abonner au canal du lobby
-        console.log('📡 Abonnement au WebSocket...');
+        // S'abonner au canal du lobby pour les événements
         this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
             next: (message) => {
                 if (this.isDestroyed) return;
@@ -63,51 +60,25 @@ export class Lobby implements OnInit, OnDestroy {
                     console.error('Erreur parsing message:', e);
                 }
             },
-            error: (err) => console.error('❌ Erreur lobby channel:', err),
-            complete: () => console.log('✅ Lobby channel complété')
+            error: (err) => console.error('❌ Erreur lobby channel:', err)
         });
 
-        // S'abonner au canal public
-        this.publicSubscription = this.wsService.getPublicChannel().subscribe({
-            next: (message) => {
-                if (this.isDestroyed) return;
-                console.log('📢 Message public reçu:', message.body);
-                try {
-                    const data = JSON.parse(message.body);
-                    if (data.type === 'NEW_PLAYER_EVENT') {
-                        console.log('🔔 Nouveau joueur détecté');
-                        this.loadPlayers();
-                    }
-                } catch (e) {
-                    // Ignore les messages non-JSON
-                }
-            },
-            error: (err) => console.error('❌ Erreur public channel:', err)
-        });
-
-        // Polling toutes les 3 secondes
+        // Polling toutes les 5 secondes
         this.intervalId = setInterval(() => {
             if (!this.isDestroyed) {
-                console.log('🔄 Polling périodique');
                 this.loadPlayers();
             }
-        }, 3000);
+        }, 5000);
     }
 
     private loadPlayers() {
-        if (this.isDestroyed) {
-            console.log('⚠️ Composant détruit');
-            return;
-        }
-        
-        console.log('📡 API Call: GET /rooms/' + this.roomUuid + '/players');
+        if (this.isDestroyed) return;
         
         this.roomService.getPlayers(this.roomUuid).subscribe({
             next: (players: any[]) => {
                 if (this.isDestroyed) return;
                 
-                console.log('✅ RÉPONSE API:', players);
-                console.log('Nombre de joueurs reçus:', players.length);
+                console.log('✅ Joueurs récupérés:', players.length);
                 
                 this.players = players.map(p => ({
                     uuid: p.uuid,
@@ -115,9 +86,6 @@ export class Lobby implements OnInit, OnDestroy {
                     isAdmin: p.isAdmin || false
                 }));
                 
-                console.log('🎮 players[] mis à jour:', this.players);
-                
-                // FORCER la détection de changement Angular
                 this.cdr.detectChanges();
             },
             error: (err) => {
@@ -135,30 +103,33 @@ export class Lobby implements OnInit, OnDestroy {
         
         switch(data.type) {
             case 'NEW_PLAYER_EVENT':
-                console.log('➕ Nouveau joueur via WebSocket:', data.data);
+                console.log('➕ Nouveau joueur via WebSocket');
                 this.loadPlayers();
                 break;
                 
             case 'PLAYER_JOINED':
-                console.log('➕ Joueur ajouté:', data.player);
-                if (!this.players.find(p => p.uuid === data.player.uuid)) {
+                console.log('➕ Joueur ajouté');
+                if (data.data && !this.players.find(p => p.uuid === data.data.uuid)) {
                     this.players.push({
-                        uuid: data.player.uuid,
-                        name: data.player.name,
-                        isAdmin: data.player.isAdmin || false
+                        uuid: data.data.uuid,
+                        name: data.data.name,
+                        isAdmin: data.data.isAdmin || false
                     });
                     this.cdr.detectChanges();
                 }
                 break;
                 
             case 'PLAYER_LEFT':
-                console.log('➖ Joueur parti:', data.playerUuid);
-                this.players = this.players.filter(p => p.uuid !== data.playerUuid);
-                this.cdr.detectChanges();
+                console.log('➖ Joueur parti');
+                if (data.playerUuid) {
+                    this.players = this.players.filter(p => p.uuid !== data.playerUuid);
+                    this.cdr.detectChanges();
+                }
                 break;
                 
             case 'GAME_STARTED':
-                console.log('🎮 Partie lancée');
+                console.log('🎮 PARTIE LANCÉE ! Redirection vers /game/' + this.roomUuid);
+                // ✅ TOUS les joueurs (admin et invités) sont redirigés automatiquement
                 this.router.navigate(['/game', this.roomUuid]);
                 break;
                 
@@ -168,12 +139,11 @@ export class Lobby implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        console.log('🧹 DESTRUCTION DU COMPOSANT');
+        console.log('🧹 Nettoyage du lobby');
         this.isDestroyed = true;
         
         if (this.intervalId) {
             clearInterval(this.intervalId);
-            console.log('✅ Intervalle arrêté');
         }
         
         if (this.lobbySubscription) {
@@ -185,16 +155,35 @@ export class Lobby implements OnInit, OnDestroy {
     }
 
     startGame() {
-        if (this.isAdmin && this.players.length >= 2) {
-            console.log('🚀 START GAME');
-            this.wsService.sendLobbyMessage({ type: 'START_GAME' });
-        } else {
-            console.warn('⚠️ Pas assez de joueurs ou pas admin');
+        if (!this.isAdmin) {
+            console.warn('⚠️ Vous n\'êtes pas admin');
+            return;
         }
+        
+        if (this.players.length < 2) {
+            console.warn('⚠️ Pas assez de joueurs (min: 2, actuel: ' + this.players.length + ')');
+            alert('Il faut au moins 2 joueurs pour lancer la partie !');
+            return;
+        }
+        
+        console.log('🚀 Envoi du signal START_GAME au serveur...');
+        
+        // Envoyer le message via WebSocket
+        this.wsService.sendLobbyMessage({
+            type: 'START_GAME'
+        });
+        
+        console.log('⏳ En attente de la confirmation du serveur...');
     }
 
     leaveLobby() {
-        console.log('👋 LEAVE');
+        console.log('👋 Départ du lobby');
+        
+        // Optionnel : envoyer un message de départ
+        this.wsService.sendLobbyMessage({
+            type: 'LEAVE_LOBBY'
+        });
+        
         this.router.navigate(['/']);
     }
 }
