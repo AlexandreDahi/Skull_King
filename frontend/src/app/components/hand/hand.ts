@@ -1,61 +1,104 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
-import {CdkDrag,CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  CdkDragStart,
+  DragDropModule
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-hand',
-  imports: [CommonModule, Cards, CdkDrag, CdkDropList, DragDropModule],
+  imports: [CommonModule, Cards, DragDropModule],
   templateUrl: './hand.html',
   styleUrl: './hand.css'
 })
 export class Hand {
-  // Liste des IDs des cartes dans la main (ordre = position)
-  cardIds: number[] = [57,58,59,60,61,62,64,65,66,71,72,73,63];
-  // cardIds: number[] = [43,44,45,46,47,48,49,50,51,52,53,54,55,56];
-  // cardIds: number[] = [29,30,31,32,33,34,35,36,37,38,39,40,41,42];
-  // cardIds: number[] = [15,16,17,18,19,20,21,22,23,24,25,26,27,28];
-  // cardIds: number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  // cardIds: number[] = [1,15,29,43,57,59];
 
-  private radius = 800;       // change pour arrondir plus/moins en px
-  private stepAngleDeg = 5;  // écart angulaire entre chaque carte en degrés
+  @Input() cardIds: number[] = [];
+  draggingIndex: number | null = null;
 
-  ComputeArcRad(card_id_lenght:number): number {
-    return ((card_id_lenght-1)*this.stepAngleDeg* Math.PI) / 180;
-  }
-  ComputeStepRad(stepAngleDeg:number): number {
-    return (stepAngleDeg * Math.PI) / 180;
-  }
-  private arcAngleRad = this.ComputeArcRad(this.cardIds.length);
-  private stepAngleRad = this.ComputeStepRad(this.stepAngleDeg);
- 
-  ComputeCardXIndex(i: number): number {
-    const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-    return Math.round(Math.sin(angle) * this.radius) - 56;
-  }
+  @Output() playCardEvent = new EventEmitter<number>();
 
-  ComputeCardYIndex(i: number): number {
-    const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-    // Position verticale (profondeur de l’arc)
-    const y = Math.cos(angle) * this.radius ;
+  flyingCardId: number | null = null;
 
-    // Normalisation : la carte la plus basse = 0px
-    return Math.round(y - this.radius);
-  }
+  /* ---------------------------
+     Calcul positions cartes sur l'arc
+     --------------------------- */
+  computeArcTransform(i: number): string {
+    const n = this.cardIds.length;
 
-  ComputeRotateTransform(i: number): string {
-    const angle = -this.arcAngleRad / 2 + i * this.stepAngleRad;
-    // inclinaison liée à l'angle de l'arc
-    return `rotate(${(angle * 180) / Math.PI}deg)`;
+    if (n === 1) {
+      return `translate(0,0) rotate(0deg)`;
+    }
+    // index centré sur 0
+    const center = (n - 1) / 2;
+    const offset = i - center;
+
+    // Chevauchement constant
+    const overlap = -40; // px de translation horizontale (carte suivante avance un peu)
+    const curveStrength = -3; // Courbure verticale
+    const rotationStrength = 5; // Rotation légère
+
+    const x = offset * overlap ;
+    const y = Math.pow(offset, 2) * -curveStrength +50; // courbe douce en U
+    const rotation = offset * rotationStrength;
+
+    return `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
   }
 
+  /* ---------------------------
+     Hand drag events
+     --------------------------- */
+  onCdkDragStarted(event: CdkDragStart, index: number) {
+    this.draggingIndex = index;
+  }
 
+  drop(event: CdkDragDrop<number[]>) {
+    if (event.previousContainer !== event.container) {
+      // Drop vers dropzone
+      const card = this.cardIds[event.previousIndex];
+      event.previousContainer.data.splice(event.previousIndex, 1);
+      event.container.data.push(card);
+    }
+  }
 
+  /* ---------------------------
+     Double click events
+     --------------------------- */
+  playCard(index: number, event: MouseEvent) {
+    const cardId = this.cardIds[index];
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.cardIds, event.previousIndex, event.currentIndex);
-    console.log('new order', this.cardIds);
+    // récupérer la position de la carte
+    const cardElement = (event.target as HTMLElement).closest('.card-on-arc') as HTMLElement;
+    if (!cardElement) return;
+
+    const rect = cardElement.getBoundingClientRect();
+
+    // appliquer l’animation
+    this.flyingCardId = cardId;
+    cardElement.style.position = 'fixed';
+    cardElement.style.left = `${rect.left}px`;
+    cardElement.style.top = `${rect.top}px`;
+    cardElement.style.transition = 'all 0.5s ease-in-out';
+
+    const dropZone = document.getElementById('dropzone');
+    if (!dropZone) return;
+    const dzRect = dropZone.getBoundingClientRect();
+
+    const deltaX = dzRect.left + dzRect.width / 2 - rect.left - rect.width / 2;
+    const deltaY = dzRect.top + dzRect.height / 2 - rect.top - rect.height / 2;
+
+    // lancer l’animation
+    requestAnimationFrame(() => {
+      cardElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.8) rotate(0deg)`;
+    });
+
+    // après l’animation, mettre à jour les tableaux
+    setTimeout(() => {
+      this.cardIds.splice(index, 1);
+      this.playCardEvent.emit(cardId);
+      this.flyingCardId = null;
+    }, 500); // durée = 0.5s
   }
 }

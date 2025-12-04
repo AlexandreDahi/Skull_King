@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { Component, Input } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import data from './index_carte.json';
 
 @Component({
@@ -13,22 +13,10 @@ export class Cards {
 
   @Input() id!: number;
 
-  // Le JSON complet importé
   jsonData = data.index_carte;
-  
-  // La carte sélectionnée
   card: any;
 
   ngOnInit() {
-    this.card = this.getCardById(this.id);
-    // console.log("Card créée ID =", this.id, " → ", this.card);
+    this.card = this.jsonData.find(c => c.id === this.id);
   }
-
-  // Fonction qui récupère une carte par son ID
-  getCardById(id: number) {
-    return this.jsonData.find(carte => carte.id === id);
-  }
-
-
-  
 }

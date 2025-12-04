@@ -1,28 +1,28 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Cards } from '../cards/cards';
 
 @Component({
   selector: 'app-drop-zone',
   standalone: true,
-  imports: [DragDropModule, CommonModule],
+  imports: [CommonModule, DragDropModule, Cards],
   templateUrl: './drop-zone.html',
   styleUrl: './drop-zone.css',
 })
 export class DropZone {
+  @Input() cardsInZone: number[] = [];
+  @Input() connectedLists: string[] = [];
 
-  @Output() cardDropped = new EventEmitter<number>();
+  onDrop(event: CdkDragDrop<number[]>) {
+    if (event.previousContainer === event.container) return;
 
-  // les cartes réellement dans la drop-zone
-  cardsInZone: number[] = [];
+    const previous = event.previousContainer.data;
+    const current = event.container.data;
 
-  onDrop(event: CdkDragDrop<any>) {
-    if (event.previousContainer !== event.container) {
-      const droppedCardId = event.item.data; // doit être l'ID
-      console.log("Carte déposée dans la drop zone :", droppedCardId);
-
-      this.cardsInZone.push(droppedCardId); // ajoute dans la zone
-      this.cardDropped.emit(droppedCardId);
-    }
+    const removedCard = previous[event.item.data.index];
+    previous.splice(event.item.data.index, 1);
+    current.push(removedCard);
   }
+
 }

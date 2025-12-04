@@ -1,0 +1,15 @@
+.card-stack {
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.drop-zone app-cards {
+  cursor: default !important;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+/* Style verrouillé */
+/* .drop-zone app-cards {
+  filter: grayscale(70%) brightness(0.9);
+} */

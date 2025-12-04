@@ -1,27 +1,27 @@
-import { Injectable } from '@angular/core';
+// import { Injectable } from '@angular/core';
 
-import { IMessage, RxStomp, RxStompConfig } from "@stomp/rx-stomp";
-import { Observable } from 'rxjs';
-
-
-@Injectable({
-  providedIn: 'root',
-})
-export class WebSocketService {
+// import { IMessage, RxStomp, RxStompConfig } from "@stomp/rx-stomp";
+// import { Observable } from 'rxjs';
 
 
-    private config: RxStompConfig = {
-        brokerURL: "ws://localhost:8080/games",
-        reconnectDelay: 2000,
-        heartbeatIncoming: 10000,
-        heartbeatOutgoing: 10000,
-    }
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class WebSocketService {
 
-    private rxStomp = new RxStomp()
 
-    private roomUuid = ""
-    private playerUuid = ""
-    private playerToken = ""
+//     private config: RxStompConfig = {
+//         brokerURL: "ws://localhost:8080/games",
+//         reconnectDelay: 2000,
+//         heartbeatIncoming: 10000,
+//         heartbeatOutgoing: 10000,
+//     }
+
+//     private rxStomp = new RxStomp()
+
+//     private roomUuid = ""
+//     private playerUuid = ""
+//     private playerToken = ""
 
 
     private publicChannel  = new Observable<IMessage>()
@@ -29,21 +29,21 @@ export class WebSocketService {
     private lobbyChannel   = new Observable<IMessage>()
 
 
-    private activateWebSocket() {
-        this.rxStomp.configure(this.config)
-        this.rxStomp.activate()
+//     private activateWebSocket() {
+//         this.rxStomp.configure(this.config)
+//         this.rxStomp.activate()
 
-    } 
+//     } 
 
-    joinRoom(roomUuid: string, playerUuid: string, playerToken: string) {
+//     joinRoom(roomUuid: string, playerUuid: string, playerToken: string) {
 
-        if (!this.rxStomp.active) {
-            this.activateWebSocket()
-        }
+//         if (!this.rxStomp.active) {
+//             this.activateWebSocket()
+//         }
 
-        this.roomUuid = roomUuid
-        this.playerUuid = playerUuid
-        this.playerToken = playerToken
+//         this.roomUuid = roomUuid
+//         this.playerUuid = playerUuid
+//         this.playerToken = playerToken
 
         this.publicChannel = this.rxStomp.watch({
             destination: `/app/rooms/${this.roomUuid}/`
@@ -59,12 +59,12 @@ export class WebSocketService {
             destination: `/app/rooms/${this.roomUuid}/lobby-events`
         })
 
-    }
+//     }
 
 
-    getPublicChannel() {
-        return this.publicChannel
-    }
+//     getPublicChannel() {
+//         return this.publicChannel
+//     }
 
     getPrivateChannel() {
         return this.privateChannel
@@ -80,4 +80,4 @@ export class WebSocketService {
    
 
 
-}
+// }

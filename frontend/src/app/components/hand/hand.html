@@ -1,17 +1,6 @@
-<div 
-  cdkDropList
-  [cdkDropListConnectedTo]="['dropzone']"
-  (cdkDropListDropped)="drop($event)"
-  class="hand"
->
-  <app-cards 
-    *ngFor="let id of cardIds; let i = index"
-    cdkDrag
-    [id]="id"
-    [cdkDragData]="id"
-    class="card-on-arc"
-    [style.left.px]="ComputeCardXIndex(i)"
-    [style.bottom.px]="ComputeCardYIndex(i)"
-    [style.transform]="ComputeRotateTransform(i)"
-  ></app-cards>
+<div id="handList" cdkDropList [cdkDropListData]="cardIds" [cdkDropListConnectedTo]="['dropzone']"
+  (cdkDropListDropped)="drop($event)" class="hand">
+  <app-cards *ngFor="let id of cardIds; let i = index" cdkDrag [id]="id" class="card-on-arc"
+    [class.flying-card]="flyingCardId === id" (dblclick)="playCard(i, $event)" [cdkDragData]="{ id: id, index: i }"
+    [style.transform]="computeArcTransform(i)" [style.zIndex]="i"></app-cards>
 </div>

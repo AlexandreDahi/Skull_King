@@ -1,7 +1,9 @@
-import { Component,ViewChild  } from '@angular/core';
+import { Component } from '@angular/core';
+import { PlaceBet } from '../../components/place-bet/place-bet';
+import { ExpandablePlaceBet } from '../../components/expandable-place-bet/expandable-place-bet';
 import { Hand } from '../../components/hand/hand';
 import { CommonModule } from '@angular/common';
-import { Cards } from '../../components/cards/cards';
+
 @Component({
   selector: 'app-game',
   imports: [Cards,CommonModule],
@@ -9,11 +11,17 @@ import { Cards } from '../../components/cards/cards';
   styleUrl: './game.css',
 })
 export class Game {
-  // accès à la main (via @ViewChild)
-  @ViewChild(Hand) hand!: Hand;
+  handCards: number[] = [57, 58, 59, 62, 64, 65, 66, 70, 71, 72];
+  dropZoneCards: number[] = [];
 
-  onCardDropped(cardId: number) {
-    console.log("Carte déposée :", cardId);
+  onCardPlayed(cardId: number) {
+    // Ajouter la carte à la drop zone
+    this.dropZoneCards.push(cardId);
+
+    // Retirer la carte de la main
+    const index = this.handCards.indexOf(cardId);
+    if (index > -1) {
+      this.handCards.splice(index, 1);
+    }
   }
-
 }
