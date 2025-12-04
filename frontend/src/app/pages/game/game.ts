@@ -20,7 +20,7 @@ export class Game implements OnInit {
   handCards: number[] = [24, 3, 15, 65, 42,68,72,4,8,12];
   dropZoneCards: number[] = [];
 
-  round: number = 1;
+  round: number = 4;
   totalRounds: number = 10;
   phase: string = "Phase d'attente des joueurs"; // affiché en haut
 
@@ -31,7 +31,7 @@ export class Game implements OnInit {
 
   score: number = 0;
   scorePopped: boolean = false;
-  tricksWon: number = 0; // nombre de plis gagnés
+  tricksWon: number = 2; // nombre de plis gagnés
   
   constructor(private ngZone: NgZone) {}
   /* --------------------------
