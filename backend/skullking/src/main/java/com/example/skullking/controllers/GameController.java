@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -46,6 +47,40 @@ public class GameController {
     @Autowired
     private RoomService roomService;
 
+    @MessageMapping("/rooms/{roomUuid}/lobby")
+    public void handleLobbyMessage(
+            @DestinationVariable UUID roomUuid,
+            @Payload Map<String, Object> message
+    ) {
+        String messageType = (String) message.get("type");
+
+        System.out.println("📨 Message reçu: " + messageType);
+
+        if ("START_GAME".equals(messageType)) {
+            if (!roomService.isRoomExisting(roomUuid)) {
+                System.err.println("❌ Room inexistante");
+                return;
+            }
+
+            int playerCount = roomService.getRoom(roomUuid).countPlayers();
+            if (playerCount < 2) {
+                System.err.println("❌ Pas assez de joueurs");
+                return;
+            }
+
+            System.out.println("🚀 Lancement de la partie");
+
+            // ✅ Utiliser /topic au lieu de /rooms
+            this.template.convertAndSend(
+                    "/topic/rooms/" + roomUuid + "/lobby-events",  // ← Ajouter /topic
+                    Map.of(
+                            "type", "GAME_STARTED",
+                            "roomUuid", roomUuid.toString(),
+                            "playerCount", playerCount
+                    )
+            );
+        }
+    }
 
     @MessageMapping("/rooms/{roomUuid}/users/{userUuid}/get-players")
     //@SendTo("/topic/messages")
@@ -73,3 +108,4 @@ public class GameController {
         //return new Message("room : " + roomUuid + ", user : " + userUuid);
     }
 }
+
