@@ -1,10 +1,23 @@
-.expandable-leaderboard-container{
-    width :250px;
+.expandable-leaderboard-container {
+  width: 250px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
 }
-.button-container{
-    display: flex;
-    flex-direction: row;
-    justify-content: center; /* TODO : maybe change this, i am not satisfied*/
-    align-items: center;
-    cursor: pointer;
+
+/* bouton */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+/* espace entre icône et texte */
+.button-container > div,
+.button-container mat-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

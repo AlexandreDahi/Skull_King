@@ -1,12 +1,23 @@
-<div class = "expandable-place-bet-container ">
+<div class="expandable-place-bet-container">
 
-        <app-place-bet *ngIf="isExpanded"></app-place-bet>
-    
-    <button class =  "backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold" (click)="toggleExpand()"><p>Place Bet</p>
-        <mat-icon class="black-icon">
-            {{ isExpanded ? 'expand_less' : 'expand_more' }}
-        </mat-icon>
-    </button> 
+  <app-place-bet *ngIf="isExpanded"></app-place-bet>
+
+  <button 
+      class="backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold"
+      [class.rounded-t-xl]="!isExpanded"
+      (click)="toggleExpand()">
+
+      <div class="left-content" >
+        <mat-icon>stacked_bar_chart</mat-icon>
+        <span>Plis</span>
+      </div>
+
+      <mat-icon class="toggle-icon">
+        {{ isExpanded ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+
+  </button>
+
 </div>
 
     

@@ -24,8 +24,8 @@ export class Game implements OnInit {
   totalRounds: number = 10;
   phase: string = "Phase d'attente des joueurs"; // affiché en haut
 
-  timer: number = 60;
-  totalTime: number = 60;
+  timer: number = 30;
+  totalTime: number = 30;
   timerProgress: number = 100;
   intervalId: any;
 

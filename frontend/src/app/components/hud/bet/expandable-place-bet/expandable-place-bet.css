@@ -1,10 +1,43 @@
-.expandable-place-bet-container{
-    width :250px;
-}
 .button-container{
     display: flex;
     flex-direction: row;
     justify-content: center; /* TODO : maybe change this, i am not satisfied*/
     align-items: center;
     cursor: pointer;
+}
+
+.expandable-place-bet-container {
+  width: 250px;
+  overflow: hidden;              /* applique l'arrondi au contenu */
+  backdrop-filter: blur(10px);
+}
+
+/* bouton plus grand, bien espacé */
+.button-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px 14px;            /* plus d’espace => plus lisible */
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+/* icône + texte alignés et espacés */
+.left-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;                      /* espace entre icône et texte */
+}
+
+.left-content mat-icon {
+  font-size: 22px;               /* icône plus visible */
+  width: 22px;
+  height: 22px;
+}
+
+/* icône dropdown */
+.toggle-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
 }
