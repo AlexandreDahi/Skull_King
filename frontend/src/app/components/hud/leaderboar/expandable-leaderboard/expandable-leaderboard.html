@@ -1,12 +1,23 @@
-<div class = "expandable-leaderboard-container ">
-
-        <app-leaderboard *ngIf="isExpanded"></app-leaderboard>
+<div class="expandable-leaderboard-container">
     
-    <button class =  "backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold" (click)="toggleExpand()"><p>leaderboard</p>
+    <!-- Contenu expandable avec animation -->
+    <div class="expandable-content" [class.expanded]="isExpanded">
+        <app-leaderboard *ngIf="isExpanded"></app-leaderboard>
+    </div>
+
+    <!-- Bouton -->
+    <button
+      class="backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold flex items-center justify-between px-4 py-3"
+      [class.rounded-t-xl]="!isExpanded"
+      (click)="toggleExpand()"
+    >
+        <div class="flex items-center gap-3">
+            <mat-icon>stars</mat-icon>
+            <span>Scores</span>
+        </div>
+
         <mat-icon class="black-icon">
             {{ isExpanded ? 'expand_less' : 'expand_more' }}
         </mat-icon>
     </button> 
 </div>
-
-    

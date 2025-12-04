@@ -1,0 +1,19 @@
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.timer-warning {
+  animation: pulse-glow 1s ease-in-out infinite;
+}
+
+/* Shake quand temps critique */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.timer-critical {
+  animation: shake 0.5s ease-in-out infinite;
+}

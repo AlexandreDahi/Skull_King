@@ -18,4 +18,25 @@ export class PlayerPanel {
   @Input() tricksWon!: number;
   @Input() score!: number;
   @Input() scorePopped!: boolean;
+
+  /**
+   * Retourne un gradient dynamique selon le pourcentage du timer
+   * Vert > 50% | Jaune 25-50% | Rouge < 25%
+   */
+  getTimerGradient(progress: number, percentage: number): string {
+    let color: string;
+    
+    if (progress > 50) {
+      // Vert
+      color = '#4ade80'; // green-400
+    } else if (progress > 33) {
+      // Jaune
+      color = '#facc15'; // yellow-400
+    } else {
+      // Rouge
+      color = '#f87171'; // red-400
+    }
+    
+    return `conic-gradient(${color} ${percentage}%, transparent 0)`;
+  }
 }
