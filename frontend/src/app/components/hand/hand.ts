@@ -21,6 +21,7 @@ export class Hand {
   draggingIndex: number | null = null;
 
   @Output() playCardEvent = new EventEmitter<number>();
+  @Output() errorEvent = new EventEmitter<string>();
 
   flyingCardId: number | null = null;
 
@@ -70,6 +71,11 @@ export class Hand {
      --------------------------- */
   playCard(index: number, event: MouseEvent) {
     const cardId = this.cardIds[index];
+
+    if (this.nonPlayableCardIds.includes(cardId)) {
+      this.errorEvent.emit('Carte non jouable !');
+      return;
+    }
 
     // récupérer la position de la carte
     const cardElement = (event.target as HTMLElement).closest('.card-on-arc') as HTMLElement;

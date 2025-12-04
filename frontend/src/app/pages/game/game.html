@@ -8,12 +8,17 @@
 
     <div class="flex items-center gap-2">
       <mat-icon>sports_esports</mat-icon>
-      Attente du Joueur 2
+      {{ errorMessage || 'Attente du Joueur 2' }}
     </div>
   </div>
 
   <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
-  <app-hand [nonPlayableCardIds]="nonPlayableCards" [cardIds]="handCards" (playCardEvent)="onCardPlayed($event)"></app-hand>
+  <app-hand 
+  [nonPlayableCardIds]="nonPlayableCards" 
+  [cardIds]="handCards" 
+  (playCardEvent)="onCardPlayed($event)"
+  (errorEvent)="onCardPlayedError($event)">
+  </app-hand>
   <app-head-up-display></app-head-up-display>
   <app-player-panel
   [round]="round"

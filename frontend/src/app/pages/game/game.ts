@@ -32,6 +32,7 @@ export class Game implements OnInit {
   score: number = 0;
   scorePopped: boolean = false;
   tricksWon: number = 0; // nombre de plis gagnés
+  errorMessage: string ='';
   
   constructor(private ngZone: NgZone) {}
   /* --------------------------
@@ -107,7 +108,6 @@ resetTimer() {
     if (dropZoneCards.length === 0) {
       return [];
     }
-
     // cherche le premier type non 'fuite' parmi les cartes du drop zone (si toutes 'fuite', on garde la dernière trouvée)
     let i = 0;
     let type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
@@ -117,6 +117,8 @@ resetTimer() {
     }
 
     if (!type) return [];
+
+    if (type === 'special') return [];
 
     // ...existing code...
     if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
@@ -130,5 +132,11 @@ resetTimer() {
   }
   get nonPlayableCards(): number[] {
     return this.getPlayableCards(this.dropZoneCards);
+  }
+
+  onCardPlayedError(errorMessage: string) {
+    this.errorMessage = errorMessage;
+    // Optionnel : effacer le message après 3 secondes
+    setTimeout(() => (this.errorMessage = ''), 3000);
   }
 }
