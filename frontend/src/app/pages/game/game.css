@@ -37,14 +37,3 @@ app-drop-zone {
   transition: 0.2s ease;
   border-radius: 10px;
 }
-
-
-@keyframes pop {
-  0%   { transform: scale(1); filter: drop-shadow(0 0 0px #a855f7); }
-  40%  { transform: scale(1.35); filter: drop-shadow(0 0 10px #d946ef); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 0px #a855f7); }
-}
-
-.pop-animation {
-  animation: pop 0.4s ease-out;
-}

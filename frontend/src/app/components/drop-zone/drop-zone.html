@@ -1,28 +1,13 @@
-<div
-  cdkDropList
-  cdkDropListDisabled="true"
-  [cdkDropListSortingDisabled]="true"
-  #dropList="cdkDropList"
-  id="dropzone"
-  [cdkDropListData]="cardsInZone"
-  [cdkDropListConnectedTo]="['handList']"
-  (cdkDropListDropped)="onDrop($event)"
-  class="drop-zone w-120 h-60 mx-auto border-3 border-dashed border-stone-600 rounded-xl
-         relative flex items-center justify-center text-gray-300 text-lg"
->
-  <div
-    *ngFor="let id of cardsInZone; let i = index"
-    cdkDrag
-    [cdkDragData]="id"
-    class="absolute card-stack"
-    [style.zIndex]="i + 1"
-    [style.transform]="
+<div cdkDropList cdkDropListDisabled="true" [cdkDropListSortingDisabled]="true" #dropList="cdkDropList" id="dropzone"
+  [cdkDropListData]="cardsInZone" [cdkDropListConnectedTo]="['handList']" (cdkDropListDropped)="onDrop($event)" class="drop-zone w-120 h-60 mx-auto border-3 border-dashed border-stone-600 rounded-xl
+         relative flex items-center justify-center text-gray-300 text-lg" [class.border-yellow-200]="isMyTurn"
+  [class.drop-zone-active]="isMyTurn">
+  <div *ngFor="let id of cardsInZone; let i = index" cdkDrag [cdkDragData]="id" class="absolute card-stack"
+    [style.zIndex]="i + 1" [style.transform]="
       'translate(' + ((i - (cardsInZone.length - 1) / 2) * 50) + 'px,' +
       ((i - (cardsInZone.length - 1) / 2) * 2) + 'px) ' +
       'rotate(' + ((i - (cardsInZone.length - 1) / 2) * 1) + 'deg)'
-    "
-  >
+    ">
     <app-cards [id]="id"></app-cards>
   </div>
 </div>
-
