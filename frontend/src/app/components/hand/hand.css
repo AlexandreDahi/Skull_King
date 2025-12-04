@@ -34,5 +34,5 @@
 
 .flying-card {
   pointer-events: none; /* pour éviter de gêner le drag pendant l’animation */
-  z-index: 999999 !important;
+  z-index: 9999 !important;
 }
