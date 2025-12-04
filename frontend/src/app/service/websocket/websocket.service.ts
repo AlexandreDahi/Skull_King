@@ -24,9 +24,9 @@
 //     private playerToken = ""
 
 
-    private publicChannel  = new Observable<IMessage>()
-    private privateChannel = new Observable<IMessage>()
-    private lobbyChannel   = new Observable<IMessage>()
+    // private publicChannel  = new Observable<IMessage>()
+    // private privateChannel = new Observable<IMessage>()
+    // private lobbyChannel   = new Observable<IMessage>()
 
 
 //     private activateWebSocket() {
@@ -45,19 +45,19 @@
 //         this.playerUuid = playerUuid
 //         this.playerToken = playerToken
 
-        this.publicChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/`
-        })
+        // this.publicChannel = this.rxStomp.watch({
+        //     destination: `/app/rooms/${this.roomUuid}/`
+        // })
 
 
-        this.privateChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/users/${this.playerUuid}/${this.playerToken}`
-        })
+        // this.privateChannel = this.rxStomp.watch({
+        //     destination: `/app/rooms/${this.roomUuid}/users/${this.playerUuid}/${this.playerToken}`
+        // })
 
 
-        this.lobbyChannel = this.rxStomp.watch({
-            destination: `/app/rooms/${this.roomUuid}/lobby-events`
-        })
+        // this.lobbyChannel = this.rxStomp.watch({
+        //     destination: `/app/rooms/${this.roomUuid}/lobby-events`
+        // })
 
 //     }
 
@@ -66,13 +66,13 @@
 //         return this.publicChannel
 //     }
 
-    getPrivateChannel() {
-        return this.privateChannel
-    }
+    // getPrivateChannel() {
+    //     return this.privateChannel
+    // }
 
-    getLobbyChannel() {
-        return this.lobbyChannel
-    }
+    // getLobbyChannel() {
+    //     return this.lobbyChannel
+    // }
 
 
 
