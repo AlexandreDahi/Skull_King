@@ -1,33 +1,54 @@
-<div class=" backdrop-blur-md bg-black/40 rounded-t-md">
+<div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
 
-  <div *ngIf="!isBetPlaced" class="place-bet-container">
-    <h1 class="text-white text-center py-5 text-2xl font-bold">Placer votre mise</h1>
+  <!-- ÉTAT : MISE À PLACER -->
+  <div *ngIf="!isBetPlaced" class="px-6 py-6 text-center space-y-6">
 
-    <p style="font-family: 'Pirata One'" class="numberBetted">{{value}}</p>
+    <p class="text-white text-[70px] leading-none font-[Pirata One]" style="font-family: 'Pirata One';">
+      {{ value }}
+    </p>
 
-    <div>
-      <button matFab aria-label="add button" (click)="decrease()">
-        <mat-icon class="black-icon">remove</mat-icon>
+    <!-- Boutons -->
+    <div class="flex justify-center gap-4">
+      <button mat-fab (click)="decrease()">
+        <mat-icon class="text-white">remove</mat-icon>
       </button>
 
-      <button matFab aria-label="add button" class="m-1" (click)="increase()">
-        <mat-icon class="black-icon">add</mat-icon>
+      <button mat-fab (click)="increase()">
+        <mat-icon class="text-white">add</mat-icon>
       </button>
     </div>
 
-    <button matButton="filled" (click)="placeBet()">Miser</button>
+    <button 
+      mat-flat-button 
+      color="primary"
+      (click)="placeBet()"
+      class="uppercase font-bold tracking-wide"
+    >
+      Miser
+    </button>
+
   </div>
 
-  <div *ngIf="isBetPlaced" class="place-bet-container">
-    <h1 class="text-white text-center py-5 text-2xl font-bold">Votre mise : </h1>
-    <div class="bet-container" [ngClass]="resultClass">
-      <p class="scoreNumber" id="scoreBetted">{{bet}}</p>
+  <!-- ÉTAT : MISE VALIDÉE -->
+  <div *ngIf="isBetPlaced" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
 
-      <p class="scoreNumber" id="scoreObtained">
+    <!-- Boîte score -->
+    <div
+      class="relative mx-auto bg-contain bg-center"
+      style="background-image: url('/images/whiteLine.png'); width: 140px; height: 140px;"
+    >
+
+      <!-- Mise -->
+      <p class="absolute top-2 left-8 text-white text-[60px] font-[Pirata One] leading-none">
+        {{ bet }}
+      </p>
+
+      <!-- Résultat -->
+      <p class="absolute bottom-2 right-10 text-white text-[60px] font-[Pirata One] leading-none">
         {{ value }}
       </p>
     </div>
-    <h2> Good luck ! </h2>
+
   </div>
 
 </div>
