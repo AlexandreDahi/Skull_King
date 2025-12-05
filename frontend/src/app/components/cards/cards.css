@@ -20,6 +20,39 @@
 }
 
 .card:hover {
-  transform: translateY(-6px) scale(1.02);
+  transform: translateY(-30px) scale(1.02);
   box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+}
+
+
+.info-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #0b0b0b;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  /* caché par défaut */
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+/* affichage uniquement au hover de la carte */
+.card:hover .info-button {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }

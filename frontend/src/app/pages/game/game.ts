@@ -17,7 +17,7 @@ import data from '../../components/cards/index_carte.json';
 export class Game implements OnInit {
   
   /* --- GAME DATA --- */
-  handCards: number[] = [24, 3, 15, 65, 42,68,72,4,8,12];
+  handCards: number[] = [24, 3,69,48,21,14,28,42];
   dropZoneCards: number[] = [];
 
   round: number = 1;
