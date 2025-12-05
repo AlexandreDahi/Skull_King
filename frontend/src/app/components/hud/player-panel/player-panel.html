@@ -1,15 +1,15 @@
-<div class="absolute bottom-[1%] left-1/2 -translate-x-1/2
-         px-5 py-3 rounded-xl bg-black/40 backdrop-blur-md
+<div class="absolute bottom-[0%] left-1/2 -translate-x-1/2
+         px-4 py-2 rounded-t-xl bg-black/40 backdrop-blur-md
          border border-white/20 text-white font-medium
          flex items-center gap-6 z-30 shadow-lg">
 
   <!-- ROUND -->
   <!-- SCORE -->
   <div class="flex items-center gap-2 px-3 py-2 rounded-full
-            bg-gradient-to-r from-amber-600/30 to-yellow-600/30
-            border border-amber-500/40" [class.score-pop]="scorePopped">
-    <mat-icon class="text-amber-400 text-lg">flag</mat-icon>
-    <span class="text-xl font-bold text-amber-300 tabular-nums">{{ round }} / {{ totalRounds }}</span>
+            bg-gradient-to-r from-amber-900/30 to-yellow-800/30
+            border border-amber-500/40 text-amber-100" [class.score-pop]="scorePopped">
+    <mat-icon class=" text-lg">flag</mat-icon>
+    <span class="text-xl  text-amber-100 tabular-nums">Manche {{ round }} / {{ totalRounds }}</span>
   </div>
 
   <!-- TIMER -->
@@ -51,8 +51,8 @@
 
   <!-- SCORE -->
   <div class="flex items-center gap-2 px-3 py-2 rounded-full
-            bg-gradient-to-r from-amber-600/30 to-yellow-600/30
-            border border-amber-500/40" [class.score-pop]="scorePopped">
-    <mat-icon class="text-amber-400 text-lg">emoji_events</mat-icon>
-    <span class="text-xl font-bold text-amber-300 tabular-nums">{{ score }}</span>
+            bg-gradient-to-r from-amber-900/30 to-yellow-800/30
+            border border-amber-500/40 text-amber-100" [class.score-pop]="scorePopped">
+    <mat-icon class="text-lg">emoji_events</mat-icon>
+    <span class="text-xl  text-amber-100 tabular-nums">Score : {{ score }}</span>
   </div>
