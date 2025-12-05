@@ -13,3 +13,31 @@
 /* .drop-zone app-cards {
   filter: grayscale(70%) brightness(0.9);
 } */
+
+.drop-zone-active {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(250, 204, 21, 0.1) 0%,
+    transparent 70%
+  );
+  box-shadow:
+    0 0 10px rgb(255, 255, 255),
+    0 0 20px rgba(250, 204, 21, 0.2),
+    inset 0 0 20px rgba(250, 204, 21, 0.1);
+  animation: pulse-zone 2s ease-in-out infinite;
+}
+
+@keyframes pulse-zone {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 20px rgb(254, 229, 128),
+      0 0 40px rgba(250, 204, 21, 0.2);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow:
+      0 0 30px rgba(250, 204, 21, 0.6),
+      0 0 60px rgba(250, 204, 21, 0.3);
+  }
+}

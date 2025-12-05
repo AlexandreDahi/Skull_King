@@ -58,11 +58,9 @@ export class WebSocketService {
             destination: `/topic/rooms/${this.roomUuid}`
         })
 
-
         this.privateChannel = this.rxStomp.watch({
             destination: `/user/queue/rooms/${this.roomUuid}`
         })
-
 
         // ✅ Ajouter /topic pour correspondre au backend
         this.lobbyChannel = this.rxStomp.watch({
@@ -74,6 +72,7 @@ export class WebSocketService {
         console.log('   - Private: /user/queue/rooms/' + this.roomUuid);
         console.log('   - Lobby: /topic/rooms/' + this.roomUuid + '/lobby-events');
     }
+
     getPLayerUuid() {
         return this.playerUuid
     }
@@ -87,7 +86,6 @@ export class WebSocketService {
     }
 
     getLobbyChannel() {
-
         if (!this.rxStomp.active) {
             this.activateWebSocket()
         }

@@ -24,6 +24,7 @@ import { RoomService } from '../../service/room/room.service';
 
 
 
+
 interface Player {
   uuid: string;
   name: string;
@@ -78,12 +79,10 @@ export class Game implements OnInit, OnDestroy {
   // Référence à la main du joueur
   @ViewChild(Hand) hand!: Hand;
 
-  // Données de la partie
+  /* --- WEBSOCKET DATA (de lobby) --- */
   roomUuid: string = '';
   playerUuid: string = '';
   isAdmin: boolean = false;
-  
-  // État du jeu
   players: Player[] = [];
   gameState: GameState = {
     currentRound: 1,
@@ -96,16 +95,24 @@ export class Game implements OnInit, OnDestroy {
   private publicSubscription?: Subscription;
   private isDestroyed = false;
 
+  /* --- GAME LOGIC DATA (de main) --- */
+ 
+
+  jsonData = data.index_carte;
+
   constructor(
+    private ngZone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
     private wsService: WebSocketService,
     private roomService: RoomService,
-    private ngZone: NgZone
   ) {}
 
+  /* --------------------------
+      INITIALISATION
+  ----------------------------*/
   ngOnInit() {
-    // 1. Récupérer les informations de la route
+    // 1. WebSocket setup (de lobby)
     this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
     this.isAdmin = this.wsService.isAdmin();
     
@@ -159,7 +166,6 @@ export class Game implements OnInit, OnDestroy {
   private loadGameState() {
     console.log('📡 Chargement de l\'état de la partie...');
     
-    // Charger la liste des joueurs
     this.roomService.getPlayers(this.roomUuid).subscribe({
       next: (players: any[]) => {
         console.log('✅ Joueurs chargés:', players);
@@ -175,8 +181,6 @@ export class Game implements OnInit, OnDestroy {
         console.error('❌ Erreur chargement joueurs:', err);
       }
     });
-
-    // TODO: Charger l'état du jeu (manche actuelle, cartes, etc.)
   }
 
   //
@@ -185,7 +189,6 @@ export class Game implements OnInit, OnDestroy {
   private subscribeToGameEvents() {
     console.log('🔌 Abonnement aux événements de jeu...');
 
-    // Canal public de la room (événements broadcast à tous)
     this.publicSubscription = this.wsService.getPublicChannel().subscribe({
       next: (message) => {
         if (this.isDestroyed) return;
@@ -200,9 +203,6 @@ export class Game implements OnInit, OnDestroy {
       },
       error: (err) => console.error('❌ Erreur canal public:', err)
     });
-
-    // TODO: S'abonner au canal privé pour les événements personnels
-    // (distribution des cartes, etc.)
   }
 
   
@@ -213,7 +213,6 @@ export class Game implements OnInit, OnDestroy {
 
     switch(data.type) {
       case 'GAME_STATE_UPDATE':
-        // Mise à jour de l'état général du jeu
         console.log('🔄 Mise à jour de l\'état du jeu');
         if (data.gameState) {
           this.gameState = data.gameState;
@@ -221,7 +220,6 @@ export class Game implements OnInit, OnDestroy {
         break;
 
       case 'PLAYER_BET':
-        // Un joueur a placé son pari
         console.log('💰 Pari reçu:', data.playerUuid, data.bet);
         const player = this.players.find(p => p.uuid === data.playerUuid);
         if (player) {
@@ -230,37 +228,28 @@ export class Game implements OnInit, OnDestroy {
         break;
 
       case 'CARD_PLAYED':
-        // Un joueur a joué une carte
         console.log('🃏 Carte jouée par:', data.playerUuid);
-        // TODO: Afficher la carte dans la drop zone
         break;
 
       case 'ROUND_START':
-        // Début d'une nouvelle manche
         console.log('🎯 Nouvelle manche:', data.round);
         this.gameState.currentRound = data.round;
         this.gameState.phase = 'BETTING';
-        // TODO: Distribuer les cartes
         break;
 
       case 'TURN_CHANGED':
-        // Le tour passe à un autre joueur
         console.log('🔄 Tour du joueur:', data.playerUuid);
         this.gameState.currentTurn = data.playerUuid;
         break;
 
       case 'ROUND_END':
-        // Fin de manche
         console.log('🏁 Fin de manche');
         this.gameState.phase = 'ROUND_END';
-        // TODO: Afficher les scores
         break;
 
       case 'GAME_END':
-        // Fin de partie
         console.log('🎊 Fin de partie !');
         this.gameState.phase = 'GAME_END';
-        // TODO: Afficher le classement final
         break;
 
       default:
@@ -294,20 +283,17 @@ export class Game implements OnInit, OnDestroy {
   onBetPlaced(betAmount: number) {
     console.log('💰 Pari placé:', betAmount);
 
-    // Envoyer le pari au serveur
     this.wsService.sendLobbyMessage({
       type: 'PLACE_BET',
       bet: betAmount,
       roomUuid: this.roomUuid
     });
 
-    // Mettre à jour localement
     const currentPlayer = this.players.find(p => p.uuid === this.playerUuid);
     if (currentPlayer) {
       currentPlayer.bet = betAmount;
     }
 
-    // Passer à la phase de jeu
     this.gameState.phase = 'PLAYING';
   }
 
@@ -315,13 +301,11 @@ export class Game implements OnInit, OnDestroy {
   leaveGame() {
     console.log('👋 Quitter la partie');
     
-    // Envoyer un message de départ
     this.wsService.sendLobbyMessage({
       type: 'LEAVE_GAME',
       roomUuid: this.roomUuid
     });
 
-    // Retourner à l'accueil
     this.router.navigate(['/']);
   }
 
@@ -356,18 +340,31 @@ export class Game implements OnInit, OnDestroy {
   //    JOUER UNE CARTE
   //----------------------------
   onCardPlayed(cardId: number) {
-    this.dropZoneCards.push(cardId);
+    // Vérifier que c'est le tour du joueur (WebSocket)
+    if (this.gameState.currentTurn !== this.playerUuid) {
+      console.warn('⚠️ Ce n\'est pas votre tour !');
+      return;
+    }
 
+    // Logique locale
+    this.dropZoneCards.push(cardId);
     const index = this.handCards.indexOf(cardId);
     if (index > -1) this.handCards.splice(index, 1);
+
+    // Envoyer au serveur via WebSocket
+    this.wsService.sendLobbyMessage({
+      type: 'PLAY_CARD',
+      cardId: cardId,
+      roomUuid: this.roomUuid
+    });
   }
 
+ 
   // --------------------------
   //    SCORE ANIMATION POP
   //----------------------------
   increaseScore(amount: number) {
     this.score += amount;
-
     this.scorePopped = true;
     setTimeout(() => (this.scorePopped = false), 400);
   }
@@ -378,18 +375,21 @@ export class Game implements OnInit, OnDestroy {
   //----------------------------
   winTrick() {
     this.tricksWon++;
-    this.increaseScore(20); // exemple
+    this.increaseScore(20);
   }
   // --------------------------
   //    Restreint les cartes jouables
   //----------------------------
-  jsonData = data.index_carte;
+  
 
+  /* --------------------------
+      CARD VALIDATION (de main)
+  ----------------------------*/
   getPlayableCards(dropZoneCards: number[]): number[] {
     if (dropZoneCards.length === 0) {
       return [];
     }
-    // cherche le premier type non 'fuite' parmi les cartes du drop zone (si toutes 'fuite', on garde la dernière trouvée)
+
     let i = 0;
     let type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
     while (type === 'fuite' && i < dropZoneCards.length - 1) {
@@ -398,26 +398,23 @@ export class Game implements OnInit, OnDestroy {
     }
 
     if (!type) return [];
-
     if (type === 'special') return [];
 
-    // ...existing code...
     if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
 
-    // autorise les cartes du même type que la carte leader + toujours 'speciale' et 'fuite'
     const allowed = new Set([type, 'special', 'fuite']);
     return this.handCards.filter(id => {
       const t = this.jsonData.find(c => c.id === id)?.type;
       return !(t != null && allowed.has(t));
     });
   }
+
   get nonPlayableCards(): number[] {
     return this.getPlayableCards(this.dropZoneCards);
   }
 
   onCardPlayedError(errorMessage: string) {
     this.errorMessage = errorMessage;
-    // Optionnel : effacer le message après 3 secondes
     setTimeout(() => (this.errorMessage = ''), 3000);
   }
 }
