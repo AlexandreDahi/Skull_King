@@ -25,7 +25,7 @@ export class PlayerPanel {
    */
   getTimerGradient(progress: number, percentage: number): string {
     let color: string;
-    
+
     if (progress > 50) {
       // Vert
       color = '#4ade80'; // green-400
@@ -36,7 +36,7 @@ export class PlayerPanel {
       // Rouge
       color = '#f87171'; // red-400
     }
-    
+
     return `conic-gradient(${color} ${percentage}%, transparent 0)`;
   }
 }

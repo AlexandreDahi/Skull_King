@@ -1,19 +1,64 @@
 .black-icon {
   color: white;
 }
-.place-bet-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 300px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    padding-bottom: 20px;
+
+.place-bet-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 300px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding-bottom: 20px;
 }
-.numberBetted{
-    font-family: 'Pirata One', cursive;
-    font-size: 70px;
-    color: white;
+
+.numberBetted {
+  font-family: 'Pirata One', cursive;
+  font-size: 70px;
+  color: white;
+}
+
+.bet-container {
+  background-image: url("/images/whiteLine.png");
+  height: 120px;  /* Augmenté pour accommoder les chiffres */
+  width: 120px;   /* Augmenté pour accommoder les chiffres */
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;  /* Correction: grid-row -> grid-template-rows */
+  position: relative;
+}
+
+#scoreBetted {
+  grid-column: 1 / 2;  /* Correction: 1 / 2 au lieu de 1 / 1 */
+  grid-row: 1 / 2;     /* Correction: 1 / 2 au lieu de 1 / 1 */
+  font-family: 'Pirata One';
+  justify-self: end;    /* Aligné à droite pour être proche de la barre */
+  align-self: end;      /* Aligné en bas */
+  font-size: 60px;      /* Réduit pour éviter le chevauchement */
+  padding-right: 10px;   /* Petit espace depuis la barre */
+  padding-bottom: 10px;
+  line-height: 1;       /* Évite l'espacement vertical */
+}
+
+#scoreObtained {
+  grid-column: 2 / 3;  /* Correction: 2 / 3 au lieu de 2 / 2 */
+  grid-row: 2 / 3;     /* Correction: 2 / 3 au lieu de 2 / 2 */
+  font-family: 'Pirata One';
+  justify-self: start;  /* Aligné à gauche pour être proche de la barre */
+  align-self: start;    /* Aligné en haut */
+  font-size: 60px;
+  padding-left: 5px;    /* Petit espace depuis la barre */
+  padding-top: 5px;
+  line-height: 1;
+}
+
+.scoreNumber {
+  font-size: 50px;
+  color: white;
+  margin: 0;
+  padding: 0;
 }

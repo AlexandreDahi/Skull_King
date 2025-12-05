@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,17 @@ export class PlaceBet {
   private minBet : number = 0;
   isBetPlaced : boolean;
 
+  @Input() bet: number = 2;        // pari (annonce)
+
+  get resultClass(): string {
+    if (this.value === this.bet) {
+      return 'text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,1)]'; // ombre verte
+    }
+    if (this.value < this.bet) {
+      return 'text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]'; // ombre rouge
+    }
+    return 'text-white';
+  }
   placeBet() {
     this.isBetPlaced = true;
     this.storeService.setIsBetPlaced(true);
@@ -34,12 +45,12 @@ export class PlaceBet {
     if (this.value < this.maxBet){
       this.value++;
     }
-    
+
   }
   decrease() {
     if (this.value > this.minBet){
       this.value--;
     }
-    
+
   }
 }
