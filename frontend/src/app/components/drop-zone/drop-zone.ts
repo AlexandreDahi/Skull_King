@@ -14,7 +14,7 @@ export class DropZone {
   @Input() cardsInZone: number[] = [];
   @Input() connectedLists: string[] = [];
 
-  @Input() isMyTurn: boolean = true;
+  @Input() isMyTurn: boolean = false;
 
   onDrop(event: CdkDragDrop<number[]>) {
     if (event.previousContainer === event.container) return;
