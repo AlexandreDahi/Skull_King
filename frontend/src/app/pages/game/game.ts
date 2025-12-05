@@ -319,11 +319,6 @@ export class Game implements OnInit, OnDestroy {
       cardId: cardId,
       roomUuid: this.roomUuid
     });
-
-    // Retirer de la main si ViewChild disponible
-    if (this.hand) {
-      this.hand.removeCard(cardId);
-    }
   }
 
   onCardDropped(cardId: number) {
