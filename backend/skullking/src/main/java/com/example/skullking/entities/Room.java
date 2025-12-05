@@ -32,9 +32,9 @@ public class Room {
         }
     }
 
-    public void deleteGuest(Player player) {
+    public void deleteGuest(UUID playerUuid) {
 
-        this.guestsList.remove(player);
+        this.guestsList.removeIf(p -> p.getUuid().equals(playerUuid));
     }
 
     public int countPlayers() {
