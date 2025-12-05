@@ -1,3 +1,8 @@
 <div class="card">
   <img [src]="card.image" alt="{{ card.name }}">
+  <button *ngIf="isCardSpecial(card)" class="info-button" [title]="
+    (card.description ? card.description : '') +
+    (card.pouvoir ? ' — Pouvoir : ' + card.pouvoir : '')">
+    <img src="/images/icons/icone_info_2.svg"/>
+  </button>
 </div>

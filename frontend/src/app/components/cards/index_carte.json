@@ -494,28 +494,28 @@
         "image": "/images/cards/spe/butin.jpg",
         "id": 70,
         "type": "fuite",
-        "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        "description": "Le butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
         },
         {
         "name":"butin 2",
         "image": "/images/cards/spe/butin.jpg",
         "id": 71,
         "type": "fuite",
-        "description": "La carte butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        "description": "Le butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
         },
         {
         "name":"baleine",
         "image": "/images/cards/spe/baleine.jpg",
         "id": 72,
         "type": "special",
-        "description": "La carte baleine annule les effets des cartes spéciales jouées dans le même tour. La première carte jouer de plus haute valeur remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        "description": "La baleine annule les effets des cartes spéciales jouées dans le même tour. La première carte jouer de plus haute valeur remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         },
         {
         "name":"kraken",
         "image": "/images/cards/spe/kraken.jpg",
         "id": 73,
         "type": "special",
-        "description":"Le kraken annule le tour, aucun joueur ne remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        "description":"Avec le kraken, aucun joueur ne remporte le plis. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         }
 
     ]

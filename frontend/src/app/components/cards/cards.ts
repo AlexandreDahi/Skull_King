@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import data from './index_carte.json';
 
 @Component({
@@ -6,7 +7,7 @@ import data from './index_carte.json';
   standalone: true,
   templateUrl: './cards.html',
   styleUrl: './cards.css',
-  imports: [],
+  imports: [CommonModule],
 })
 export class Cards {
 
@@ -18,4 +19,10 @@ export class Cards {
   ngOnInit() {
     this.card = this.jsonData.find(c => c.id === this.id);
   }
+
+  isCardSpecial(card: any): boolean {
+    if (!card) return false;
+    return card.type === 'special' || card.type === 'fuite';
+  }
+
 }
