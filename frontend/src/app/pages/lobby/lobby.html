@@ -1,0 +1,61 @@
+<div class="body">
+  <app-navbar></app-navbar>
+  
+  <div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
+    <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+      
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ roomName || 'Salle d\'attente' }}</h1>
+        <p class="text-gray-400">En attente des joueurs...</p>
+        <p class="text-sm text-yellow-400 mt-2" *ngIf="isAdmin">Vous êtes le capitaine</p>
+      </div>
+
+      <!-- Liste des joueurs -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Joueurs connectés ({{ players.length }})</h2>
+        
+        <div class="space-y-3" *ngIf="players.length > 0; else noPlayers">
+          <div *ngFor="let player of players; let i = index" 
+               class="flex items-center justify-between p-4 rounded-xl bg-white/10 border border-white/20">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">{{ i + 1 }}</span>
+              <span class="text-lg font-semibold">{{ player.name }}</span>
+            </div>
+            <span *ngIf="player.isAdmin" 
+                  class="px-3 py-1 rounded-lg bg-yellow-500/20 text-yellow-400 text-sm font-semibold">
+              Capitaine
+            </span>
+          </div>
+        </div>
+
+        <ng-template #noPlayers>
+          <p class="text-gray-400 italic text-center py-8">En attente de joueurs...</p>
+        </ng-template>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-4">
+        <button
+          *ngIf="isAdmin"
+          (click)="startGame()"
+          [disabled]="players.length < 2"
+          class="bg-green-400 hover:bg-green-500 disabled:bg-gray-500 disabled:cursor-not-allowed
+                 text-black font-semibold px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer">
+          Lancer la partie ({{ players.length }}/8)
+        </button>
+
+        <p *ngIf="!isAdmin" class="text-gray-400 italic self-center">
+          En attente que le capitaine lance la partie...
+        </p>
+
+        <button
+          (click)="leaveLobby()"
+          class="bg-red-500 hover:bg-red-600 text-white font-semibold 
+                 px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer ml-auto">
+          Quitter
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -28,4 +28,14 @@ export class RoomService {
   joinRoom(roomId: string, playerName: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/${roomId}/join`, { playerName });
   }
+
+  // Récupération des joueurs d'une room
+  getPlayers(roomUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${roomUuid}/players`);
+  }
+
+  // Quitter une room
+  leaveRoom(roomUuid: string, playerUuid: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${roomUuid}/leave?playerUuid=${playerUuid}`);
+  }
 }
