@@ -4,7 +4,7 @@ import java.util.List;
 
 public class BroadcastTurnResultsEvent {
 
-    public static GameEvent type = GameEvent.BROADCAST_TURN_RESULTS;
+    public static String type = "TURN_RESULTS_EVENT";
 
     public List<Integer> results;
 }

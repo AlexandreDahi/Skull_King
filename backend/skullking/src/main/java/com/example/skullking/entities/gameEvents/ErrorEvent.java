@@ -2,7 +2,7 @@ package com.example.skullking.entities.gameEvents;
 
 public class ErrorEvent {
 
-    public static GameEvent type = GameEvent.ERROR_EVENT;
+    public static String type = "ERROR_EVENT";
 
     public String message;
 

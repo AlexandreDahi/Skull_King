@@ -35,8 +35,8 @@ export class Room {
         console.log('Room créée !', res);
         
         const roomId = res.uuid;
-        const playerUuid = res.adminUuid;
-        const playerToken = res.adminToken;
+        const playerUuid = res.hostUuid;
+        const playerToken = res.hostToken;
 
         // Connecter au WebSocket en tant qu'admin
         this.wsService.joinRoom(roomId, playerUuid, playerToken, true);

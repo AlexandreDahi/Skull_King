@@ -1,42 +1,70 @@
 package com.example.skullking.services;
 
+
 import com.example.skullking.entities.Player;
+import com.example.skullking.entities.PlayerDTOForPublic;
+import com.example.skullking.entities.Room;
 import com.example.skullking.entities.game.BetPlayer;
 import com.example.skullking.entities.game.CardPlayer;
-import com.example.skullking.entities.game.GameState;
-import com.example.skullking.entities.game.GameStateMachine;
+
+import com.example.skullking.entities.gameEvents.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
 
 @Service
 public class GameService {
 
-    private Map<UUID, GameStateMachine> gameStateMap = new HashMap<> ();
+    @Autowired
+    private WebSocketService wsService;
 
-    public boolean startGame(UUID roomUuid, List<Player> players){
-        if (this.gameStateMap.containsKey(roomUuid)){
-            return this.gameStateMap.get(roomUuid).startGame(players);
-        }
-        return false;
+    @Autowired
+    private TaskScheduler scheduler;
+
+    public boolean startGame(Room room){
+
+        boolean result =  room.getGameStateMachine().startGame(room.getPlayers());
+
+
+        List<PlayerDTOForPublic> playersList = room.getPlayers()
+                .stream()
+                .map(PlayerDTOForPublic::new)
+                .toList();
+
+
+        wsService.broadcastGameStart(room, playersList);
+
+        this.startBettingPhase(room);
+
+        return result;
     }
 
-    public boolean receiveBet(UUID roomUuid, BetPlayer betPlayer){
-        if (this.gameStateMap.containsKey(roomUuid)){
-            return this.gameStateMap.get(roomUuid).receiveBetPlayer(betPlayer);
-        }
-        return false;
+    public void startBettingPhase(Room room) {
+
+        room.getGameStateMachine();
+
+        Instant deadline = Instant.now().plusSeconds(30);
+
+        this.scheduler.schedule(
+                () -> wsService.broadcastBettingPhaseStart(room, deadline),
+                Instant.now().plusSeconds(5));
+
     }
 
-    public boolean receiveCard(UUID roomUuid, CardPlayer cardPlayer){
-        if (this.gameStateMap.containsKey(roomUuid)){
-            return this.gameStateMap.get(roomUuid).receiveCardPlayer(cardPlayer);
-        }
-        return false;
+    public boolean receiveBet(Room room, BetPlayer betPlayer){
+
+        return room.getGameStateMachine().receiveBetPlayer(betPlayer);
     }
 
+    public boolean receiveCard(Room room, CardPlayer cardPlayer){
 
+        return room.getGameStateMachine().receiveCardPlayer(cardPlayer);
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.skullking.entities.game;
 
 import com.example.skullking.entities.Player;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,7 +11,16 @@ public class GameStateMachine {
     private ScheduledExecutorService scheduler;
     private int BETTING_ROUND_MAX_DURATION = 60;
 
-    GameState gameState = new GameState();
+    GameState gameState;
+    private SimpMessagingTemplate webSocket;
+
+
+    public GameStateMachine() {
+
+        this.gameState = new GameState();
+    }
+
+
 
 
     public boolean startGame(List<Player> players){

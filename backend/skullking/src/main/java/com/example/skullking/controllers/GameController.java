@@ -1,51 +1,39 @@
 package com.example.skullking.controllers;
 
 
-import com.example.skullking.entities.PlayerDTOForPublic;
-import com.example.skullking.entities.gameEvents.BaseEvent;
-import com.example.skullking.entities.gameEvents.JoinGameEvent;
-import com.example.skullking.entities.gameEvents.SendBetEvent;
+import com.example.skullking.entities.Room;
+import com.example.skullking.entities.game.BetPlayer;
+import com.example.skullking.entities.game.CardPlayer;
+import com.example.skullking.entities.gameEvents.PlayerBetEvent;
+import com.example.skullking.entities.gameEvents.PlayerSentCardEvent;
+import com.example.skullking.entities.gameEvents.HostStartedGameEvent;
+import com.example.skullking.services.GameService;
 import com.example.skullking.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 
 
-
-class Message {
-
-    public String type;
-    public Object data;
-
-
-    public Message(String type) {
-        this.type = type;
-    }
-}
-
 @Controller
 public class GameController {
 
-
+    @Autowired
     private SimpMessagingTemplate template;
 
     @Autowired
-    public GameController(SimpMessagingTemplate template) {
-        this.template = template;
-    }
+    private RoomService roomService;
 
     @Autowired
-    private RoomService roomService;
+    private GameService gameService;
+
+
 
     @MessageMapping("/rooms/{roomUuid}/lobby")
     public void handleLobbyMessage(
@@ -82,30 +70,72 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/rooms/{roomUuid}/users/{userUuid}/get-players")
-    //@SendTo("/topic/messages")
-    public void getPlayers(
-            @DestinationVariable UUID roomUuid,
-            @DestinationVariable String userUuid,
-            @Payload JoinGameEvent joinGameEvent
+    @MessageMapping("/rooms/{roomUuid}/start-game")
+    public void startGame(
+        @DestinationVariable UUID roomUuid,
+        @Payload HostStartedGameEvent startGameEvent
     ) {
 
-        // check room existence
-        // Check user identity
+        if (!roomService.isRoomExisting(roomUuid)) {
+            System.err.println("[startGame] Room with uuid " + roomUuid +" doesn't exist");
+            return;
+        }
+
+        Room room = this.roomService.getRoom(roomUuid);
+
+        int playerCount = roomService.getRoom(roomUuid).countPlayers();
+        if (playerCount < 2) {
+            System.err.println("[startGame] No enough players");
+            return;
+        }
+
+        if (!room.getHost().getToken().equals(startGameEvent.userToken)) {
+            System.err.println(
+                "[startGame] Someone tried to start the game but provided a wrong host token");
+            System.err.println("host token : " + room.getHost().getToken() + ", token received : " + startGameEvent.userToken);
+            return;
+        }
+
+        gameService.startGame(room);
 
 
-        List<PlayerDTOForPublic> playerList =  roomService
-                .getRoom(roomUuid)
-                .getPlayers()
-                .stream()
-                .map(PlayerDTOForPublic::new)
-                .toList();
-
-        this.template.convertAndSend(
-            "/rooms/" + roomUuid + "/lobby-events",
-            new Message("roome : " + roomUuid + ", user : " + userUuid)
-        );
-        //return new Message("room : " + roomUuid + ", user : " + userUuid);
     }
+
+    @MessageMapping("/rooms/{roomUuid}/bet")
+    public void bet(
+            @DestinationVariable UUID roomUuid,
+            @Payload PlayerBetEvent playerBetEvent
+    ) {
+
+        // TODO: check user identity & room existence
+
+        Room room = roomService.getRoom(roomUuid);
+
+        BetPlayer betPlayer = new BetPlayer();
+        betPlayer.setBetAmount(playerBetEvent.bet);
+        betPlayer.setPlayerId(playerBetEvent.userUuid);
+
+        gameService.receiveBet(room, betPlayer);
+    }
+
+
+    @MessageMapping("/rooms/{roomUuid}/play-card")
+    public void playCard(
+            @DestinationVariable UUID roomUuid,
+            @Payload PlayerSentCardEvent playerSentCardEvent
+    ) {
+
+        // TODO: check user identity & room existence
+
+        Room room = roomService.getRoom(roomUuid);
+        CardPlayer cardPlayer = new CardPlayer();
+        cardPlayer.setPlayerId(playerSentCardEvent.userUuid);
+        cardPlayer.setCardId(playerSentCardEvent.card);
+
+
+        gameService.receiveCard(room, cardPlayer);
+
+    }
+
 }
 

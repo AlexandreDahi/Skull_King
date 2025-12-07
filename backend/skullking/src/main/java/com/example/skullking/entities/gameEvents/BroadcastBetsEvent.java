@@ -4,7 +4,12 @@ import java.util.List;
 
 public class BroadcastBetsEvent {
 
-    public static GameEvent type = GameEvent.BROADCAST_BETS;
+    public String type;
+    public List<Integer> betList;
 
-    public List<List<Integer>> betList;
+
+    public BroadcastBetsEvent(List<Integer> betList) {
+        this.type = "BETTING_PHASE_END";
+        this.betList = betList;
+    }
 }

@@ -55,7 +55,7 @@ export class WebSocketService {
         });
 
         this.publicChannel = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}`
+            destination: `/topic/rooms/${this.roomUuid}/general`
         })
 
         this.privateChannel = this.rxStomp.watch({
@@ -103,6 +103,19 @@ export class WebSocketService {
         this.rxStomp.publish({
             destination: `/app/rooms/${this.roomUuid}/lobby`,
             body: JSON.stringify(message)
+        })
+    }
+
+
+    sendStartGameSignal() {
+        console.log("📤 Envoi du signal de début de partie au serveur.")
+
+        this.rxStomp.publish({
+            destination: `/app/rooms/${this.roomUuid}/start-game`,
+            body: JSON.stringify({
+                userUuid: this.playerUuid,
+                userToken: this.playerToken,
+            })
         })
     }
 }

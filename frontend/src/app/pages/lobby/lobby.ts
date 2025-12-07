@@ -98,6 +98,7 @@ export class Lobby implements OnInit, OnDestroy {
     private handleLobbyMessage(data: any) {
         if (this.isDestroyed) return;
         
+        console.log("Données reçues : ", data)
         console.log('📥 Type de message WebSocket:', data.type);
         
         switch(data.type) {
@@ -114,7 +115,7 @@ export class Lobby implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
                 break;
                 
-            case 'GAME_STARTED':
+            case 'GAME_START_EVENT':
                 console.log('🎮 PARTIE LANCÉE ! Redirection vers /game/' + this.roomUuid);
                 this.router.navigate(['/game', this.roomUuid]);
                 break;
@@ -149,9 +150,11 @@ export class Lobby implements OnInit, OnDestroy {
         
         console.log('🚀 Envoi du signal START_GAME au serveur...');
         
-        this.wsService.sendLobbyMessage({
+        /*this.wsService.sendLobbyMessage({
             type: 'START_GAME'
-        });
+        });*/
+
+        this.wsService.sendStartGameSignal()
         
         console.log('⏳ En attente de la confirmation du serveur...');
     }

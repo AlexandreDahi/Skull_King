@@ -4,7 +4,9 @@ import java.util.List;
 
 public class SendHandEvent {
 
-    public static GameEvent type = GameEvent.SEND_HAND;
+    public List<Integer> hand;
 
-    public List<Integer> cardList;
+    public SendHandEvent(List<Integer> hand) {
+        this.hand = hand;
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.skullking.entities;
 
+import com.example.skullking.entities.game.GameStateMachine;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,11 +15,15 @@ public class Room {
     private List<Player> guestsList;
 
 
+    private GameStateMachine gameStateMachine;
+
+
     public Room() {
         this.uuid = UUID.randomUUID();
         this.host = new Player();
         this.guestsList = new ArrayList<>();
         this.name = "";
+        this.gameStateMachine = new GameStateMachine();
     }
 
     public UUID getUuid() {
@@ -65,5 +71,10 @@ public class Room {
 
     public String getName() {
         return name;
+    }
+
+
+    public GameStateMachine getGameStateMachine() {
+        return gameStateMachine;
     }
 }
