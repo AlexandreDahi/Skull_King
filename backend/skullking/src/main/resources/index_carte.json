@@ -4,6 +4,7 @@
         "name": "1 violet",
         "image":"/images/cards/violet/violet_1.jpg",
         "id": 1,
+        "number": 1,
         "suite": "violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 1"
@@ -12,6 +13,7 @@
         "name": "2 violet",
         "image":"/images/cards/violet/violet_2.jpg",
         "id": 2,
+        "number": 2,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 2"
@@ -20,6 +22,7 @@
         "name": "3 violet",
         "image":"/images/cards/violet/violet_3.jpg",
         "id": 3,
+        "number": 3,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 3"
@@ -28,6 +31,7 @@
         "name": "4 violet",
         "image":"/images/cards/violet/violet_4.jpg",
         "id": 4,
+        "number": 4,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 4"
@@ -36,6 +40,7 @@
         "name": "5 violet",
         "image":"/images/cards/violet/violet_5.jpg",
         "id": 5,
+        "number": 5,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 5"
@@ -44,6 +49,7 @@
         "name": "6 violet",
         "image":"/images/cards/violet/violet_6.jpg",
         "id": 6,
+        "number": 6,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 6"
@@ -52,6 +58,7 @@
         "name": "7 violet",
         "image":"/images/cards/violet/violet_7.jpg",
         "id": 7,
+        "number": 7,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 7"
@@ -60,6 +67,7 @@
         "name": "8 violet",
         "image":"/images/cards/violet/violet_8.jpg",
         "id": 8,
+        "number": 8,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 8"
@@ -68,6 +76,7 @@
         "name": "9 violet",
         "image":"/images/cards/violet/violet_9.jpg",
         "id": 9,
+        "number": 9,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 9"
@@ -76,6 +85,7 @@
         "name": "10 violet",
         "image":"/images/cards/violet/violet_10.jpg",
         "id": 10,
+        "number": 10,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 10"
@@ -84,6 +94,7 @@
         "name": "11 violet",
         "image":"/images/cards/violet/violet_11.jpg",
         "id": 11,
+        "number": 11,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 11"
@@ -92,6 +103,7 @@
         "name": "12 violet",
         "image":"/images/cards/violet/violet_12.jpg",
         "id": 12,
+        "number": 12,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 12"
@@ -100,6 +112,7 @@
         "name": "13 violet",
         "image":"/images/cards/violet/violet_13.jpg",
         "id": 13,
+        "number": 13,
         "suite":"violet",
         "type": ["violet"],
         "description": "Carte de couleur violet avec une valeur de 13"
@@ -108,14 +121,16 @@
         "name": "14 violet",
         "image":"/images/cards/violet/violet_14.jpg",
         "id": 14,
+        "number": 14,
         "suite":"violet",
-        "type": ["violet","14"],
+        "type": ["violet","quatorze"],
         "description": "Carte de couleur violet avec une valeur de 14"
         },
         {
         "name":"1 vert",
         "image":"/images/cards/vert/vert_1.jpg",
         "id": 15,
+        "number": 1,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 1"
@@ -124,6 +139,7 @@
         "name":"2 vert",
         "image":"/images/cards/vert/vert_2.jpg",
         "id": 16,
+        "number": 2,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 2"
@@ -132,6 +148,7 @@
         "name":"3 vert",
         "image":"/images/cards/vert/vert_3.jpg",
         "id": 17,
+        "number": 3,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 3"
@@ -140,6 +157,7 @@
         "name":"4 vert",
         "image":"/images/cards/vert/vert_4.jpg",
         "id": 18,
+        "number": 4,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 4"
@@ -148,6 +166,7 @@
         "name":"5 vert",
         "image":"/images/cards/vert/vert_5.jpg",
         "id": 19,
+        "number": 5,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 5"
@@ -156,6 +175,7 @@
         "name":"6 vert",
         "image":"/images/cards/vert/vert_6.jpg",
         "id": 20,
+        "number": 6,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 6"
@@ -164,6 +184,7 @@
         "name":"7 vert",
         "image":"/images/cards/vert/vert_7.jpg",
         "id": 21,
+        "number": 7,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 7"
@@ -172,6 +193,7 @@
         "name":"8 vert",
         "image":"/images/cards/vert/vert_8.jpg",
         "id": 22,
+        "number": 8,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 8"
@@ -180,6 +202,7 @@
         "name":"9 vert",
         "image":"/images/cards/vert/vert_9.jpg",
         "id": 23,
+        "number": 9,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 9"
@@ -188,6 +211,7 @@
         "name":"10 vert",
         "image":"/images/cards/vert/vert_10.jpg",
         "id": 24,
+        "number": 10,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 10"
@@ -196,6 +220,7 @@
         "name":"11 vert",
         "image":"/images/cards/vert/vert_11.jpg",
         "id": 25,
+        "number": 11,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 11"
@@ -204,6 +229,7 @@
         "name":"12 vert",
         "image":"/images/cards/vert/vert_12.jpg",
         "id": 26,
+        "number": 12,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 12"
@@ -212,6 +238,7 @@
         "name":"13 vert",
         "image":"/images/cards/vert/vert_13.jpg",
         "id": 27,
+        "number": 13,
         "suite":"vert",
         "type": ["vert"],
         "description": "Carte de couleur vert avec une valeur de 13"
@@ -220,14 +247,16 @@
         "name":"14 vert",
         "image":"/images/cards/vert/vert_14.jpg",
         "id": 28,
+        "number": 14,
         "suite":"vert",
-        "type": ["vert","14"],
+        "type": ["vert","quatorze"],
         "description": "Carte de couleur vert avec une valeur de 14"
         },
         {
         "name":"1 noir",
         "image":"/images/cards/noir/noir_1.jpg",
         "id": 29,
+        "number": 1,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 1"
@@ -236,6 +265,7 @@
         "name":"2 noir",
         "image":"/images/cards/noir/noir_2.jpg",
         "id": 30,
+        "number": 2,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 2"
@@ -244,6 +274,7 @@
         "name":"3 noir",
         "image":"/images/cards/noir/noir_3.jpg",
         "id": 31,
+        "number": 3,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 3"
@@ -252,6 +283,7 @@
         "name":"4 noir",
         "image":"/images/cards/noir/noir_4.jpg",
         "id": 32,
+        "number": 4,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 4"
@@ -260,6 +292,7 @@
         "name":"5 noir",
         "image":"/images/cards/noir/noir_5.jpg",
         "id": 33,
+        "number": 5,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 5"
@@ -268,6 +301,7 @@
         "name":"6 noir",
         "image":"/images/cards/noir/noir_6.jpg",
         "id": 34,
+        "number": 6,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 6"
@@ -276,6 +310,7 @@
         "name":"7 noir",
         "image":"/images/cards/noir/noir_7.jpg",
         "id": 35,
+        "number": 7,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 7"
@@ -284,6 +319,7 @@
         "name":"8 noir",
         "image":"/images/cards/noir/noir_8.jpg",
         "id": 36,
+        "number": 8,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 8"
@@ -292,6 +328,7 @@
         "name":"9 noir",
         "image":"/images/cards/noir/noir_9.jpg",
         "id": 37,
+        "number": 9,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 9"
@@ -300,6 +337,7 @@
         "name":"10 noir",
         "image":"/images/cards/noir/noir_10.jpg",
         "id": 38,
+        "number": 10,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 10"
@@ -308,6 +346,7 @@
         "name":"11 noir",
         "image":"/images/cards/noir/noir_11.jpg",
         "id": 39,
+        "number": 11,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 11"
@@ -316,6 +355,7 @@
         "name":"12 noir",
         "image":"/images/cards/noir/noir_12.jpg",
         "id": 40,
+        "number": 12,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 12"
@@ -324,6 +364,7 @@
         "name":"13 noir",
         "image":"/images/cards/noir/noir_13.jpg",
         "id": 41,
+        "number": 13,
         "suite":"noir",
         "type": ["noir"],
         "description": "Carte de couleur noir avec une valeur de 13"
@@ -332,14 +373,16 @@
         "name":"14 noir",
         "image":"/images/cards/noir/noir_14.jpg",
         "id": 42,
+        "number": 14,
         "suite":"noir",
-        "type": ["noir","14"],
+        "type": ["noir","quatorze"],
         "description": "Carte de couleur noir avec une valeur de 14"
         },
         {
         "name":"1 jaune",
         "image":"/images/cards/jaune/jaune_1.jpg",
         "id": 43,
+        "number": 1,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 1"
@@ -348,6 +391,7 @@
         "name":"2 jaune",
         "image":"/images/cards/jaune/jaune_2.jpg",
         "id": 44,
+        "number": 2,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 2"
@@ -356,6 +400,7 @@
         "name":"3 jaune",
         "image":"/images/cards/jaune/jaune_3.jpg",
         "id": 45,
+        "number": 3,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 3"
@@ -364,6 +409,7 @@
         "name":"4 jaune",
         "image":"/images/cards/jaune/jaune_4.jpg",
         "id": 46,
+        "number": 4,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 4"
@@ -372,6 +418,7 @@
         "name":"5 jaune",
         "image":"/images/cards/jaune/jaune_5.jpg",
         "id": 47,
+        "number": 5,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 5"
@@ -380,6 +427,7 @@
         "name":"6 jaune",
         "image":"/images/cards/jaune/jaune_6.jpg",
         "id": 48,
+        "number": 6,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 6"
@@ -388,6 +436,7 @@
         "name":"7 jaune",
         "image":"/images/cards/jaune/jaune_7.jpg",
         "id": 49,
+        "number": 7,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 7"
@@ -396,6 +445,7 @@
         "name":"8 jaune",
         "image":"/images/cards/jaune/jaune_8.jpg",
         "id": 50,
+        "number": 8,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 8"
@@ -404,6 +454,7 @@
         "name":"9 jaune",
         "image":"/images/cards/jaune/jaune_9.jpg",
         "id": 51,
+        "number": 9,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 9"
@@ -412,6 +463,7 @@
         "name":"10 jaune",
         "image":"/images/cards/jaune/jaune_10.jpg",
         "id": 52,
+        "number": 10,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 10"
@@ -420,6 +472,7 @@
         "name":"11 jaune",
         "image":"/images/cards/jaune/jaune_11.jpg",
         "id": 53,
+        "number": 11,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 11"
@@ -428,6 +481,7 @@
         "name":"12 jaune",
         "image":"/images/cards/jaune/jaune_12.jpg",
         "id": 54,
+        "number": 12,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 12"
@@ -436,6 +490,7 @@
         "name":"13 jaune",
         "image":"/images/cards/jaune/jaune_13.jpg",
         "id": 55,
+        "number": 13,
         "suite":"jaune",
         "type": ["jaune"],
         "description": "Carte de couleur jaune avec une valeur de 13"
@@ -444,14 +499,16 @@
         "name":"14 jaune",
         "image":"/images/cards/jaune/jaune_14.jpg",
         "id": 56,
+        "number": 14,
         "suite":"jaune",
-        "type": ["jaune","14"],
+        "type": ["jaune","quatorze"],
         "description": "Carte de couleur jaune avec une valeur de 14"
         },
         {
         "name": "Skull King",
         "image": "/images/cards/spe/skull_king.jpg",
         "id": 57,
+
         "suite":"special",
         "type":["special", "skullKing"],
         "description": "Le Skull King permet de gagner contre toutes les autres cartes, sauf les sirènes qui peuvent le capturer. Le Skull King remporte 30 point par capture de pirates"

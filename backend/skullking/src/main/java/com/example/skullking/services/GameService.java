@@ -4,11 +4,10 @@ package com.example.skullking.services;
 import com.example.skullking.entities.Player;
 import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.Room;
-import com.example.skullking.entities.game.BetPlayer;
-import com.example.skullking.entities.game.CardPlayer;
+import com.example.skullking.entities.game.dto.BetPlayer;
+import com.example.skullking.entities.game.dto.CardPlayer;
 
 import com.example.skullking.entities.game.GamePhase;
-import com.example.skullking.entities.game.GameState;
 import com.example.skullking.entities.gameEvents.*;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,5 @@
 package com.example.skullking.entities.game.cards;
 
 public enum CardType {
-    yellow, green, purple, black, special,pirate,mermaid,skullKing,doNotDecideSuit,
+    jaune, vert, violet, noir, special, pirate, mermaid, skullKing, doNotDecideSuit, kraken, whale,quatorze;
 }

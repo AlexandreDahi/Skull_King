@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 public class DeckBuilder {
@@ -26,10 +29,13 @@ public class DeckBuilder {
                     String name = cardNode.get("name").asText();
                     String image = cardNode.get("image").asText();
                     int id = cardNode.get("id").asInt();
-                    String type = cardNode.get("type").asText();
+                    JsonNode typeNode = cardNode.get("type");
+                    List<CardType> types = StreamSupport.stream(typeNode.spliterator(), false)
+                            .map(node -> CardType.valueOf(node.asText()))
+                            .toList();
+                    String suite = cardNode.get("suite").asText();
                     String description = cardNode.get("description").asText();
-
-                    deck.put(id,new Card(id,type));
+                    deck.put(id,new Card(id,types,CardSuite.valueOf(suite)));
                 }
             }
             return deck;

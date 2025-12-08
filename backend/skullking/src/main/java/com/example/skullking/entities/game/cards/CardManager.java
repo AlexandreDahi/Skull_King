@@ -1,11 +1,12 @@
 package com.example.skullking.entities.game.cards;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class CardManager {
-    Deck deck;
-    Map<UUID,Hand> playerHands;
+    Deck deck = new Deck();
+    Map<UUID,Hand> playerHands = new HashMap<>();
 
 
     public boolean drawCard(UUID playerId){
@@ -14,17 +15,16 @@ public class CardManager {
             return false;
         }
         else if (!playerHands.containsKey(playerId)){
-            return false;
+            Hand hand = new Hand();
+            this.playerHands.put(playerId, hand);
         }
-        else{
             Hand hand = this.playerHands.get(playerId);
-            hand.addCard(removedCard);
-            return true;
-        }
+            return hand.addCard(removedCard);
+
     }
 
     public boolean drawHand(UUID playerId, int numberOfCards){
-        if (playerHands.containsKey(playerId) && numberOfCards <= deck.cards.size()){
+        if (numberOfCards <= deck.cards.size()){
             for (int i=0  ; i < numberOfCards ; i++){
                 this.drawCard(playerId);
             }
@@ -42,11 +42,7 @@ public class CardManager {
     }
 
     public Hand getPlayerHand(UUID playerId){
-        if (!playerHands.containsKey(playerId)){
-            return null;
-        } else  {
-            return playerHands.get(playerId);
-        }
+        return playerHands.getOrDefault(playerId, null);
     }
 
 }
