@@ -9,7 +9,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -43,25 +46,35 @@ public class GameStateMachine {
     public boolean receiveBetPlayer(BetPlayer betPlayer) {
         if (this.getCurrentPhase() != GamePhase.Betting) {
             return false;
+        if (this.getCurrentPhase() != GamePhase.Betting) {
+            return false;
         }
+        boolean recordBetResult = gameState.recordBet(betPlayer.getPlayerId(), betPlayer.getBetAmount());
+        if ( this.isPhaseFinished()){
         boolean recordBetResult = gameState.recordBet(betPlayer.getPlayerId(), betPlayer.getBetAmount());
         if ( this.isPhaseFinished()){
             this.endBettingPhase();
             this.cancelTimer();
+            this.cancelTimer();
         }
         //broadcastGameState(" placed a bet of " + betPlayer);
+        return recordBetResult;
         return recordBetResult;
     }
 
     public boolean receiveCardPlayer(CardPlayer cardPlayer) {
         if (this.getCurrentPhase() != GamePhase.Playing) {
+        if (this.getCurrentPhase() != GamePhase.Playing) {
             throw new IllegalStateException("Not in playing phase!");
         }
+
 
         gameState.recordCardPlayed(cardPlayer.getPlayerId(), cardPlayer.getCardId());
 
         if( this.isPhaseFinished()){
+        if( this.isPhaseFinished()){
             this.endPlayingPhase();
+            this.cancelTimer();
             this.cancelTimer();
         }
         //broadcastGameState(" placed a bet of " + GamePhase);
@@ -72,6 +85,8 @@ public class GameStateMachine {
 
     private boolean startBettingPhase(){
         //Broadcast that i need bets
+        this.setCurrentPhase(GamePhase.Betting);
+        this.schedulePhaseTimeout(GamePhase.Betting,this.BETTING_ROUND_MAX_DURATION, this::endBettingPhase);
         this.setCurrentPhase(GamePhase.Betting);
         this.schedulePhaseTimeout(GamePhase.Betting,this.BETTING_ROUND_MAX_DURATION, this::endBettingPhase);
         return true;
@@ -86,13 +101,19 @@ public class GameStateMachine {
         this.setCurrentPhase(GamePhase.Playing);
         this.startPlayerPlayingPhase();
         return this.gameState.givePlayersCard();
+        this.setCurrentPhase(GamePhase.Playing);
+        this.startPlayerPlayingPhase();
+        return this.gameState.givePlayersCard();
     }
 
     private boolean startPlayerPlayingPhase(){
         this.schedulePhaseTimeout(GamePhase.Playing,this.BETTING_ROUND_MAX_DURATION, this::endPlayerPlayingPhase);
+        this.schedulePhaseTimeout(GamePhase.Playing,this.BETTING_ROUND_MAX_DURATION, this::endPlayerPlayingPhase);
         return true;
     }
     private boolean endPlayerPlayingPhase(){
+        if (this.isPhaseFinished()){
+            this.endPlayingPhase();
         if (this.isPhaseFinished()){
             this.endPlayingPhase();
             this.endPlayingPhase();
