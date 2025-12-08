@@ -24,7 +24,7 @@ public class GameState {
     Map<UUID,Player> players ;
     int NUMBER_OF_ROUND = 10;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    //private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> scheduledTask;
 
     public boolean startGame(List<Player> players) {
@@ -51,13 +51,13 @@ public class GameState {
         return false;
     }
 
-    public void schedulePhaseTimeout(GamePhase phase, int seconds, Runnable onTimeOut) {
+    /*public void schedulePhaseTimeout(GamePhase phase, int seconds, Runnable onTimeOut) {
         this.scheduledTask =  scheduler.schedule(() -> {
             if (this.currentPhase == phase) {
                 onTimeOut.run();
             }
         }, seconds, TimeUnit.SECONDS);
-    }
+    }*/
 
     public void cancelTimer(){
         if(this.scheduledTask != null) {
@@ -84,6 +84,27 @@ public class GameState {
 
     public void endPlayingPhase() {
         
+    }
+
+    public boolean isRoundFinished() {
+
+        return false;
+    }
+
+    public void setScheduledTask(ScheduledFuture<?> scheduledTask) {
+        this.scheduledTask = scheduledTask;
+    }
+
+    public void cancelScheduledTask() {
+
+        if (this.scheduledTask != null){
+            this.scheduledTask.cancel(true);
+            this.scheduledTask = null;
+        }
+    }
+
+    public boolean hasEveryoneBet() {
+        return players.size() == bets.size();
     }
 }
 

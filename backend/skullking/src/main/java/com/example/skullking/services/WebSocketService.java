@@ -4,6 +4,7 @@ package com.example.skullking.services;
 import com.example.skullking.entities.Player;
 import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.Room;
+import com.example.skullking.entities.game.BetPlayer;
 import com.example.skullking.entities.gameEvents.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -61,7 +62,7 @@ public class WebSocketService {
         );
     }
 
-    public void broadcastBettingPhaseEnd(Room room, List<Integer> betsList) {
+    public void broadcastBettingPhaseEnd(Room room, List<BetPlayer> betsList) {
 
         webSocket.convertAndSend(
                 this.getGeneralChannel(room.getUuid()),
