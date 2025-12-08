@@ -29,14 +29,16 @@ public class RoomController {
 
     @Operation(summary = "Create a new room and returns the credentials for the host to join")
     @PostMapping
-    public ResponseEntity<Room> createRoom(@Valid @RequestBody RoomFormCreate roomFormCreate) {
+    public ResponseEntity<RoomDTOForHost> createRoom(@Valid @RequestBody RoomFormCreate roomFormCreate) {
 
         String roomName = roomFormCreate.roomName;
         String hostName = roomFormCreate.hostName;
 
         Room room = this.roomService.createRoom(roomName, hostName);
 
-        return ResponseEntity.status(201).body(room);
+        RoomDTOForHost roomDTOForHost = new RoomDTOForHost(room);
+
+        return ResponseEntity.status(201).body(roomDTOForHost);
     }
 
     @Operation(summary = "Return all rooms")

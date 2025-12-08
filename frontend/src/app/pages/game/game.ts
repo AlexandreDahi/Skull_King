@@ -193,7 +193,8 @@ export class Game implements OnInit, OnDestroy {
       next: (message) => {
         if (this.isDestroyed) return;
         
-        console.log('📢 Message public reçu:', message.body);
+        console.log('📢 Message public reçu:', message);
+        console.log("Corps du message : ", message.body)
         try {
           const data = JSON.parse(message.body);
           this.handleGameMessage(data);
@@ -218,7 +219,11 @@ export class Game implements OnInit, OnDestroy {
           this.gameState = data.gameState;
         }
         break;
-
+      
+      case 'BETTING_PHASE_START':
+        console.log("Il est temps de faire un pari");
+        
+        break;
       case 'PLAYER_BET':
         console.log('💰 Pari reçu:', data.playerUuid, data.bet);
         const player = this.players.find(p => p.uuid === data.playerUuid);
