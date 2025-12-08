@@ -19,7 +19,7 @@
           <div *ngFor="let player of players; let i = index" 
                class="flex items-center justify-between p-4 rounded-xl bg-white/10 border border-white/20">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">{{ i + 1 }}</span>
+              <span class="text-2xl font-bold">#{{ i + 1 }}</span>
               <span class="text-lg font-semibold">{{ player.name }}</span>
             </div>
             <span *ngIf="player.isAdmin" 
