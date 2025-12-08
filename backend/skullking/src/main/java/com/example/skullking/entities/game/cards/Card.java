@@ -7,9 +7,12 @@ public class Card {
     int id;
     List<CardType> cardTypes;
     CardSuite suite;
+    int number;
 
-    public Card(int id, String type) {
+    public Card(int id, List<CardType> cardTypes,CardSuite suite) {
         this.id = id;
+        this.cardTypes = cardTypes;
+        this.suite = suite;
     }
 
     public int getId() {
@@ -22,6 +25,10 @@ public class Card {
 
     public CardSuite getSuite() {
         return suite;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public boolean isFlee() {

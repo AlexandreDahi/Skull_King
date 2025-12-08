@@ -3,29 +3,24 @@ package com.example.skullking.entities.game;
 import com.example.skullking.entities.Player;
 import com.example.skullking.entities.game.cards.Card;
 import com.example.skullking.entities.game.cards.CardManager;
+import com.example.skullking.entities.game.cards.Hand;
+import com.example.skullking.entities.game.cards.TrickResult;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class GameState {
 
-    private GamePhase currentPhase;
+
     private int currentRound = 1;
     private final Map<Player, Integer> bets = new HashMap<>();
-    private final Map<Player, Card> cardPlayed = new LinkedHashMap<>();
+    private final LinkedHashMap<Player, Card> cardPlayed = new LinkedHashMap<>();
     private final Map<Player,Integer> roundWon = new HashMap<>();
-
+    private final Map<Player,Integer> points = new HashMap<>();
     private final CardManager cardManager = new CardManager();
     private final GameLogic gameLogic = new GameLogic();
     Map<UUID,Player> players ;
-    int NUMBER_OF_ROUND = 10;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture<?> scheduledTask;
 
     public boolean startGame(List<Player> players) {
         this.players = players.stream()
@@ -33,7 +28,7 @@ public class GameState {
         return true;
     }
 
-    public  boolean recordCardPlayed(UUID playerId, int uuidCardPlayed){
+    public boolean recordCardPlayed(UUID playerId, int uuidCardPlayed){
         Card cardChosen = this.cardManager.playCard(playerId, uuidCardPlayed);
         List<Card> cardPlayed = new ArrayList<>(this.cardPlayed.values());
         if (cardPlayed == null){
@@ -47,43 +42,29 @@ public class GameState {
     }
 
     public boolean recordBet(UUID playerId, Integer bet){
-        this.bets.put(players.get(playerId),bet);
+        if (players.containsKey(playerId)){
+            this.bets.put(players.get(playerId),bet);
+            return true;
+        }
         return false;
     }
 
-    public void schedulePhaseTimeout(GamePhase phase, int seconds, Runnable onTimeOut) {
-        this.scheduledTask =  scheduler.schedule(() -> {
-            if (this.currentPhase == phase) {
-                onTimeOut.run();
+
+
+    public boolean givePlayersCard() {
+        for (Map.Entry<UUID,Player> players : players.entrySet()){
+            cardManager.drawHand(players.getKey(),10);
+            Hand hand = cardManager.getPlayerHand(players.getKey());
+            if (hand == null){
+                return false;
             }
-        }, seconds, TimeUnit.SECONDS);
-    }
-
-    public void cancelTimer(){
-        if(this.scheduledTask != null) {
-            this.scheduledTask.cancel(false);
+            // distrubute hands
         }
+        return true;
     }
 
+    public boolean calculateScores() {
 
-
-    public boolean isPhaseFinished(){
-        if (this.currentPhase.equals(GamePhase.Betting)){
-            return players.size() == bets.size();
-        } else if (this.currentPhase.equals(GamePhase.Playing)) {
-            return players.size() == cardPlayed.size();
-        }
-        return false;
-    }
-
-    public GamePhase getCurrentPhase() { return this.currentPhase; }
-    public void setCurrentPhase(GamePhase phase) { this.currentPhase = phase; }
-    public void nextRound() { this.currentRound++; }
-    public boolean isGameOver() {return currentRound > 10; }
-
-
-    public void endPlayingPhase() {
-        
     }
 }
 

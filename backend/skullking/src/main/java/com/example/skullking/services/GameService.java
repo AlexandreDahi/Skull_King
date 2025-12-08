@@ -1,9 +1,8 @@
 package com.example.skullking.services;
 
 import com.example.skullking.entities.Player;
-import com.example.skullking.entities.game.BetPlayer;
-import com.example.skullking.entities.game.CardPlayer;
-import com.example.skullking.entities.game.GameState;
+import com.example.skullking.entities.game.dto.BetPlayer;
+import com.example.skullking.entities.game.dto.CardPlayer;
 import com.example.skullking.entities.game.GameStateMachine;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,11 @@ public class GameService {
 
     public boolean startGame(UUID roomUuid, List<Player> players){
         if (this.gameStateMap.containsKey(roomUuid)){
-            return this.gameStateMap.get(roomUuid).startGame(players);
+            return false;
         }
-        return false;
+        GameStateMachine gameStateMachine = new GameStateMachine();
+        this.gameStateMap.put(roomUuid,gameStateMachine);
+        return gameStateMachine.startGame(players);
     }
 
     public boolean receiveBet(UUID roomUuid, BetPlayer betPlayer){

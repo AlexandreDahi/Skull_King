@@ -37,6 +37,13 @@ public class Player {
         this.roundResultsList = new ArrayList<>();
         this.formerGamesResults = new ArrayList<>();
     }
+    public Player(String name) {
+        this.name = name;
+        this.uuid = UUID.randomUUID();
+        this.token = generateRandomToken();
+        this.roundResultsList = new ArrayList<>();
+        this.formerGamesResults = new ArrayList<>();
+    }
 
     public UUID getUuid() {
         return uuid;
