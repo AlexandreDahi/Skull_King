@@ -397,28 +397,28 @@
         "image": "/images/cards/spe/skull_king.jpg",
         "id": 57,
         "type": "special",
-        "description": "Le Skull King permet de gagner contre toutes les autres cartes, sauf les sirènes qui peuvent le capturer. Le Skull King remporte 30 point par capture de pirates"
+        "description": "Le Skull King permet de gagner contre toutes les autres cartes, sauf les sirènes qui peuvent le capturer.\nLe Skull King remporte 30 point par capture de pirates"
         },
         {
         "name": "Sirène 1",
         "image": "/images/cards/spe/sirene_1.jpg",
         "id": 58,
         "type": "special",
-        "description": "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
+        "description": "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer.\nLa Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
         },
         {
         "name": "Sirène 2",
         "image": "/images/cards/spe/sirene_2.jpg",
         "id": 59,
         "type": "special",
-        "description":  "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer. La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
+        "description":  "La Sirène remporte contre toutes les cartes à l'excetptions des pirates qui peuvent la capturer.\n La Sirène remporte 40 point pour lacapture du Skull King et gagne si au sein d'un mêm tour il y a pirate, Skull King et Sirène."
         },
         {
         "name": "Pirate Rascal le flambeur",
         "image": "/images/cards/spe/pirate_rascal.jpg",
         "id": 60,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de parier 0, 10 ou 20 point supplémentaire en cas de victoire. Soustraits en cas de défaite."
         },
         {
@@ -426,7 +426,7 @@
         "image": "/images/cards/spe/pirate_juanita.jpg",
         "id": 61,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de regarder les cartes de la pioche (les cartes non distrivuées)"
         },
         {
@@ -434,7 +434,7 @@
         "image": "/images/cards/spe/pirate_rosie.jpg",
         "id": 62,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de choisir qui commencera le tour suivant."
         },
         {
@@ -442,7 +442,7 @@
         "image": "/images/cards/spe/pirate_will.jpg",
         "id": 63,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de prendre les deux premières cartes de la poche et de les échanger avec les cartes de sa main."
         },
         {
@@ -450,7 +450,7 @@
         "image": "/images/cards/spe/pirate_harry.jpg",
         "id": 64,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de modifier son nombre de pari de +1, -1 ou rien."
         },
         {
@@ -458,7 +458,7 @@
         "image": "/images/cards/spe/pirate_fuite_tigresse.jpg",
         "id": 65,
         "type": "special",
-        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King. Le Pirate remporte 20 point par capture de Sirène. Chaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
+        "description": "Le Pirate remporte contre toutes les cartes à l'excetptions du Skull King.\nLe Pirate remporte 20 point par capture de Sirène.\nChaque pirate possède un pouvoir unique qu'il peut utiliser en cas de victoire.",
         "pouvoir":  "Permet de choisir de joueur un pirate ou une fuite."
         },
         {
@@ -466,28 +466,28 @@
         "image": "/images/cards/spe/fuite.jpg",
         "id": 66,
         "type": "fuite",
-        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 2",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 67,
         "type": "fuite",
-        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 3",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 68,
         "type": "fuite",
-        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
         "name":"fuite 4",
         "image": "/images/cards/spe/fuite.jpg",
         "id": 69,
         "type": "fuite",
-        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours. Aucun point n'est gagné ou perdu."
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
         "name":"butin 1",
@@ -508,14 +508,14 @@
         "image": "/images/cards/spe/baleine.jpg",
         "id": 72,
         "type": "special",
-        "description": "La baleine annule les effets des cartes spéciales jouées dans le même tour. La première carte jouer de plus haute valeur remporte le tour. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        "description": "La baleine annule les effets des cartes spéciales jouées dans le même tour.\nLa première carte jouer de plus haute valeur remporte le tour.\nEn cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         },
         {
         "name":"kraken",
         "image": "/images/cards/spe/kraken.jpg",
         "id": 73,
         "type": "special",
-        "description":"Avec le kraken, aucun joueur ne remporte le plis. En cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
+        "description":"Avec le kraken, aucun joueur ne remporte le plis.\nEn cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         }
 
     ]

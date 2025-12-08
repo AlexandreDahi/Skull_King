@@ -59,7 +59,7 @@ export class WebSocketService {
         })
 
         this.privateChannel = this.rxStomp.watch({
-            destination: `/user/queue/rooms/${this.roomUuid}`
+            destination: `/topic/rooms/${this.roomUuid}/${this.playerUuid}/${this.playerToken}`
         })
 
         // ✅ Ajouter /topic pour correspondre au backend
@@ -76,6 +76,8 @@ export class WebSocketService {
     getPLayerUuid() {
         return this.playerUuid
     }
+
+
 
     getPublicChannel() {
         return this.publicChannel

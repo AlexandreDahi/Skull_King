@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { StoreService } from '../../../../service/store/store.service';
+import { WebSocketService } from '../../../../service/websocket/websocket.service';
 
 @Component({
   selector: 'app-place-bet',
@@ -14,6 +15,9 @@ import { StoreService } from '../../../../service/store/store.service';
   styleUrl: './place-bet.css',
 })
 export class PlaceBet {
+
+  private wsService = inject(WebSocketService) 
+  
   constructor(private storeService:StoreService){
     this.isBetPlaced = storeService.getIsBetPlaced()
     this.value = storeService.getBet();
@@ -39,6 +43,9 @@ export class PlaceBet {
     this.isBetPlaced = true;
     this.storeService.setIsBetPlaced(true);
     this.storeService.setBet(this.value);
+
+    // wsService.get
+
   }
 
   increase() {
