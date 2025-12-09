@@ -4,7 +4,8 @@ package com.example.skullking.services;
 import com.example.skullking.entities.Player;
 import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.Room;
-import com.example.skullking.entities.game.BetPlayer;
+import com.example.skullking.entities.game.cards.Hand;
+import com.example.skullking.entities.game.dto.BetPlayer;
 import com.example.skullking.entities.gameEvents.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -72,14 +74,12 @@ public class WebSocketService {
 
     public void broadcastCard(
             Room room,
-            Player currentPlayer,
-            Date eventEnd,
+            UUID currentPlayer,
             Integer lastCardPlayed
     ) {
-        webSocket.convertAndSend(
-                this.getGeneralChannel(room.getUuid()),
-                new BroadcastCardEvent(currentPlayer.getUuid(), eventEnd, lastCardPlayed)
-        );
+
     }
 
+    public void givePlayerHands(Room room, Map<UUID, Hand> hands) {
+    }
 }

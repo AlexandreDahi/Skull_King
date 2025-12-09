@@ -1,23 +1,24 @@
 package com.example.skullking.services;
 
 
-import com.example.skullking.entities.Player;
 import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.Room;
+import com.example.skullking.entities.game.cards.Hand;
 import com.example.skullking.entities.game.dto.BetPlayer;
 import com.example.skullking.entities.game.dto.CardPlayer;
 
 import com.example.skullking.entities.game.GamePhase;
-import com.example.skullking.entities.gameEvents.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -32,9 +33,7 @@ public class GameService {
     private TaskScheduler scheduler;
 
     public void startGame(Room room){
-
         room.getGameState().startGame(room.getPlayers());
-
 
         List<PlayerDTOForPublic> playersList = room.getPlayers()
                 .stream()
@@ -49,45 +48,38 @@ public class GameService {
     }
 
     public void receiveBet(Room room, BetPlayer betPlayer){
-
         if (room.getGameState().getCurrentPhase() != GamePhase.Betting) {
             return;
         }
 
         // check if player hasn't bet yet
-
         room.getGameState().recordBet(betPlayer.getPlayerId(), betPlayer.getBetAmount());
 
         if (room.getGameState().hasEveryoneBet()) {
             room.getGameState().cancelScheduledTask();
-            this.startPlayingPhase(room);
+            this.endBettingPhase(room);
         }
 
     }
 
     public void receiveCard(Room room, CardPlayer cardPlayer){
-
         if (room.getGameState().getCurrentPhase() != GamePhase.Playing) {
             return;
         }
+        try {
+            room.getGameState().recordCardPlayed(cardPlayer);
+            room.getGameState().cancelScheduledTask();
+            UUID currentPlayer = room.getGameState().getCurrentPlayer().getUuid();
+            wsService.broadcastCard(room,currentPlayer, cardPlayer.getCardId());
+            this.endPlayerPlayingPhase(room);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
 
-        // check if its the player's turn
-        // room.getGameState().getCurrentPlayer()
-
-
-        // check if the card est légale
-
-
-        // gameState.setCardForCurrentPlayer(card)
-
-
-        this.endPlayingPhase();
-
-        return room.getGameStateMachine().receiveCardPlayer(cardPlayer);
     }
 
     public void startBettingPhase(Room room){
-
         // Set state
         room.getGameState().setCurrentPhase(GamePhase.Betting);
 
@@ -104,17 +96,18 @@ public class GameService {
     }
 
     private void endBettingPhase(Room room){
+        List<BetPlayer> betList = room.getGameState().getBetList();
+        wsService.broadcastBettingPhaseEnd(room,betList);
         this.startPlayingPhase(room);
     }
 
     private void startPlayingPhase(Room room){
-
         // Set state
         room.getGameState().setCurrentPhase(GamePhase.Playing);
+        Map<UUID, Hand> hands = room.getGameState().givePlayersCard();
 
         // Broadcast
-        wsService.broadcastBettingPhaseEnd(room, );
-
+        wsService.givePlayerHands(room, hands);
 
         // Schedule next phase
         this.startPlayerPlayingPhase(room);
@@ -122,14 +115,10 @@ public class GameService {
     }
 
     private void startPlayerPlayingPhase(Room room){
-
-        // Set state
-        room.getGameState().schedulePhaseTimeout(GamePhase.Playing,this.BETTING_ROUND_MAX_DURATION, this::endPlayerPlayingPhase);
-
         // Broadcast
         Instant deadline = Instant.now().plusSeconds(30);
-
-        // Player p = gameState.getCurrentPlayer()
+        room.getGameState().setNextPlayer();
+        UUID playerId = room.getGameState().getCurrentPlayer().getUuid();
 
         // Schedule next phase
         this.scheduler.schedule(
@@ -139,41 +128,35 @@ public class GameService {
 
     }
     private void endPlayerPlayingPhase(Room room){
-
-        if (room.getGameState().isRoundFinished()){
-            this.endRound();
-            return;
+        if (room.getGameState().hasEveryonePlayedACard()){
+            this.endTrick(room);
         }
+        else{
+            startPlayerPlayingPhase(room);
+        }
+    }
 
+    private void startTrick(Room room){
         this.startPlayerPlayingPhase(room);
-
     }
-    private void startRound(){
 
-    }
-    private void endRound(){
-        if (isPlayingPhaseFinished()){
-            this.endPlayingPhase();
-            return;
+    private void endTrick(Room room){
+        if (room.getGameState().haveEveryCardsBeenPlayed()){
+            this.endPlayingPhase(room);
         }
-
-
-        // annoncer le gagnant du pli et celui qui commence
-        // nextRound...
-
-
+        else{
+            this.startTrick(room);
+        }
     }
-    private void endPlayingPhase(){
 
-        if (this.gameState.isGameOver()){
+    private void endPlayingPhase(Room room){
+        if (room.getGameState().isGameOver()){
             this.endGame();
             return;
         }
-
-        //this.gameState.nextPlayingPhase();
-        //this.startBettingPhase();
-
-
+        else{
+            this.startBettingPhase(room);
+        }
     }
 
     private boolean endGame(){

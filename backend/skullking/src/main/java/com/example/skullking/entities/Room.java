@@ -1,7 +1,6 @@
 package com.example.skullking.entities;
 
 import com.example.skullking.entities.game.GameState;
-import com.example.skullking.entities.game.GameStateMachine;
 
 import java.util.ArrayList;
 import java.util.List;

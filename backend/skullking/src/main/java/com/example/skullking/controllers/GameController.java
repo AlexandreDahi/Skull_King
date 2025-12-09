@@ -2,8 +2,9 @@ package com.example.skullking.controllers;
 
 
 import com.example.skullking.entities.Room;
-import com.example.skullking.entities.game.BetPlayer;
-import com.example.skullking.entities.game.CardPlayer;
+import com.example.skullking.entities.game.dto.BetPlayer;
+import com.example.skullking.entities.game.dto.CardPlayer;
+import com.example.skullking.entities.game.dto.BetPlayer;
 import com.example.skullking.entities.gameEvents.PlayerBetEvent;
 import com.example.skullking.entities.gameEvents.PlayerSentCardEvent;
 import com.example.skullking.entities.gameEvents.HostStartedGameEvent;
@@ -110,10 +111,7 @@ public class GameController {
         // TODO: check user identity & room existence
 
         Room room = roomService.getRoom(roomUuid);
-
-        BetPlayer betPlayer = new BetPlayer();
-        betPlayer.setBetAmount(playerBetEvent.bet);
-        betPlayer.setPlayerId(playerBetEvent.userUuid);
+        BetPlayer betPlayer = new BetPlayer(playerBetEvent.userUuid,playerBetEvent.bet);
 
         gameService.receiveBet(room, betPlayer);
     }
@@ -128,10 +126,7 @@ public class GameController {
         // TODO: check user identity & room existence
 
         Room room = roomService.getRoom(roomUuid);
-        CardPlayer cardPlayer = new CardPlayer();
-        cardPlayer.setPlayerId(playerSentCardEvent.userUuid);
-        cardPlayer.setCardId(playerSentCardEvent.card);
-
+        CardPlayer cardPlayer = new CardPlayer(playerSentCardEvent.card,playerSentCardEvent.userUuid);
 
         gameService.receiveCard(room, cardPlayer);
 

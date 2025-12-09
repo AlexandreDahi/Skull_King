@@ -1,6 +1,6 @@
 package com.example.skullking.entities.gameEvents;
 
-import com.example.skullking.entities.game.BetPlayer;
+import com.example.skullking.entities.game.dto.BetPlayer;
 
 import java.util.List;
 
