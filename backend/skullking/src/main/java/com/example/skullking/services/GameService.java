@@ -141,6 +141,7 @@ public class GameService {
     }
 
     private void endTrick(Room room){
+        room.getGameState().endOfTrick();
         if (room.getGameState().haveEveryCardsBeenPlayed()){
             this.endPlayingPhase(room);
         }
@@ -150,6 +151,7 @@ public class GameService {
     }
 
     private void endPlayingPhase(Room room){
+        room.getGameState().endOfRound();
         if (room.getGameState().isGameOver()){
             this.endGame();
             return;
