@@ -51,7 +51,7 @@ interface GameState {
 export class Game implements OnInit, OnDestroy {
 
   // --- GAME DATA ---  //
-  handCards: number[] = [24, 3, 15, 65, 42,68,72,4,8,12];
+  handCards: number[] = [24,59,71,54,21,32];
   dropZoneCards: number[] = [];
 
   round: number = 4;

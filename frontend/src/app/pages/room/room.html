@@ -59,9 +59,11 @@
 
         <button
           type="submit"
+          [disabled]="!name || !hostName"
           class="bg-green-400 hover:bg-green-500 text-black font-semibold 
-                 px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer">
-           Créer la Room
+                px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer
+                disabled:bg-gray-500 disabled:cursor-not-allowed">
+          Créer la Room
         </button>
 
         <button

@@ -51,8 +51,9 @@
 
           <button
             type="submit" 
+            [disabled]="!playerName"
             class="bg-green-400 hover:bg-green-500 text-black font-semibold 
-                   px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer">
+                   px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed">
             Rejoindre la Room
           </button>
 

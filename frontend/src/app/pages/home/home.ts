@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RoomCard } from '../../components/room-card/room-card';
 import { Navbar } from '../../components/navbar/navbar';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { RoomService } from '../../service/room/room.service';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-home',
   standalone: true,
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
-  imports: [RoomCard , MatIconModule , Navbar , CommonModule],
+  imports: [RoomCard, MatIconModule, Navbar, CommonModule, FormsModule],
 })
-
-
 export class HomeComponent implements OnInit {
-
-  rooms: any[] = [];  // <-- liste des rooms
+  rooms: any[] = [];
   loading = true;
-  filteredRooms: any[] = []; // <-- liste des rooms filtrées
+  filteredRooms: any[] = [];
+  searchQuery: string = '';
 
   constructor(
     private router: Router,
@@ -30,9 +30,7 @@ export class HomeComponent implements OnInit {
 
     this.roomService.rooms$.subscribe(data => {
       this.rooms = data;
-
-      this.filteredRooms = data.filter(room => room.nbPlayers < 8);
-
+      this.filterRooms();
       this.loading = false;
     });
 
@@ -41,5 +39,39 @@ export class HomeComponent implements OnInit {
 
   goToRooms() {
     this.router.navigate(['/room']);
+  }
+
+  filterRooms() {
+    let result = [...this.rooms];
+
+    // Filtre par recherche
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
+      result = result.filter(room => 
+        room.name.toLowerCase().includes(query) ||
+        room.hostName.toLowerCase().includes(query)
+      );
+    }
+
+    // Affiche seulement les rooms disponibles (pas pleines)
+    result = result.filter(room => room.nbPlayers < 8);
+
+    this.filteredRooms = result;
+  }
+
+  refreshRooms() {
+  this.loading = true;
+  this.roomService.getRooms();
+  this.loading = false;
+  }
+
+  getEmptyMessage(): string {
+    if (this.searchQuery.trim()) {
+      return `Aucune partie trouvée pour "${this.searchQuery}"`;
+    }
+    if (this.rooms.length > 0) {
+      return 'Toutes les parties sont pleines ! Crée la tienne ! 🏴‍☠️';
+    }
+    return 'La mer est calme… aucune partie en vue ! ⚓';
   }
 }
