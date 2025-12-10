@@ -1,6 +1,7 @@
 package com.example.skullking.services;
 
 
+import com.example.skullking.entities.Player;
 import com.example.skullking.entities.PlayerDTOForPublic;
 import com.example.skullking.entities.Room;
 import com.example.skullking.entities.game.cards.Hand;
@@ -15,10 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -86,6 +84,11 @@ public class GameService {
         // Broadcast
         Instant deadline = Instant.now().plusSeconds(30);
         wsService.broadcastBettingPhaseStart(room, deadline);
+        Map<Player, Hand> hands = room.getGameState().givePlayersCard();
+        for(Map.Entry<Player,Hand> hand : hands.entrySet()){
+            List<Integer> cards = new ArrayList<>(hand.getValue().getCards().keySet());
+            wsService.sendHandToPlayer(room, hand.getKey(),cards);
+        }
 
         // Schedule next phase
         this.scheduler.schedule(
@@ -104,10 +107,6 @@ public class GameService {
     private void startPlayingPhase(Room room){
         // Set state
         room.getGameState().setCurrentPhase(GamePhase.Playing);
-        Map<UUID, Hand> hands = room.getGameState().givePlayersCard();
-
-        // Broadcast
-        wsService.givePlayerHands(room, hands);
 
         // Schedule next phase
         this.startPlayerPlayingPhase(room);

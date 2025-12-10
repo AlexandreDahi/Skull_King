@@ -30,13 +30,16 @@ public class GameState {
 
     private GamePhase gamePhase;
     private Player currentPlayer;
+    public GameState(){
 
+    }
 
     //INPUT
     public boolean startGame(List<Player> players) {
         for(Player player : players){
             this.players.put(player.getUuid(),player);
         }
+        this.currentPlayer = players.getFirst();
         return true;
     }
 
@@ -73,15 +76,15 @@ public class GameState {
         return this.scoreManager.calculateScoresEndOfPlayingPhase();
     }
 
-    public Map<UUID,Hand> givePlayersCard() {
-        Map<UUID,Hand> hands = new HashMap<>();
+    public Map<Player,Hand> givePlayersCard() {
+        Map<Player,Hand> hands = new HashMap<>();
         for (Map.Entry<UUID,Player> players : players.entrySet()){
-            cardManager.drawHand(players.getKey(),10);
+            cardManager.drawHand(players.getKey(),currentRound);
             Hand hand = cardManager.getPlayerHand(players.getKey());
             if (hand == null){
                 return null;
             }
-            hands.put(players.getKey(),hand);
+            hands.put(players.getValue(),hand);
 
         }
         return hands;

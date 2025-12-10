@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { IMessage, RxStomp, RxStompConfig } from "@stomp/rx-stomp";
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subscription } from 'rxjs';
 
 
 @Injectable({
@@ -25,9 +25,18 @@ export class WebSocketService {
     private isPlayerAdmin = false
 
 
-    private publicChannel  = new Observable<IMessage>()
-    private privateChannel = new Observable<IMessage>()
-    private lobbyChannel   = new Observable<IMessage>()
+    private publicSubject  = new ReplaySubject<IMessage>(10)
+    private privateSubject = new ReplaySubject<IMessage>(10)
+    private lobbySubject   = new ReplaySubject<IMessage>(10)
+
+
+    private publicChannel: Observable<IMessage>  = this.publicSubject.asObservable()
+    private privateChannel: Observable<IMessage> = this.privateSubject.asObservable()
+    private lobbyChannel: Observable<IMessage>   = this.lobbySubject.asObservable()
+
+    private _publicSub?: Subscription
+    private _privateSub?: Subscription
+    private _lobbySub?: Subscription
 
 
     private activateWebSocket() {
@@ -54,18 +63,27 @@ export class WebSocketService {
             isAdmin
         });
 
-        this.publicChannel = this.rxStomp.watch({
+        const pubWatch = this.rxStomp.watch({
             destination: `/topic/rooms/${this.roomUuid}/general`
         })
 
-        this.privateChannel = this.rxStomp.watch({
+        const privWatch = this.rxStomp.watch({
             destination: `/topic/rooms/${this.roomUuid}/${this.playerUuid}/${this.playerToken}`
         })
 
         // ✅ Ajouter /topic pour correspondre au backend
-        this.lobbyChannel = this.rxStomp.watch({
+        const lobbyWatch = this.rxStomp.watch({
             destination: `/topic/rooms/${this.roomUuid}/lobby-events`  // ← AJOUTER /topic
         })
+
+        // Clean up previous low-level subscriptions if any
+        this._publicSub?.unsubscribe()
+        this._privateSub?.unsubscribe()
+        this._lobbySub?.unsubscribe()
+
+        this._publicSub = pubWatch.subscribe(msg => this.publicSubject.next(msg))
+        this._privateSub = privWatch.subscribe(msg => this.privateSubject.next(msg))
+        this._lobbySub = lobbyWatch.subscribe(msg => this.lobbySubject.next(msg))
 
         console.log('✅ Channels configurés:');
         console.log('   - Public: /topic/rooms/' + this.roomUuid);

@@ -52,7 +52,7 @@ public class WebSocketService {
 
     public void sendHandToPlayer(Room room, Player player, List<Integer> hand) {
 
-        String path = this.getPrivateChannel(room.getUuid(), player) + "/hand";
+        String path = this.getPrivateChannel(room.getUuid(), player);
 
         webSocket.convertAndSend(path, new SendHandEvent(hand));
     }
@@ -80,6 +80,4 @@ public class WebSocketService {
 
     }
 
-    public void givePlayerHands(Room room, Map<UUID, Hand> hands) {
-    }
 }

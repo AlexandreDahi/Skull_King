@@ -51,7 +51,7 @@ interface GameState {
 export class Game implements OnInit, OnDestroy {
 
   // --- GAME DATA ---  //
-  handCards: number[] = [24,59,71,54,21,32];
+  handCards: number[] = [];
   dropZoneCards: number[] = [];
 
   round: number = 4;
@@ -131,6 +131,7 @@ export class Game implements OnInit, OnDestroy {
 
     // 3. S'abonner aux événements de jeu via WebSocket
     this.subscribeToGameEvents();
+    this.subscribeToPrivateEvents();
 
 
     // 4. 
@@ -205,8 +206,38 @@ export class Game implements OnInit, OnDestroy {
       error: (err) => console.error('❌ Erreur canal public:', err)
     });
   }
+  private subscribeToPrivateEvents() {
+     console.log('🔌 Abonnement aux événements de jeu...');
 
-  
+    this.publicSubscription = this.wsService.getPrivateChannel().subscribe({
+      next: (message) => {
+        if (this.isDestroyed) return;
+        
+        console.log('📢 Message privé reçu:', message);
+        console.log("Corps du message : ", message.body)
+        try {
+          const data = JSON.parse(message.body);
+          this.handlePrivateMessage(data);
+        } catch (e) {
+          console.error('Erreur parsing message:', e);
+        }
+      },
+      error: (err) => console.error('❌ Erreur canal privé:', err)
+    });
+  }
+  private handlePrivateMessage(data: any) {
+    if (this.isDestroyed) return;
+    console.log('📥 Type de message privé:', data.type);
+    switch(data.type) {
+      case 'SEND_HAND_EVENT':
+        console.log('🃏 Réception de la main de cartes privée');
+        this.handCards = data.hand || [];
+        break;
+      default:
+      console.log('⚠️ Message non géré:', data.type);
+    }
+  }
+
   private handleGameMessage(data: any) {
     if (this.isDestroyed) return;
 
