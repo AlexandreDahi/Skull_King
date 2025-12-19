@@ -1,0 +1,88 @@
+@startuml
+
+
+enum CardType {
++ Number
++ Pirate
++ Escape
++ Misc
+}
+
+enum ColorCardType {
++ Purple
++ Yellow
++ Green
++ Black
+}
+
+
+enum EscapeCardType {
++ Normal
++ Whale
++ Kraken
++ Loot
+}
+
+enum PirateCardType {
++ Voyante
++ Flambeur
++ Harry
++ Jessy
++ JessyEscape
++ Brigand
++ Berta
+}
+
+enum MiscCardType {
++ SkullKing
++ Siren
+}
+
+class Card {
+
+- value: int
+- color: ColorType
+
+- escapeType: EscapeType
+
+- pirateType: PirateType
+
+- miscType: MiscCardType
+
++ getType()
++ getNumberType()
++ getEscapeType()
++ getPirateType()
++ getMiscType()
+
+}
+
+class GameLogic {
+
++ calcWinningCard(cards: List<Card>): (winner: bool, bestCard: Card)
++ calcAskedColor(cards: List<Cards>): ColorType | null
+
+}
+
+class TurnState {
++ playersOrder: List<Uuid>
++ CardsPlayed: List<CardUuid>
+
+}
+
+class RoundState {
++ betList: List<int>
++ stack: List<CardUuid>
++ hands: Map<PlayerUuid, List<CardUuid>>
++ scores: Map<Playeruuid, int>
++ turns: List<TurnState>
+}
+
+class GameState {
++ cards: List<Card>
+
++ rounds: List<RoundState>
+
+}
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+
+
+Actor all_players
+Actor specific_player
+Participant server
+
+
+server -> all_players : GameStartSignal
+
+
+loop round
+
+	loop cards distribution
+		server -> specific_player : hand (RoundStartSignal)
+	end
+
+	all_players -> server : bet
+
+	server -> all_players : bets (BetEndSignal)
+
+	loop turn
+		loop card transmission
+
+			server -> all_players : previous card played + current player
+			note across
+				An undefined previous card acts as a TurnStartSignal
+			end note
+
+			specific_player -> server : card
+
+		end
+
+		server -> all_players : winner of the turn (TurnEndSignal)
+
+		alt pirate ability
+
+			server -> all_players : PirateAbilityStartSignal
+			server -> specific_player : ask to use pirate ability
+			specific_player -> server : answer
+
+			server -> all_players : ability result (PirateAbilityEndSignal)
+
+		end
+	end
+
+	server -> all_players : scores (RoundEndSignal)
+end
+
+server -> all_players : GameEndSignal
+
+
+
+
+@enduml
+
+

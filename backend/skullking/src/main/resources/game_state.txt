@@ -1,0 +1,12 @@
+@startuml
+
+[*] --> Bet
+Bet --> ShowBets
+ShowBets --> Playing
+Playing --> ShowTurnResults
+ShowTurnResults --> Playing
+ShowTurnResults --> ShowRoundResults
+ShowRoundResults --> Bet
+ShowRoundResults --> [*]
+
+@enduml
