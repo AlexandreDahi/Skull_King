@@ -1,0 +1,63 @@
+<div class="body">
+  <app-navbar></app-navbar>
+  
+  <!-- Conteneur centré -->
+  <div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
+
+    
+    @if (state() === "lobby") {
+      <!-- Carte centrale -->
+      <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+      
+      <!-- HEADER avec logo et boutons -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        
+        <!-- Logo + Titre -->
+        <div class="flex items-center space-x-3">
+          <img src="/images/skullking_logo_icon.png" class="h-16 w-16 md:h-20 md:w-20" />
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide">
+            Skull King Online
+          </h1>
+        </div>
+
+        <!-- FORMULAIRE -->
+      <form class="space-y-6" (ngSubmit)="joinGame()" >
+
+        <!-- Nom du joueur -->
+        <div class="flex flex-col">
+          <label class="text-gray-200 font-semibold mb-1">Nom du pirate</label>
+          <input
+            type="text"
+            [(ngModel)]="playerName"
+            name="playerName"
+            placeholder="Ex: Barbe Rousse"
+            class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-gray-300"
+            required
+          />
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-6">
+
+          <button
+            type="submit" 
+            [disabled]="!playerName"
+            class="bg-green-400 hover:bg-green-500 text-black font-semibold 
+                   px-6 py-3 rounded-xl shadow-lg transition w-full sm:w-auto cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed">
+            Rejoindre la Room
+          </button>
+
+        </div>
+      </form>
+      </div>
+      
+      </div>
+    }
+    @else {
+      <app-game></app-game>
+
+    }
+    
+  </div>
+</div>

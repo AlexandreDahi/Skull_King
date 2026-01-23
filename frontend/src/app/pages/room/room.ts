@@ -26,6 +26,7 @@ export class Room {
   ) {}
   
   cancel() {
+    console.log("Retour sur la page de base /")
     this.router.navigate(['/']);
   }
   

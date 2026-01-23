@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, NgZone, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -17,6 +17,7 @@ import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-disp
 import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 
 import { WebSocketService } from '../../service/websocket/websocket.service';
+import { ws2Service } from '../../service/websocket/ws-2.service';
 import { RoomService } from '../../service/room/room.service';
 
 
@@ -49,6 +50,8 @@ interface GameState {
   standalone: true
 })
 export class Game implements OnInit, OnDestroy {
+
+  wsService2 = inject(ws2Service)
 
   // --- GAME DATA ---  //
   handCards: number[] = [];
@@ -113,18 +116,47 @@ export class Game implements OnInit, OnDestroy {
   ----------------------------*/
   ngOnInit() {
     // 1. WebSocket setup (de lobby)
-    this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
-    this.isAdmin = this.wsService.isAdmin();
+
+    this.wsService2.onNewRoundEvent( (message: any) => {
+
+      const hand = []
+      for (const card of message.hand) {
+
+        const [color, number] = card.split(' ')
+
+        let color_front
+        switch (color) {
+          case "purple":
+            color_front = "violet"
+            break
+          case "green":
+            color_front = "vert"
+            break
+          case "yellow":
+            color_front = "jaune"
+            break
+          case "black":
+            color_front = "noir"
+            break
+          
+        }
+
+        const name_in_front = number + ' ' + color_front
+
+        
+        for (const card_front of this.jsonData) {
+
+          if (name_in_front === card_front.name){
+            hand.push(card_front.id)
+          }
+        }
+      }
+      this.handCards = hand
+    })
+
+
+
     
-    console.log('🎮 === GAME INIT ===');
-    console.log('Room UUID:', this.roomUuid);
-    console.log('Is Admin:', this.isAdmin);
-    
-    if (!this.roomUuid) {
-      console.error('❌ Pas de room UUID, retour à l\'accueil');
-      this.router.navigate(['/']);
-      return;
-    }
 
     // 2. Charger l'état initial de la partie
     this.loadGameState();
@@ -376,6 +408,8 @@ export class Game implements OnInit, OnDestroy {
   //    JOUER UNE CARTE
   //----------------------------
   onCardPlayed(cardId: number) {
+
+    console.log("COUCOU")
     // Vérifier que c'est le tour du joueur (WebSocket)
     if (this.gameState.currentTurn !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');

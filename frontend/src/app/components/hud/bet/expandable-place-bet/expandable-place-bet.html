@@ -1,10 +1,13 @@
 <div class="expandable-place-bet-container">
 
-  <app-place-bet *ngIf="isExpanded"></app-place-bet>
+  @if (isExpanded()) {
+    <app-place-bet></app-place-bet>
+  }
+  
 
   <button 
       class="backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold"
-      [class.rounded-t-xl]="!isExpanded"
+      [class.rounded-t-xl]="!isExpanded()"
       (click)="toggleExpand()">
 
       <div class="left-content" >
@@ -13,7 +16,7 @@
       </div>
 
       <mat-icon class="toggle-icon">
-        {{ isExpanded ? 'expand_less' : 'expand_more' }}
+        {{ isExpanded() ? 'expand_less' : 'expand_more' }}
       </mat-icon>
 
   </button>
