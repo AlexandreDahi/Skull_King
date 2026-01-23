@@ -38,7 +38,9 @@ public class GameState {
     public boolean startGame(List<Player> players) {
         for(Player player : players){
             this.players.put(player.getUuid(),player);
+
         }
+        this.scoreManager.initializeScores(players);
         this.currentPlayer = players.getFirst();
         return true;
     }
@@ -122,7 +124,7 @@ public class GameState {
         Iterator<Map.Entry<UUID, Player>> iterator = this.players.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<UUID, Player> currentEntry = iterator.next();
-            if (currentEntry.getKey().equals(this.currentPlayer) ) {
+            if (currentEntry.getValue().equals(this.currentPlayer) ) {
                 if (iterator.hasNext()){
                     this.currentPlayer = iterator.next().getValue();
                 }else{
@@ -150,8 +152,29 @@ public class GameState {
                 .map(entry -> new BetPlayer(entry.getKey().getUuid(),entry.getValue()))
                 .toList();
     }
+
     private boolean isPlayerTurn(UUID player){
         return player.equals(this.currentPlayer.getUuid());
+    }
+
+    public boolean hasPlayerPlayed(){
+        return this.cardPlayed.containsKey(this.currentPlayer);
+    }
+
+    public void playRandomCard() {
+        Player currentPlayer = this.getCurrentPlayer();
+        Hand hand = this.cardManager.getPlayerHand(currentPlayer.getUuid());
+        List<Card> cardPlayed = new ArrayList<>(this.cardPlayed.values());
+        for (Card card : cardPlayed){
+            if(this.gameLogic.isCardPlayedLegal(cardPlayed,card,hand)){
+                try{
+                    this.recordCardPlayed(new CardPlayer(card.getId(),currentPlayer.getUuid()));
+                }
+                catch(Exception e){
+                 e.printStackTrace();
+                }
+            }
+        }
     }
 }
 

@@ -43,7 +43,30 @@ public class GameController {
     ) {
         String messageType = (String) message.get("type");
 
-        System.out.println("📨 Message reçu: " + messageType);
+        System.out.println("📨 Message reçu: " + message);
+        if ("PLAY_CARD".equals(messageType)){
+            if (!roomService.isRoomExisting(roomUuid)) {
+                System.err.println("❌ Room inexistante");
+                return;
+            }
+            Room room = roomService.getRoom(roomUuid);
+            int cardId = (int) message.get("cardId");
+            UUID playerUuid =  UUID.fromString((String)message.get("playerUuid")) ;
+            CardPlayer cardPlayer = new CardPlayer(cardId,playerUuid);
+            gameService.receiveCard(room, cardPlayer);
+
+        } else if ("PLACE_BET".equals(messageType)){
+            if (!roomService.isRoomExisting(roomUuid)) {
+                System.err.println("❌ Room inexistante");
+                return;
+            }
+            UUID playerUuid =  UUID.fromString((String)message.get("playerUuid")) ;
+            Room room = roomService.getRoom(roomUuid);
+            int betAmount = (int) message.get("bet");
+            BetPlayer betPlayer = new BetPlayer(playerUuid,betAmount);
+            gameService.receiveBet(room,betPlayer);
+
+        }
 
         if ("START_GAME".equals(messageType)) {
             if (!roomService.isRoomExisting(roomUuid)) {

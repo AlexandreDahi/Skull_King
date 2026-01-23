@@ -52,7 +52,6 @@ public class GameService {
 
         // check if player hasn't bet yet
         room.getGameState().recordBet(betPlayer.getPlayerId(), betPlayer.getBetAmount());
-
         if (room.getGameState().hasEveryoneBet()) {
             room.getGameState().cancelScheduledTask();
             this.endBettingPhase(room);
@@ -118,6 +117,7 @@ public class GameService {
         Instant deadline = Instant.now().plusSeconds(30);
         room.getGameState().setNextPlayer();
         UUID playerId = room.getGameState().getCurrentPlayer().getUuid();
+        this.wsService.broadCastWhoShouldPlay(room, playerId);
 
         // Schedule next phase
         this.scheduler.schedule(
@@ -126,7 +126,11 @@ public class GameService {
         );
 
     }
+
     private void endPlayerPlayingPhase(Room room){
+        if (!room.getGameState().hasPlayerPlayed()){
+            room.getGameState().playRandomCard();
+        }
         if (room.getGameState().hasEveryonePlayedACard()){
             this.endTrick(room);
         }

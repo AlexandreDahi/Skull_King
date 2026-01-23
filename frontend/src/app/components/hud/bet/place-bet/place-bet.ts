@@ -43,7 +43,10 @@ export class PlaceBet {
     this.isBetPlaced = true;
     this.storeService.setIsBetPlaced(true);
     this.storeService.setBet(this.value);
-
+    this.wsService.sendLobbyMessage({
+      type: 'PLACE_BET',
+      bet: this.value
+    });
     // wsService.get
 
   }

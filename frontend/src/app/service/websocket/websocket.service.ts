@@ -119,10 +119,11 @@ export class WebSocketService {
     }
 
     sendLobbyMessage(message: any) {
+        const messageWithPlayerUuid = { ...message, playerUuid: this.playerUuid };
         console.log('📤 Envoi message lobby:', message);
         this.rxStomp.publish({
             destination: `/app/rooms/${this.roomUuid}/lobby`,
-            body: JSON.stringify(message)
+            body: JSON.stringify(messageWithPlayerUuid)
         })
     }
 

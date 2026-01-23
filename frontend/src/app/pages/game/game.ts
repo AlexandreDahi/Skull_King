@@ -115,7 +115,6 @@ export class Game implements OnInit, OnDestroy {
     // 1. WebSocket setup (de lobby)
     this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
     this.isAdmin = this.wsService.isAdmin();
-    
     console.log('🎮 === GAME INIT ===');
     console.log('Room UUID:', this.roomUuid);
     console.log('Is Admin:', this.isAdmin);
@@ -225,6 +224,7 @@ export class Game implements OnInit, OnDestroy {
       error: (err) => console.error('❌ Erreur canal privé:', err)
     });
   }
+  
   private handlePrivateMessage(data: any) {
     if (this.isDestroyed) return;
     console.log('📥 Type de message privé:', data.type);
@@ -273,9 +273,9 @@ export class Game implements OnInit, OnDestroy {
         this.gameState.phase = 'BETTING';
         break;
 
-      case 'TURN_CHANGED':
-        console.log('🔄 Tour du joueur:', data.playerUuid);
-        this.gameState.currentTurn = data.playerUuid;
+      case 'PLAYER_TURN':
+        console.log('🔄 Tour du joueur:', data.playerWhoShouldPlay);
+        this.gameState.currentTurn = data.playerWhoShouldPlay;
         break;
 
       case 'ROUND_END':
@@ -379,7 +379,7 @@ export class Game implements OnInit, OnDestroy {
     // Vérifier que c'est le tour du joueur (WebSocket)
     if (this.gameState.currentTurn !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');
-      return;
+      //return;
     }
 
     // Logique locale

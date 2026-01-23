@@ -49,6 +49,13 @@ public class WebSocketService {
                 new BroadcastGameStartEvent(playersList)
         );
     }
+    public void broadCastWhoShouldPlay(Room room, UUID player){
+        System.out.println("broadcast who should play");
+        webSocket.convertAndSend(
+                this.getGeneralChannel(room.getUuid()),
+                new BroadcastPlayerWhoShouldPlayEvent(player)
+        );
+    }
 
     public void sendHandToPlayer(Room room, Player player, List<Integer> hand) {
 

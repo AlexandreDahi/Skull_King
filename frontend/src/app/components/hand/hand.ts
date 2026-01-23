@@ -62,6 +62,7 @@ export class Hand {
       // Drop vers dropzone
       const card = this.cardIds[event.previousIndex];
       event.previousContainer.data.splice(event.previousIndex, 1);
+      this.playCardEvent.emit(card);
       event.container.data.push(card);
     }
   }
