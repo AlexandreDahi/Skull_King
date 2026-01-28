@@ -1,21 +1,21 @@
 <div class="players-container">
+  <div class="direction-left-container">
+    @for (player of getPlayersByClass('left-player').reverse(); track player.uuid) {
+      <app-other-player [playerUuid]="player.uuid" />
+    }
+  </div>
+
+
   <div class="direction-top-container">
-    <div *ngFor="let player of getPlayersByClass('top-player')" class="item">
-      <app-other-player [player]="player"></app-other-player>
-    </div>
+    @for (player of getPlayersByClass('top-player'); track player.uuid) {
+      <app-other-player [playerUuid]="player.uuid" />
+    }
   </div>
 
 
   <div class="direction-right-container">
-    <div *ngFor="let player of getPlayersByClass('right-player')" class="item">
-      <app-other-player [player]="player"></app-other-player>
-    </div>
-  </div>
-
-
-  <div class="direction-left-container">
-    <div *ngFor="let player of getPlayersByClass('left-player')" class="item">
-      <app-other-player [player]="player"></app-other-player>
-    </div>
+    @for (player of getPlayersByClass('right-player'); track player.uuid) {
+      <app-other-player [playerUuid]="player.uuid" />
+    }
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy, NgZone, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, NgZone, inject, signal, WritableSignal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -16,13 +16,8 @@ import data from '../../components/cards/index_carte.json';
 import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-display';
 import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 
-import { WebSocketService } from '../../service/websocket/websocket.service';
-import { ws2Service } from '../../service/websocket/ws-2.service';
+import { webSocketService } from '../../service/websocket/websocket.service';
 import { RoomService } from '../../service/room/room.service';
-
-
-
-
 
 
 
@@ -51,11 +46,14 @@ interface GameState {
 })
 export class Game implements OnInit, OnDestroy {
 
-  wsService2 = inject(ws2Service)
+  wsService = inject(webSocketService)
 
   // --- GAME DATA ---  //
-  handCards: number[] = [];
-  dropZoneCards: number[] = [];
+  handCards: WritableSignal<number[]> = signal([]);
+  dropZoneCards: WritableSignal<number[]> = signal([]);
+  nonPlayableCards = computed(() => this.getPlayableCards(this.dropZoneCards()))
+
+  gameStateInfo = signal("")
 
   round: number = 4;
   totalRounds: number = 10;
@@ -107,7 +105,6 @@ export class Game implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
-    private wsService: WebSocketService,
     private roomService: RoomService,
   ) {}
 
@@ -117,7 +114,7 @@ export class Game implements OnInit, OnDestroy {
   ngOnInit() {
     // 1. WebSocket setup (de lobby)
 
-    this.wsService2.onNewRoundEvent( (message: any) => {
+    this.wsService.onNewRoundEvent( (message: any) => {
 
       const hand = []
       for (const card of message.hand) {
@@ -151,19 +148,29 @@ export class Game implements OnInit, OnDestroy {
           }
         }
       }
-      this.handCards = hand
+      this.handCards.set(hand)
+      this.gameStateInfo.set("A vos paris !")
+
     })
 
+    this.wsService.onAskCardEvent((message: any) => {
+      const players = this.wsService.getPlayersName()
+      const localPlayer = this.wsService.getPlayerUuid()
+      const current_player = message.current_player
 
+      if (current_player === localPlayer) {
+        this.gameStateInfo.set("A vous de jouer")
+        
+      } else {
+        for (const player of players) {
+          if (player.uuid === current_player) {
+            this.gameStateInfo.set("Au tour de " + player.name + " de jouer")
+            break
+          }
+        }
+      }
+    })
 
-    
-
-    // 2. Charger l'état initial de la partie
-    this.loadGameState();
-
-    // 3. S'abonner aux événements de jeu via WebSocket
-    this.subscribeToGameEvents();
-    this.subscribeToPrivateEvents();
 
 
     // 4. 
@@ -193,139 +200,6 @@ export class Game implements OnInit, OnDestroy {
   }
 
 
-  //
-  // Charger l'état initial de la partie via l'API
-  //
-  private loadGameState() {
-    console.log('📡 Chargement de l\'état de la partie...');
-    
-    this.roomService.getPlayers(this.roomUuid).subscribe({
-      next: (players: any[]) => {
-        console.log('✅ Joueurs chargés:', players);
-        this.players = players.map(p => ({
-          uuid: p.uuid,
-          name: p.name,
-          isAdmin: p.isAdmin || false,
-          score: 0,
-          bet: undefined
-        }));
-      },
-      error: (err) => {
-        console.error('❌ Erreur chargement joueurs:', err);
-      }
-    });
-  }
-
-  //
-  // S'abonner aux événements de jeu via WebSocket
-  //
-  private subscribeToGameEvents() {
-    console.log('🔌 Abonnement aux événements de jeu...');
-
-    this.publicSubscription = this.wsService.getPublicChannel().subscribe({
-      next: (message) => {
-        if (this.isDestroyed) return;
-        
-        console.log('📢 Message public reçu:', message);
-        console.log("Corps du message : ", message.body)
-        try {
-          const data = JSON.parse(message.body);
-          this.handleGameMessage(data);
-        } catch (e) {
-          console.error('Erreur parsing message:', e);
-        }
-      },
-      error: (err) => console.error('❌ Erreur canal public:', err)
-    });
-  }
-  private subscribeToPrivateEvents() {
-     console.log('🔌 Abonnement aux événements de jeu...');
-
-    this.publicSubscription = this.wsService.getPrivateChannel().subscribe({
-      next: (message) => {
-        if (this.isDestroyed) return;
-        
-        console.log('📢 Message privé reçu:', message);
-        console.log("Corps du message : ", message.body)
-        try {
-          const data = JSON.parse(message.body);
-          this.handlePrivateMessage(data);
-        } catch (e) {
-          console.error('Erreur parsing message:', e);
-        }
-      },
-      error: (err) => console.error('❌ Erreur canal privé:', err)
-    });
-  }
-  private handlePrivateMessage(data: any) {
-    if (this.isDestroyed) return;
-    console.log('📥 Type de message privé:', data.type);
-    switch(data.type) {
-      case 'SEND_HAND_EVENT':
-        console.log('🃏 Réception de la main de cartes privée');
-        this.handCards = data.hand || [];
-        break;
-      default:
-      console.log('⚠️ Message non géré:', data.type);
-    }
-  }
-
-  private handleGameMessage(data: any) {
-    if (this.isDestroyed) return;
-
-    console.log('📥 Type de message:', data.type);
-
-    switch(data.type) {
-      case 'GAME_STATE_UPDATE':
-        console.log('🔄 Mise à jour de l\'état du jeu');
-        if (data.gameState) {
-          this.gameState = data.gameState;
-        }
-        break;
-      
-      case 'BETTING_PHASE_START':
-        console.log("Il est temps de faire un pari");
-        
-        break;
-      case 'PLAYER_BET':
-        console.log('💰 Pari reçu:', data.playerUuid, data.bet);
-        const player = this.players.find(p => p.uuid === data.playerUuid);
-        if (player) {
-          player.bet = data.bet;
-        }
-        break;
-
-      case 'CARD_PLAYED':
-        console.log('🃏 Carte jouée par:', data.playerUuid);
-        break;
-
-      case 'ROUND_START':
-        console.log('🎯 Nouvelle manche:', data.round);
-        this.gameState.currentRound = data.round;
-        this.gameState.phase = 'BETTING';
-        break;
-
-      case 'TURN_CHANGED':
-        console.log('🔄 Tour du joueur:', data.playerUuid);
-        this.gameState.currentTurn = data.playerUuid;
-        break;
-
-      case 'ROUND_END':
-        console.log('🏁 Fin de manche');
-        this.gameState.phase = 'ROUND_END';
-        break;
-
-      case 'GAME_END':
-        console.log('🎊 Fin de partie !');
-        this.gameState.phase = 'GAME_END';
-        break;
-
-      default:
-        console.log('⚠️ Message non géré:', data.type);
-    }
-  }
-
-  
   onCardDropped(cardId: number) {
     console.log("🃏 Carte déposée :", cardId);
     
@@ -337,11 +211,7 @@ export class Game implements OnInit, OnDestroy {
     }
 
     // Envoyer la carte jouée au serveur via WebSocket
-    this.wsService.sendLobbyMessage({
-      type: 'PLAY_CARD',
-      cardId: cardId,
-      roomUuid: this.roomUuid
-    });
+    
 
     // Retirer la carte de la main
     //this.hand.removeCard(cardId);
@@ -351,12 +221,7 @@ export class Game implements OnInit, OnDestroy {
   onBetPlaced(betAmount: number) {
     console.log('💰 Pari placé:', betAmount);
 
-    this.wsService.sendLobbyMessage({
-      type: 'PLACE_BET',
-      bet: betAmount,
-      roomUuid: this.roomUuid
-    });
-
+    
     const currentPlayer = this.players.find(p => p.uuid === this.playerUuid);
     if (currentPlayer) {
       currentPlayer.bet = betAmount;
@@ -369,10 +234,7 @@ export class Game implements OnInit, OnDestroy {
   leaveGame() {
     console.log('👋 Quitter la partie');
     
-    this.wsService.sendLobbyMessage({
-      type: 'LEAVE_GAME',
-      roomUuid: this.roomUuid
-    });
+    
 
     this.router.navigate(['/']);
   }
@@ -417,16 +279,15 @@ export class Game implements OnInit, OnDestroy {
     }
 
     // Logique locale
-    this.dropZoneCards.push(cardId);
-    const index = this.handCards.indexOf(cardId);
-    if (index > -1) this.handCards.splice(index, 1);
+    this.dropZoneCards.update((v) => {
+      v.push(cardId)
+      return v
+    })
+    const index = this.handCards().indexOf(cardId);
+    if (index > -1) this.handCards().splice(index, 1);
 
-    // Envoyer au serveur via WebSocket
-    this.wsService.sendLobbyMessage({
-      type: 'PLAY_CARD',
-      cardId: cardId,
-      roomUuid: this.roomUuid
-    });
+    this.handCards.update(v => v)
+    
   }
 
  
@@ -470,18 +331,18 @@ export class Game implements OnInit, OnDestroy {
     if (!type) return [];
     if (type === 'special') return [];
 
-    if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
+    if (this.handCards().filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
 
     const allowed = new Set([type, 'special', 'fuite']);
-    return this.handCards.filter(id => {
+    return this.handCards().filter(id => {
       const t = this.jsonData.find(c => c.id === id)?.type;
       return !(t != null && allowed.has(t));
     });
   }
 
-  get nonPlayableCards(): number[] {
-    return this.getPlayableCards(this.dropZoneCards);
-  }
+  /*get nonPlayableCards(): number[] {
+    return this.getPlayableCards(this.dropZoneCards());
+  }*/
 
   onCardPlayedError(errorMessage: string) {
     this.errorMessage = errorMessage;

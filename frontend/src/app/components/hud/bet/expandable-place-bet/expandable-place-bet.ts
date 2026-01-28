@@ -4,7 +4,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
-import { ws2Service } from '../../../../service/websocket/ws-2.service';
+import { webSocketService } from '../../../../service/websocket/websocket.service';
 
 @Component({
   selector: 'app-expandable-place-bet',
@@ -14,7 +14,7 @@ import { ws2Service } from '../../../../service/websocket/ws-2.service';
 })
 export class ExpandablePlaceBet {
 
-  wsService = inject(ws2Service)
+  wsService = inject(webSocketService)
 
   isExpanded = signal(false);
 

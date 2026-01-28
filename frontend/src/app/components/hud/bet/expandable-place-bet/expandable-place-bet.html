@@ -1,7 +1,7 @@
-<div class="expandable-place-bet-container">
+<div class="expandable-place-bet-container rounded-t-xl">
 
   @if (isExpanded()) {
-    <app-place-bet></app-place-bet>
+    <app-place-bet [(isExpended)]="isExpanded"/>
   }
   
 

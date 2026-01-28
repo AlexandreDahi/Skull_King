@@ -1,13 +1,12 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, model, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { StoreService } from '../../../../service/store/store.service';
 
-import { ws2Service } from '../../../../service/websocket/ws-2.service';
+import { webSocketService } from '../../../../service/websocket/websocket.service';
 
 @Component({
   selector: 'app-place-bet',
@@ -17,47 +16,29 @@ import { ws2Service } from '../../../../service/websocket/ws-2.service';
 })
 export class PlaceBet {
 
-  private wsService = inject(ws2Service) 
+  private wsService = inject(webSocketService) 
   
-  constructor(private storeService:StoreService){
-    this.isBetPlaced = storeService.getIsBetPlaced()
-    this.value = storeService.getBet();
-  }
 
-  value :number ;
-  private maxBet : number = 10;
-  private minBet : number = 0;
-  isBetPlaced : boolean;
+  bet = signal(0)
+  private maxBet: number = 10;
+  private minBet: number = 0;
 
-  @Input() bet: number = 2;        // pari (annonce)
+  isExpended = model.required<boolean>()
 
-  get resultClass(): string {
-    if (this.value === this.bet) {
-      return 'text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,1)]'; // ombre verte
-    }
-    if (this.value < this.bet) {
-      return 'text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]'; // ombre rouge
-    }
-    return 'text-white';
-  }
   placeBet() {
-    //this.isBetPlaced = true;
-    //this.storeService.setIsBetPlaced(true);
-    this.storeService.setBet(this.value);
-
-    this.wsService.sendBet(this.value)
-
+    this.wsService.sendBet(this.bet())
+    this.isExpended.set(false)
   }
 
   increase() {
-    if (this.value < this.maxBet){
-      this.value++;
+    if (this.bet() < this.maxBet){
+      this.bet.update(value => value + 1)
     }
 
   }
   decrease() {
-    if (this.value > this.minBet){
-      this.value--;
+    if (this.bet() > this.minBet){
+      this.bet.update(value => value - 1);
     }
 
   }

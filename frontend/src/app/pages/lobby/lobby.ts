@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { WebSocketService } from '../../service/websocket/websocket.service';
+//import { WebSocketService } from '../../service/websocket/websocket.service';
 import { RoomService } from '../../service/room/room.service';
 import { Navbar } from '../../components/navbar/navbar';
 import { Subscription } from 'rxjs';
@@ -29,7 +29,7 @@ export class Lobby implements OnInit, OnDestroy {
     private isDestroyed = false;
 
     constructor(
-        private wsService: WebSocketService,
+        //private wsService: WebSocketService,
         private roomService: RoomService,
         private route: ActivatedRoute,
         private router: Router,
@@ -38,8 +38,8 @@ export class Lobby implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
-        this.playerUuid = this.wsService.getPLayerUuid();
-        this.isAdmin = this.wsService.isAdmin();
+        //this.playerUuid = this.wsService.getPLayerUuid();
+        //this.isAdmin = this.wsService.isAdmin();
         
         console.log('=== LOBBY INIT ===');
         console.log('Room UUID:', this.roomUuid);
@@ -50,7 +50,7 @@ export class Lobby implements OnInit, OnDestroy {
         this.loadPlayers();
         
         // ✅ S'abonner au WebSocket pour les mises à jour en temps réel
-        this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
+        /*this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
             next: (message) => {
                 if (this.isDestroyed) return;
                 console.log('📨 Message lobby reçu:', message.body);
@@ -62,7 +62,7 @@ export class Lobby implements OnInit, OnDestroy {
                 }
             },
             error: (err) => console.error('❌ Erreur lobby channel:', err)
-        });
+        });*/
 
         // ❌ SUPPRIMER LE POLLING
         // Plus besoin de setInterval !
@@ -154,7 +154,7 @@ export class Lobby implements OnInit, OnDestroy {
             type: 'START_GAME'
         });*/
 
-        this.wsService.sendStartGameSignal()
+        //this.wsService.sendStartGameSignal()
         
         console.log('⏳ En attente de la confirmation du serveur...');
     }

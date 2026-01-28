@@ -8,25 +8,29 @@
 
     <div class="flex items-center gap-2">
       <mat-icon>sports_esports</mat-icon>
-      {{ errorMessage || 'Attente du Joueur 2' }}
+      {{ errorMessage || gameStateInfo() }}
     </div>
   </div>
 
-  <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
+  <app-drop-zone [cardsInZone]="dropZoneCards()" />
+
   <app-hand 
-  [nonPlayableCardIds]="nonPlayableCards" 
-  [cardIds]="handCards" 
-  (playCardEvent)="onCardPlayed($event)"
-  (errorEvent)="onCardPlayedError($event)">
-  </app-hand>
-  <app-head-up-display></app-head-up-display>
+    [nonPlayableCardIds]="nonPlayableCards()" 
+    [cardIds]="handCards()" 
+    (playCardEvent)="onCardPlayed($event)"
+    (errorEvent)="onCardPlayedError($event)"
+  />
+ 
+  <app-head-up-display />
+
   <app-player-panel
-  [round]="round"
-  [totalRounds]="totalRounds"
-  [timer$]="timer$"
-  [timerProgress$]="timerProgress$"
-  [tricksWon]="tricksWon"
-  [score]="score"
-  [scorePopped]="scorePopped">
-</app-player-panel>
+    [round]="round"
+    [totalRounds]="totalRounds"
+    [timer$]="timer$"
+    [timerProgress$]="timerProgress$"
+    [tricksWon]="tricksWon"
+    [score]="score"
+    [scorePopped]="scorePopped"
+  />
+
 </div>

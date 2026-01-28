@@ -1,7 +1,9 @@
-import { Component,AfterViewInit} from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { OtherPlayer } from '../other-player/other-player';
 import { Direction } from '../../../../service/direction.enum';
 import { CommonModule,  } from '@angular/common';
+import { webSocketService } from '../../../../service/websocket/websocket.service';
+
 
 @Component({
   selector: 'app-other-players',
@@ -10,29 +12,34 @@ import { CommonModule,  } from '@angular/common';
   styleUrls: ['./other-players.css'],
 })
 export class OtherPlayers 
-{
-  players: any[] = [];
-  direction = Direction.Right;
+{ 
+  wsService = inject(webSocketService)
+  players: {uuid: string, direction: Direction}[] = []
 
   ngOnInit() {
-    this.players = this.getPlayerList();
-    this.setCss();
+
+    this.players = this.getPlayerList()
+    this.setCss()
   }
 
 
 
   getPlayerList() {
     const listDirection = [];
-    listDirection.push({ direction: null, name: "Player 1", bet: 5, obtained: 0 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
+
+    const players_list = this.wsService.getPlayersName()
+
+    for (const player of players_list) {
+      listDirection.push({
+        direction: Direction.Bottom, 
+        uuid: player.uuid, 
+      })
+    }
+
 
     return listDirection;
   }
-  getPlayersByClass(className: string): any[] {
+  getPlayersByClass(className: string) {
     return this.players.filter(player => this.getDirectionClass(player.direction) === className);
   }
   getDirectionClass(direction:Direction): string {
@@ -49,26 +56,39 @@ export class OtherPlayers
   }
   setCss() {
     const playerNumber = this.players.length;
-    if (playerNumber == 1){
-      this.players[0].direction = Direction.Top;
+
+    // Compute how many players go to left, top and right
+    const n = Math.trunc(playerNumber / 3)
+
+    let repartition: [number, number, number] // [left players, top players, right players]
+
+    if (playerNumber % 3 === 0) {
+      repartition = [n, n, n]
+
+    } else if (playerNumber % 3 === 1) {
+      repartition = [n, n + 1, n]
+
+    } else {
+      repartition = [n + 1, n, n + 1]
     }
-    else{
-      this.players[0].direction = Direction.Right;
-      this.players[1].direction = Direction.Left;
+
+    // Assign each player its position
+    let index = 0
+
+    for (let i=0; i<repartition[0]; i++) {
+      this.players[index].direction = Direction.Left
+      index++
     }
-    this.players.forEach((player, index) => {
-      if (index >= 2 && index <= 4) {
-        this.players[index].direction = Direction.Top;
-      }
-      else if (index === 5  ) {
-        this.players[index].direction = Direction.Left;
-      }
-      else if (index === 6){
-        this.players[index].direction = Direction.Right;
-      }
-      else if (index !=0 && index !=1){
-        console.log('too many players, WTF');
-      }
-    });
+
+    for (let i=0; i<repartition[1]; i++) {
+      this.players[index].direction = Direction.Top
+      index++
+    }
+
+    for (let i=0; i<repartition[2]; i++) {
+      this.players[index].direction = Direction.Right
+      index++
+    }
+
   }
 }

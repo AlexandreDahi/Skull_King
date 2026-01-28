@@ -4,7 +4,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { RoomService } from '../../service/room/room.service';
-import { WebSocketService } from '../../service/websocket/websocket.service';
+//import { WebSocketService } from '../../service/websocket/websocket.service';
 import { FormsModule } from '@angular/forms';  
 
 @Component({
@@ -28,7 +28,7 @@ export class JoinRoom implements OnInit {
     private route: ActivatedRoute, 
     private router: Router, 
     private roomService: RoomService,
-    private wsService: WebSocketService
+    //private wsService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +59,7 @@ export class JoinRoom implements OnInit {
         const playerToken = res.token;
         
         // Connecter au WebSocket
-        this.wsService.joinRoom(this.roomId, playerUuid, playerToken);
+        //this.wsService.joinRoom(this.roomId, playerUuid, playerToken);
         
         // Rediriger vers le lobby au lieu du jeu
         this.router.navigate(['/lobby', this.roomId]);

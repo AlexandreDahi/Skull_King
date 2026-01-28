@@ -1,14 +1,14 @@
 <div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
 
-  <!-- ÉTAT : MISE À PLACER -->
-  <div *ngIf="!isBetPlaced" class="px-6 py-6 text-center space-y-6">
-
-    <p class="text-white text-[70px] leading-none font-[Pirata One]" style="font-family: 'Pirata One';">
-      {{ value }}
+    <p 
+      class="text-white text-[70px] leading-none font-[Pirata One] text-center p-2" 
+      style="font-family: 'Pirata One';"
+    >
+      {{ bet() }}
     </p>
 
     <!-- Boutons -->
-    <div class="flex justify-center gap-4">
+    <div class="flex justify-center gap-4 p-2">
       <button mat-fab (click)="decrease()">
         <mat-icon class="text-white">remove</mat-icon>
       </button>
@@ -18,7 +18,9 @@
       </button>
     </div>
 
-    <button 
+    <div class="flex justify-center gap-4 p-4">
+
+      <button 
       mat-flat-button 
       color="primary"
       (click)="placeBet()"
@@ -27,29 +29,7 @@
       Miser
     </button>
 
-  </div>
-
-  <!-- ÉTAT : MISE VALIDÉE -->
-  <div *ngIf="isBetPlaced" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
-
-    <!-- Boîte score -->
-    <div
-    [ngClass]="resultClass"
-      class="relative mx-auto bg-contain bg-center"
-      style="background-image: url('/images/whiteLine.png'); width: 140px; height: 140px;"
-    >
-
-      <!-- Mise -->
-      <p class="absolute top-2 left-8 text-white text-[60px] leading-none" [ngClass]="resultClass">
-        {{ bet }}
-      </p>
-
-      <!-- Résultat -->
-      <p class="absolute bottom-2 right-10 text-white text-[60px] leading-none" [ngClass]="resultClass">
-        {{ value }}
-      </p>
     </div>
-
-  </div>
+    
 
 </div>

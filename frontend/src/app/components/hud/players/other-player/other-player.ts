@@ -1,42 +1,51 @@
-import { Component, input } from '@angular/core';
-import { Direction } from '../../../../service/direction.enum';
-import { CommonModule } from '@angular/common';
+import { Component, inject, input, signal } from '@angular/core';
+import { webSocketService } from '../../../../service/websocket/websocket.service';
 
 @Component({
   selector: 'app-other-player',
   templateUrl: './other-player.html',
-  imports:[CommonModule],
+  imports:[],
   styleUrls: ['./other-player.css'],
 })
 export class OtherPlayer {
-  
-  playerDisplayLocation: string = "init";
-  player = input.required<{direction:Direction,name:string,bet:number,obtained:number}>();
-  playerName: string = "Player 1";
-  valueObtained: number = 0;
-  valueBetted: number = 0;
-  specificDirectionclass:string = "";
-  constructor() {
-  }
+
+  private wsService = inject(webSocketService)
+
+  playerUuid = input("")
+  playerName = signal("")
+  playerBet = signal(0)
+  playerTricksWon = signal(0)
+
 
   ngOnInit() {
-    this.playerDisplayLocation = this.getDirectionClass();
-    this.specificDirectionclass = this.playerDisplayLocation;
-    this.playerName = this.player().name;
-    this.valueBetted = this.player().bet;
-    this.valueObtained = this.player().obtained;
+
+    const playersList = this.wsService.getPlayersName()
+
+    for (const player of playersList) {
+      if (player.uuid === this.playerUuid()) {
+        this.playerName.set(player.name)
+      }
+    }
+
+    this.wsService.onBetRevealEvent((message:any) => {
+
+      for (const playerBet of message.bets) {
+        if (playerBet.uuid === this.playerUuid()) {
+          this.playerBet.set(playerBet.bet)
+          this.playerTricksWon.set(0)
+          break
+        }
+      }
+    })
+
+    this.wsService.onTrickWinner((message: any) => {
+      if (message.winner === this.playerUuid()) {
+        this.playerTricksWon.update((score) => score + 1)
+      }
+    })
+    
+    
+    
   }
   
-  getDirectionClass(): string {
-    switch (this.player().direction) {  
-      case Direction.Top:
-        return 'top-player';
-      case Direction.Left:
-        return 'left-player';
-      case Direction.Right:
-        return 'right-player';
-      default:
-        return '';
-    }
-  }
 }

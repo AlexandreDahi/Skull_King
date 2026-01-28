@@ -1,6 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { ws2Service } from "../../service/websocket/ws-2.service";
-import { Navbar } from "../../components/navbar/navbar";
+import { webSocketService } from "../../service/websocket/websocket.service";
 import { FormsModule } from "@angular/forms";
 
 import { Game } from "../game/game";
@@ -9,11 +8,11 @@ import { Game } from "../game/game";
     selector: "home-2",
     templateUrl: './home2.html',
     styleUrls: ['./home2.css'],
-    imports: [Navbar, FormsModule, Game]
+    imports: [FormsModule, Game]
 })
 export class Home2Component {
 
-    wsService = inject(ws2Service)
+    wsService = inject(webSocketService)
 
     players: {name: string, uuid: string}[] = []
     my_uuid: string = ""

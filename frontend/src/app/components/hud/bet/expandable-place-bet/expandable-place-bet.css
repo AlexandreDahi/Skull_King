@@ -7,6 +7,10 @@
 }
 
 .expandable-place-bet-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+ 
   width: 250px;
   overflow: hidden;              /* applique l'arrondi au contenu */
   backdrop-filter: blur(10px);

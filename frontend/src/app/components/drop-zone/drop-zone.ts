@@ -1,10 +1,10 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input, model, ModelSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Cards } from '../cards/cards';
 
 
-import { ws2Service } from '../../service/websocket/ws-2.service';
+import { webSocketService } from '../../service/websocket/websocket.service';
 import data from '../cards/index_carte.json'
 
 @Component({
@@ -16,14 +16,52 @@ import data from '../cards/index_carte.json'
 })
 export class DropZone {
 
-  wsService = inject(ws2Service)
+  wsService = inject(webSocketService)
 
-  @Input() cardsInZone: number[] = [];
-  @Input() connectedLists: string[] = [];
+  cardsInZone =  model<number[]>([])
 
-  @Input() isMyTurn: boolean = false;
+  isMyTurn = signal(false)
 
   cardData = data.index_carte;
+
+  constructor(){
+    this.wsService.onCardPlayed((message: any) => {
+
+      if (this.isMyTurn()) {
+        // This block prevent the card played being displayed twice
+        // i.e. once when the user drag and drop the card and once 
+        // when the server broadcast the card played
+        this.isMyTurn.set(false)
+        return
+      }
+
+      const card = this.wsService.convertCardNameFromBackToFront(message.card)
+
+      const card_id = this.wsService.getCardIdFromCardName(card)
+
+      if (card_id === undefined) {
+        console.log("Card sent from server is not known : ", message.card)
+        return
+      }
+
+      this.cardsInZone.update(value => {
+        value.push(card_id)
+        return value
+      })
+    })
+
+    this.wsService.onTrickWinner((message: any) => {
+      this.cardsInZone.set([])
+    })
+
+    this.wsService.onAskCardEvent((message: any) => {
+
+      if (message.current_player === this.wsService.getPlayerUuid()) {
+        this.isMyTurn.set(true)
+      }
+
+    })
+  }
 
   onDrop(event: CdkDragDrop<number[]>) {
     
@@ -56,7 +94,7 @@ export class DropZone {
             break
         }
 
-        card_back = color + ' ' + num
+        card_back = color_back + ' ' + num
       }
     }
 
@@ -66,8 +104,9 @@ export class DropZone {
     
 
     console.log("removed card : ", removedCard)
-    previous.splice(event.item.data.index, 1);
-    current.push(removedCard);
+    previous.splice(event.item.data.index, 1)
+    current.push(removedCard)
+      
   }
 
 }

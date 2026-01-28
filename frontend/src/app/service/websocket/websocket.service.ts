@@ -1,141 +1,220 @@
 import { Injectable } from '@angular/core';
 
-import { IMessage, RxStomp, RxStompConfig } from "@stomp/rx-stomp";
-import { Observable, ReplaySubject, Subscription } from 'rxjs';
+
+import cardData from '../../components/cards/index_carte.json';
 
 
 @Injectable({
   providedIn: 'root',
 })
-export class WebSocketService {
+export class webSocketService {
 
+    private cardsInfo = cardData.index_carte
 
-    private config: RxStompConfig = {
-        brokerURL: "ws://localhost:8080/games",
-        reconnectDelay: 2000,
-        heartbeatIncoming: 10000,
-        heartbeatOutgoing: 10000,
+    private websocket: WebSocket
+    private newRoundMessage = undefined
+    private player_uuid: string = ""
+    private players_list: {uuid: string, name: string}[] = []
+
+    private onGameStartSubscribers:any[] = []
+    private onNewRoundEventSubscribers:any[] = []
+    private onCardPlayedSubscribers:any[] = []
+    private onAskCardSubscribers: any[] = []
+    private onBetRevealSubscribers: any[] = []
+    private onRoundScoresSubscribers: any[] = []
+    private onTrickWinnerSubscribers: any[] = []
+
+    constructor(){
+        this.websocket = new WebSocket("ws://localhost:8000/ws")
+
+        this.websocket.addEventListener("open", this.onOpenConnection)
+        this.websocket.addEventListener("message", (event) => this.onMessage(event))
+        this.websocket.addEventListener("error", (event) => this.onError(event))
     }
 
-    private rxStomp = new RxStomp()
+    onOpenConnection(){
+        console.log("Websocket connection open")
+    }
 
-    private roomUuid = ""
-    private playerUuid = ""
-    private playerToken = ""
-    private isPlayerAdmin = false
+    onMessage(event: MessageEvent){
 
+        const message = JSON.parse(event.data)
+        console.log("Websocket event : ", message)
 
-    private publicSubject  = new ReplaySubject<IMessage>(10)
-    private privateSubject = new ReplaySubject<IMessage>(10)
-    private lobbySubject   = new ReplaySubject<IMessage>(10)
+        switch (message.event){
 
+            case "game_start":
+                console.log("Game start !!!")
 
-    private publicChannel: Observable<IMessage>  = this.publicSubject.asObservable()
-    private privateChannel: Observable<IMessage> = this.privateSubject.asObservable()
-    private lobbyChannel: Observable<IMessage>   = this.lobbySubject.asObservable()
+                this.player_uuid = message.me
+                this.players_list = message.players
 
-    private _publicSub?: Subscription
-    private _privateSub?: Subscription
-    private _lobbySub?: Subscription
+                for (const callback of this.onGameStartSubscribers) {
+                    callback(message)
+                }
+                break
+            
+            case "new_round":
+                console.log("New round start")
 
+                this.newRoundMessage = message
 
-    private activateWebSocket() {
-        this.rxStomp.configure(this.config)
-        this.rxStomp.activate()
+                for (const callback of this.onNewRoundEventSubscribers) {
+                    callback(this.newRoundMessage)
+                }
+                break
 
-    } 
+            case "bet_reveal":
+                console.log("bet reveal")
 
-    joinRoom(roomUuid: string, playerUuid: string, playerToken: string, isAdmin: boolean = false) {
+                for (const callback of this.onBetRevealSubscribers) {
+                    callback(message)
+                }
 
-        if (!this.rxStomp.active) {
-            this.activateWebSocket()
+                break
+
+            case "ask_card":
+                console.log("Card asked")
+                
+                for (const callback of this.onAskCardSubscribers) {
+                    callback(message)
+                }
+
+                break
+
+            case "card_played":
+                console.log("Card played")
+
+                for (const callback of this.onCardPlayedSubscribers) {
+                    callback(message)
+                }
+                break
+            
+            case "trick_winner":
+                console.log("End of trick")
+
+                for (const callback of this.onTrickWinnerSubscribers) {
+                    callback(message)
+                }
+                break
+            
+            case "round_scores":
+                console.log("End of round")
+                
+                for (const callback of this.onRoundScoresSubscribers) {
+                    callback(message)
+                    break
+                }
+
+        }
+    }
+
+    onError(event: Event ){
+        console.log("Websocket error : ", event)
+    }
+
+    onCloseConnection(){
+        console.log("Websocket connection closed")
+    }
+
+    convertCardNameFromBackToFront(card: string) {
+        const [color, number] = card.split(' ')
+
+        let color_front
+        switch (color) {
+          case "purple":
+            color_front = "violet"
+            break
+          case "green":
+            color_front = "vert"
+            break
+          case "yellow":
+            color_front = "jaune"
+            break
+          case "black":
+            color_front = "noir"
+            break
+          
         }
 
-        this.roomUuid = roomUuid
-        this.playerUuid = playerUuid
-        this.playerToken = playerToken
-        this.isPlayerAdmin = isAdmin
-
-        console.log('🔌 WebSocket joinRoom:', {
-            roomUuid,
-            playerUuid,
-            playerToken,
-            isAdmin
-        });
-
-        const pubWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/general`
-        })
-
-        const privWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/${this.playerUuid}/${this.playerToken}`
-        })
-
-        // ✅ Ajouter /topic pour correspondre au backend
-        const lobbyWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/lobby-events`  // ← AJOUTER /topic
-        })
-
-        // Clean up previous low-level subscriptions if any
-        this._publicSub?.unsubscribe()
-        this._privateSub?.unsubscribe()
-        this._lobbySub?.unsubscribe()
-
-        this._publicSub = pubWatch.subscribe(msg => this.publicSubject.next(msg))
-        this._privateSub = privWatch.subscribe(msg => this.privateSubject.next(msg))
-        this._lobbySub = lobbyWatch.subscribe(msg => this.lobbySubject.next(msg))
-
-        console.log('✅ Channels configurés:');
-        console.log('   - Public: /topic/rooms/' + this.roomUuid);
-        console.log('   - Private: /user/queue/rooms/' + this.roomUuid);
-        console.log('   - Lobby: /topic/rooms/' + this.roomUuid + '/lobby-events');
+        return number + ' ' + color_front
     }
 
-    getPLayerUuid() {
-        return this.playerUuid
-    }
+    getCardIdFromCardName(card: string) {
+        for (const card_front of this.cardsInfo) {
 
-
-
-    getPublicChannel() {
-        return this.publicChannel
-    }
-
-    getPrivateChannel() {
-        return this.privateChannel
-    }
-
-    getLobbyChannel() {
-        if (!this.rxStomp.active) {
-            this.activateWebSocket()
+          if (card === card_front.name){
+            return card_front.id
+          }
         }
-        
-        return this.lobbyChannel
+
+        return undefined
+    }
+
+    getPlayerUuid() {
+        return this.player_uuid
+    }
+
+    getPlayersName() {
+        return this.players_list
     }
 
 
-    isAdmin(): boolean {
-        return this.isPlayerAdmin
-    }
 
-    sendLobbyMessage(message: any) {
-        console.log('📤 Envoi message lobby:', message);
-        this.rxStomp.publish({
-            destination: `/app/rooms/${this.roomUuid}/lobby`,
-            body: JSON.stringify(message)
-        })
+    sendName(playerName: string){
+        this.websocket.send(JSON.stringify({name: playerName}))
     }
 
 
-    sendStartGameSignal() {
-        console.log("📤 Envoi du signal de début de partie au serveur.")
-
-        this.rxStomp.publish({
-            destination: `/app/rooms/${this.roomUuid}/start-game`,
-            body: JSON.stringify({
-                userUuid: this.playerUuid,
-                userToken: this.playerToken,
-            })
-        })
+    sendBet(player_bet: number) {
+        this.websocket.send(JSON.stringify({
+            event: "bet_transmission",
+            bet: player_bet
+        }))
     }
+
+    sendCard(player_card: string) {
+        this.websocket.send(JSON.stringify({
+            event: "card_transmission",
+            card: player_card,
+        }))
+    }
+
+    onGameStartEvent(callback: any){
+        this.onGameStartSubscribers.push(callback)
+    }
+
+    onNewRoundEvent(callback: any){
+
+        this.onNewRoundEventSubscribers.push(callback)
+
+        if (this.newRoundMessage !== undefined) {
+            // Subscriber probably missed something
+            // so we send them what we got
+            callback(this.newRoundMessage)
+        }
+    }
+
+    onBetRevealEvent(callback: any) {
+        this.onBetRevealSubscribers.push(callback)
+    }
+
+    onAskCardEvent(callback: any) {
+        this.onAskCardSubscribers.push(callback)
+    }
+
+    onCardPlayed(callback: any) {
+        this.onCardPlayedSubscribers.push(callback)
+    }
+
+    onTrickWinner(callback: any) {
+        this.onTrickWinnerSubscribers.push(callback)
+    }
+    
+    onRoundScores(callback: any) {
+        this.onRoundScoresSubscribers.push(callback)
+    }
+
+    
+
 }

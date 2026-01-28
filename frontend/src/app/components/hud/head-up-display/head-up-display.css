@@ -1,4 +1,6 @@
 .expandables-container{
+    width: 100%;
+    justify-content: space-between;
     position: fixed;
     bottom: 0;
     right: 0;
@@ -6,4 +8,6 @@
     flex-direction: row;
     align-items: end;
     gap: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
