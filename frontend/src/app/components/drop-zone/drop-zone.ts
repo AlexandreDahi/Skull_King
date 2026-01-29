@@ -35,17 +35,13 @@ export class DropZone {
         return
       }
 
-      const card = this.wsService.convertCardNameFromBackToFront(message.card)
-
-      const card_id = this.wsService.getCardIdFromCardName(card)
-
-      if (card_id === undefined) {
+      if (message.card === undefined) {
         console.log("Card sent from server is not known : ", message.card)
         return
       }
 
       this.cardsInZone.update(value => {
-        value.push(card_id)
+        value.push(message.card)
         return value
       })
     })
@@ -72,35 +68,9 @@ export class DropZone {
 
     const removedCard = previous[event.item.data.index];
 
-    let card_back = ''
-    for (const card_front of this.cardData) {
-      if (card_front.id === removedCard){
-
-        const [num, color] = card_front.name.split(' ')
-
-        let color_back
-        switch (color) {
-          case "violet":
-            color_back = "purple"
-            break
-          case "jaune":
-            color_back = "jaune"
-            break
-          case "noir":
-            color_back = 'black'
-            break
-          case "vert":
-            color_back = "green"
-            break
-        }
-
-        card_back = color_back + ' ' + num
-      }
-    }
-
     
-    console.log("sending card", card_back, "to the backend")
-    this.wsService.sendCard(card_back)
+    console.log("Sending card id", removedCard, "to the backend")
+    this.wsService.sendCard(removedCard)
     
 
     console.log("removed card : ", removedCard)

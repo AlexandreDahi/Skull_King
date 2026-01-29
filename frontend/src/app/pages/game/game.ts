@@ -116,39 +116,7 @@ export class Game implements OnInit, OnDestroy {
 
     this.wsService.onNewRoundEvent( (message: any) => {
 
-      const hand = []
-      for (const card of message.hand) {
-
-        const [color, number] = card.split(' ')
-
-        let color_front
-        switch (color) {
-          case "purple":
-            color_front = "violet"
-            break
-          case "green":
-            color_front = "vert"
-            break
-          case "yellow":
-            color_front = "jaune"
-            break
-          case "black":
-            color_front = "noir"
-            break
-          
-        }
-
-        const name_in_front = number + ' ' + color_front
-
-        
-        for (const card_front of this.jsonData) {
-
-          if (name_in_front === card_front.name){
-            hand.push(card_front.id)
-          }
-        }
-      }
-      this.handCards.set(hand)
+      this.handCards.set(message.hand)
       this.gameStateInfo.set("A vos paris !")
 
     })

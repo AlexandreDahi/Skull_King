@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 
 import cardData from '../../components/cards/index_carte.json';
 
+import { cardNameToId, idToCardName } from '../mapCardFrontBack';
+
 
 @Injectable({
   providedIn: 'root',
@@ -56,6 +58,10 @@ export class webSocketService {
             
             case "new_round":
                 console.log("New round start")
+                
+                // Cards conversion
+                const front_hand = this.convertBackendCardsToFront(message.hand)
+                message.hand = front_hand
 
                 this.newRoundMessage = message
 
@@ -84,6 +90,9 @@ export class webSocketService {
 
             case "card_played":
                 console.log("Card played")
+
+                const front_card = cardNameToId.get(message.card)
+                message.card = front_card
 
                 for (const callback of this.onCardPlayedSubscribers) {
                     callback(message)
@@ -117,28 +126,12 @@ export class webSocketService {
         console.log("Websocket connection closed")
     }
 
-    convertCardNameFromBackToFront(card: string) {
-        const [color, number] = card.split(' ')
-
-        let color_front
-        switch (color) {
-          case "purple":
-            color_front = "violet"
-            break
-          case "green":
-            color_front = "vert"
-            break
-          case "yellow":
-            color_front = "jaune"
-            break
-          case "black":
-            color_front = "noir"
-            break
-          
-        }
-
-        return number + ' ' + color_front
+    private convertBackendCardsToFront(cards: string[]) {
+        return cards
+            .map(card_back => cardNameToId.get(card_back))
+            .filter(id => id !== undefined);
     }
+    
 
     getCardIdFromCardName(card: string) {
         for (const card_front of this.cardsInfo) {
@@ -173,10 +166,10 @@ export class webSocketService {
         }))
     }
 
-    sendCard(player_card: string) {
+    sendCard(player_card: number) {
         this.websocket.send(JSON.stringify({
             event: "card_transmission",
-            card: player_card,
+            card: idToCardName.get(player_card) ,
         }))
     }
 
