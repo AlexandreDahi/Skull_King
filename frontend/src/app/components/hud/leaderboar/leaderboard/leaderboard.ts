@@ -13,7 +13,12 @@ export class Leaderboard {
 
   wsService = inject(webSocketService)
 
-  scores = signal<{name: string, uuid: string, score: number}[]>([])
+  scores = signal<{
+    name: string, 
+    uuid: string, 
+    score: number, 
+    score_last_round: number}[]
+  >([])
   
   ngOnInit() {
 
@@ -21,22 +26,24 @@ export class Leaderboard {
 
     for (const player of players) {
       this.scores.update( (values) => {
-        values.push({name: player.name, uuid: player.uuid, score: 0})
+        values.push({
+          name: player.name, 
+          uuid: player.uuid, 
+          score: 0, 
+          score_last_round: 0
+        })
         return values
       })
     }
 
 
     this.wsService.onRoundScores((message: any) => {
-      //for (const roundPlayerInfo of message.scores) {
 
         for (const player of this.scores()) {
-          //if (roundPlayerInfo.uuid === player.uuid) {
+          
             player.score += message.scores[player.uuid]
-            //break
-          //}
+            player.score_last_round = message.scores[player.uuid]
         }
-      //}
 
       this.scores.update((values) => values) // notify angular to update the view
     })

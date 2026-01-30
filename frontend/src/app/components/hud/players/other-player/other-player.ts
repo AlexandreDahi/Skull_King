@@ -44,8 +44,16 @@ export class OtherPlayer {
       }
     })
     
-    
-    
+  }
+
+  name() {
+
+    if (this.wsService.getPlayerUuid() === this.playerUuid()) {
+      return this.playerName() + " (Vous)"
+    } 
+    else {
+      return this.playerName()
+    }
   }
   
 }
