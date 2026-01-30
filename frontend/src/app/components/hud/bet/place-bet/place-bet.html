@@ -9,11 +9,19 @@
 
     <!-- Boutons -->
     <div class="flex justify-center gap-4 p-2">
-      <button mat-fab (click)="decrease()">
-        <mat-icon class="text-white">remove</mat-icon>
-      </button>
+      @if (buttonDisabled()) {
+        <button mat-fab (click)="decrease()" disabled>
+          <mat-icon class="text-white">remove</mat-icon>
+          ok
+        </button>
+      } @else {
+        <button mat-fab (click)="decrease()">
+          <mat-icon class="text-white">remove</mat-icon>
+        </button>
+      }
+      
 
-      <button mat-fab (click)="increase()">
+      <button mat-fab (click)="increase()" [disabled]="buttonDisabled()">
         <mat-icon class="text-white">add</mat-icon>
       </button>
     </div>
@@ -21,13 +29,14 @@
     <div class="flex justify-center gap-4 p-4">
 
       <button 
-      mat-flat-button 
-      color="primary"
-      (click)="placeBet()"
-      class="uppercase font-bold tracking-wide"
-    >
-      Miser
-    </button>
+        mat-flat-button 
+        color="primary"
+        (click)="placeBet()"
+        [disabled]="buttonDisabled()"
+        class="uppercase font-bold tracking-wide"
+      >
+        Miser
+      </button>
 
     </div>
     
