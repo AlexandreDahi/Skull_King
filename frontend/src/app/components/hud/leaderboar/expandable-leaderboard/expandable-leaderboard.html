@@ -1,14 +1,17 @@
 <div class="expandable-leaderboard-container">
     
     <!-- Contenu expandable avec animation -->
-    <div class="expandable-content" [class.expanded]="isExpanded">
-        <app-leaderboard *ngIf="isExpanded"></app-leaderboard>
+    <div class="expandable-content" [class.expanded]="isExpanded()">
+
+        @if (isExpanded()) {
+            <app-leaderboard />
+        }
     </div>
 
     <!-- Bouton -->
     <button
       class="backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold flex items-center justify-between px-4 py-3"
-      [class.rounded-t-xl]="!isExpanded"
+      [class.rounded-t-xl]="!isExpanded()"
       (click)="toggleExpand()"
     >
         <div class="flex items-center gap-3">
@@ -17,7 +20,7 @@
         </div>
 
         <mat-icon class="black-icon">
-            {{ isExpanded ? 'expand_less' : 'expand_more' }}
+            {{ isExpanded() ? 'expand_less' : 'expand_more' }}
         </mat-icon>
     </button> 
 </div>

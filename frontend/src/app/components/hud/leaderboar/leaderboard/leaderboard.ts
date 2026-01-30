@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { webSocketService } from '../../../../service/websocket/websocket.service';
 
 
+type PlayerInfo = {
+  name: string,
+  uuid: string, 
+  score: number, 
+  score_last_round: number
+}
+
 @Component({
   selector: 'app-leaderboard',
   imports: [CommonModule],
@@ -13,12 +20,7 @@ export class Leaderboard {
 
   wsService = inject(webSocketService)
 
-  scores = signal<{
-    name: string, 
-    uuid: string, 
-    score: number, 
-    score_last_round: number}[]
-  >([])
+  scores = signal<PlayerInfo[]>([])
   
   ngOnInit() {
 
@@ -45,9 +47,17 @@ export class Leaderboard {
             player.score_last_round = message.scores[player.uuid]
         }
 
-      this.scores.update((values) => values) // notify angular to update the view
+      this.scores.update(values => values) // notify angular to update the view
     })
 
+  }
+
+  scoreInfo(player: PlayerInfo) {
+
+    const sign = player.score_last_round > 0 ? "+" : ""
+    console.log("Updating score info")
+
+    return player.score + " (" + sign + player.score_last_round + ")"
   }
 
 }

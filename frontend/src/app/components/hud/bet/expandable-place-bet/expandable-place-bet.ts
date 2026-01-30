@@ -27,7 +27,6 @@ export class ExpandablePlaceBet {
   }
 
   toggleExpand() {
-    console.log("Expanding place bet")
     this.isExpanded.update(isExpanded => !isExpanded)
   }
 
