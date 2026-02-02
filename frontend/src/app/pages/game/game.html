@@ -16,8 +16,7 @@
 
   <app-hand 
     [nonPlayableCardIds]="nonPlayableCards()" 
-    [cardIds]="handCards()" 
-    (playCardEvent)="onCardPlayed($event)"
+    [(cardIds)]="handCards"
     (errorEvent)="onCardPlayedError($event)"
   />
  

@@ -51,8 +51,7 @@ export class Game implements OnInit, OnDestroy {
   // --- GAME DATA ---  //
   handCards: WritableSignal<number[]> = signal([]);
   dropZoneCards: WritableSignal<number[]> = signal([]);
-  nonPlayableCards = computed(() => this.getPlayableCards(this.dropZoneCards())
-  )
+  nonPlayableCards = computed(() => this.getPlayableCards(this.dropZoneCards()))
 
   gameStateInfo = signal("")
 
@@ -235,31 +234,6 @@ export class Game implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
   }
 
-  // --------------------------
-  //    JOUER UNE CARTE
-  //----------------------------
-  onCardPlayed(cardId: number) {
-
-    console.log("COUCOU")
-    // Vérifier que c'est le tour du joueur (WebSocket)
-    if (this.gameState.currentTurn !== this.playerUuid) {
-      console.warn('⚠️ Ce n\'est pas votre tour !');
-      return;
-    }
-
-    // Logique locale
-    this.dropZoneCards.update((v) => {
-      v.push(cardId)
-      return v
-    })
-    const index = this.handCards().indexOf(cardId);
-    if (index > -1) this.handCards().splice(index, 1);
-
-    this.handCards.update(v => v)
-    
-  }
-
- 
   // --------------------------
   //    SCORE ANIMATION POP
   //----------------------------

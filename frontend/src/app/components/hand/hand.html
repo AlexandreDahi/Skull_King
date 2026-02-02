@@ -1,11 +1,23 @@
-<div id="handList" cdkDropList [cdkDropListData]="cardIds" [cdkDropListConnectedTo]="['dropzone']"
-  (cdkDropListDropped)="drop($event)" class="hand">
-  <app-cards *ngFor="let id of cardIds; let i = index" cdkDrag
-    [cdkDragDisabled]="nonPlayableCardIds().includes(id)"
-    [id]="id" class="card-on-arc"
-    [class.grayed]="nonPlayableCardIds().includes(id)"
-    [class.flying-card]="flyingCardId === id"
-    (dblclick)="playCard(i, $event)"
-    [cdkDragData]="{ id: id, index: i }"
-    [style.transform]="computeArcTransform(i)" [style.zIndex]="i"></app-cards>
+<div 
+  id="handList" 
+  cdkDropList 
+  [cdkDropListData]="cardIds()" 
+  [cdkDropListConnectedTo]="['dropzone']"
+  (cdkDropListDropped)="drop($event)" 
+  class="hand"
+>
+  @for (id of cardIds(); track id) {
+    <app-cards 
+      cdkDrag
+      [cdkDragDisabled]="nonPlayableCardIds().includes(id) || !isMyTurn()"
+      [id]="id" 
+      class="card-on-arc"
+      [class.grayed]="nonPlayableCardIds().includes(id)"
+      [class.flying-card]="flyingCardId === id"
+      (dblclick)="playCard($index, $event)"
+      [cdkDragData]="{ id: id, index: $index }"
+      [style.transform]="computeArcTransform($index)" [style.zIndex]="$index"
+    />
+  }
+  
 </div>

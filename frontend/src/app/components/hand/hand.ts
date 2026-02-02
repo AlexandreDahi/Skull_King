@@ -1,4 +1,4 @@
-import { Component, EventEmitter, input, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, input, model, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
 import {
@@ -6,6 +6,7 @@ import {
   CdkDragStart,
   DragDropModule
 } from '@angular/cdk/drag-drop';
+import { webSocketService } from '../../service/websocket/websocket.service';
 
 @Component({
   selector: 'app-hand',
@@ -15,21 +16,37 @@ import {
 })
 export class Hand {
 
-  @Input() cardIds: number[] = [];
+  cardIds = model.required<number[]>();
   nonPlayableCardIds = input.required<number[]>();
+  isMyTurn = signal(false)
 
   draggingIndex: number | null = null;
 
-  @Output() playCardEvent = new EventEmitter<number>();
   @Output() errorEvent = new EventEmitter<string>();
 
+  wsService = inject(webSocketService)
+
   flyingCardId: number | null = null;
+
+
+  ngOnInit() {
+
+    this.wsService.onAskCardEvent((message:any) => {
+      if (message.current_player === this.wsService.getPlayerUuid()) {
+        this.isMyTurn.set(true)
+      }
+    })
+
+    this.wsService.onCardPlayed((message: any) => {
+      this.isMyTurn.set(false)
+    })
+  }
 
   /* ---------------------------
      Calcul positions cartes sur l'arc
      --------------------------- */
   computeArcTransform(i: number): string {
-    const n = this.cardIds.length;
+    const n = this.cardIds().length;
 
     if (n === 1) {
       return `translate(0,0) rotate(0deg)`;
@@ -60,7 +77,7 @@ export class Hand {
   drop(event: CdkDragDrop<number[]>) {
     if (event.previousContainer !== event.container) {
       // Drop vers dropzone
-      const card = this.cardIds[event.previousIndex];
+      const card = this.cardIds()[event.previousIndex];
       event.previousContainer.data.splice(event.previousIndex, 1);
       event.container.data.push(card);
     }
@@ -70,7 +87,12 @@ export class Hand {
      Double click events
      --------------------------- */
   playCard(index: number, event: MouseEvent) {
-    const cardId = this.cardIds[index];
+    const cardId = this.cardIds()[index];
+
+    if (!this.isMyTurn()) {
+      this.errorEvent.emit("Ce n'est pas votre tour !")
+      return
+    }
 
     if (this.nonPlayableCardIds().includes(cardId)) {
       this.errorEvent.emit('Carte non jouable !');
@@ -104,9 +126,10 @@ export class Hand {
 
     // après l’animation, mettre à jour les tableaux
     setTimeout(() => {
-      this.cardIds.splice(index, 1);
-      this.playCardEvent.emit(cardId);
+      this.cardIds().splice(index, 1);
+      this.cardIds.set([...this.cardIds()])
       this.flyingCardId = null;
+      this.wsService.sendCard(cardId)
     }, 500); // durée = 0.5s
   }
 
