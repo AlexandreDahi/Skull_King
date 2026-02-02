@@ -66,7 +66,8 @@ export class webSocketService {
                 console.log("New round start")
                 
                 // Cards conversion
-                const front_hand = this.convertBackendCardsToFront(message.hand)
+                const front_hand = this.convertBackendCardsToFront(message.hand).sort((a, b) => a - b)
+                console.log("------------ cartes triées : ", front_hand)
                 message.hand = front_hand
 
                 this.newRoundMessage = message
