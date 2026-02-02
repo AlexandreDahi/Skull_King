@@ -40,10 +40,8 @@ export class DropZone {
         return
       }
 
-      this.cardsInZone.update(value => {
-        value.push(message.card)
-        return value
-      })
+      const cardsPlayed = [...this.cardsInZone(), message.card]
+      this.cardsInZone.set(cardsPlayed)
     })
 
     this.wsService.onTrickWinner((message: any) => {

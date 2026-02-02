@@ -51,7 +51,8 @@ export class Game implements OnInit, OnDestroy {
   // --- GAME DATA ---  //
   handCards: WritableSignal<number[]> = signal([]);
   dropZoneCards: WritableSignal<number[]> = signal([]);
-  nonPlayableCards = computed(() => this.getPlayableCards(this.dropZoneCards()))
+  nonPlayableCards = computed(() => this.getPlayableCards(this.dropZoneCards())
+  )
 
   gameStateInfo = signal("")
 

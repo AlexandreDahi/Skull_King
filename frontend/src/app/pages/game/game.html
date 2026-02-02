@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <app-drop-zone [cardsInZone]="dropZoneCards()" />
+  <app-drop-zone [(cardsInZone)]="dropZoneCards" />
 
   <app-hand 
     [nonPlayableCardIds]="nonPlayableCards()" 

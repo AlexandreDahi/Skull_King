@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Cards } from '../../components/cards/cards';
 import {
@@ -16,7 +16,7 @@ import {
 export class Hand {
 
   @Input() cardIds: number[] = [];
-  @Input() nonPlayableCardIds: number[] = [];
+  nonPlayableCardIds = input.required<number[]>();
 
   draggingIndex: number | null = null;
 
@@ -72,7 +72,7 @@ export class Hand {
   playCard(index: number, event: MouseEvent) {
     const cardId = this.cardIds[index];
 
-    if (this.nonPlayableCardIds.includes(cardId)) {
+    if (this.nonPlayableCardIds().includes(cardId)) {
       this.errorEvent.emit('Carte non jouable !');
       return;
     }

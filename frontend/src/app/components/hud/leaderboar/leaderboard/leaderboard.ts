@@ -55,7 +55,7 @@ export class Leaderboard {
   scoreInfo(player: PlayerInfo) {
 
     const sign = player.score_last_round > 0 ? "+" : ""
-    console.log("Updating score info")
+    //console.log("Updating score info")
 
     return player.score + " (" + sign + player.score_last_round + ")"
   }

@@ -1,9 +1,9 @@
 <div id="handList" cdkDropList [cdkDropListData]="cardIds" [cdkDropListConnectedTo]="['dropzone']"
   (cdkDropListDropped)="drop($event)" class="hand">
   <app-cards *ngFor="let id of cardIds; let i = index" cdkDrag
-    [cdkDragDisabled]="nonPlayableCardIds.includes(id)"
+    [cdkDragDisabled]="nonPlayableCardIds().includes(id)"
     [id]="id" class="card-on-arc"
-    [class.grayed]="nonPlayableCardIds.includes(id)"
+    [class.grayed]="nonPlayableCardIds().includes(id)"
     [class.flying-card]="flyingCardId === id"
     (dblclick)="playCard(i, $event)"
     [cdkDragData]="{ id: id, index: i }"
