@@ -27,15 +27,12 @@ export class PlaceBet {
 
   ngOnInit() {
 
-    console.log("----- init place bet, disabled : ", this.buttonDisabled())
-
     this.wsService.onNewRoundEvent((message: any) => {
       this.isExpended.set(true)
       this.buttonDisabled.set(false)
     }) 
 
     this.wsService.onBetRevealEvent((message: any) => {
-      console.log("-----------disabling the button")
       this.buttonDisabled.set(true)
     })
 

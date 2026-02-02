@@ -1,4 +1,6 @@
-<div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
+@if (isExpended()) {
+
+  <div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
 
     <p 
       class="text-white text-[70px] leading-none font-[Pirata One] text-center p-2" 
@@ -9,18 +11,12 @@
 
     <!-- Boutons -->
     <div class="flex justify-center gap-4 p-2">
-      @if (buttonDisabled()) {
-        <button mat-fab (click)="decrease()" disabled>
-          <mat-icon class="text-white">remove</mat-icon>
-          ok
-        </button>
-      } @else {
-        <button mat-fab (click)="decrease()">
-          <mat-icon class="text-white">remove</mat-icon>
-        </button>
-      }
       
-
+      <button mat-fab (click)="decrease()" [disabled]="buttonDisabled()">
+        <mat-icon class="text-white">remove</mat-icon>
+        
+      </button>
+    
       <button mat-fab (click)="increase()" [disabled]="buttonDisabled()">
         <mat-icon class="text-white">add</mat-icon>
       </button>
@@ -41,4 +37,6 @@
     </div>
     
 
-</div>
+  </div>
+}
+

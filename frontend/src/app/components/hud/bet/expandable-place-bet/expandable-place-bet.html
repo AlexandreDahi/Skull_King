@@ -1,10 +1,8 @@
 <div class="expandable-place-bet-container rounded-t-xl">
 
-  @if (isExpanded()) {
-    <app-place-bet [(isExpended)]="isExpanded"/>
-  }
+  <app-place-bet [(isExpended)]="isExpanded"/>
   
-
+  
   <button 
     class="backdrop-blur-md bg-black/40 w-full button-container uppercase font-bold"
     [class.rounded-t-xl]="!isExpanded()"
