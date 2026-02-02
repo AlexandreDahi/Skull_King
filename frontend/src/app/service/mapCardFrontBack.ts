@@ -31,47 +31,53 @@ export const cardNameToId = new Map([
     ["GREEN_13", 27],
     ["GREEN_14", 28],
 
-    // BLACK 1-14
-    ["BLACK_1", 29],
-    ["BLACK_2", 30],
-    ["BLACK_3", 31],
-    ["BLACK_4", 32],
-    ["BLACK_5", 33],
-    ["BLACK_6", 34],
-    ["BLACK_7", 35],
-    ["BLACK_8", 36],
-    ["BLACK_9", 37],
-    ["BLACK_10", 38],
-    ["BLACK_11", 39],
-    ["BLACK_12", 40],
-    ["BLACK_13", 41],
-    ["BLACK_14", 42],
-
     // YELLOW 1-14
-    ["YELLOW_1", 43],
-    ["YELLOW_2", 44],
-    ["YELLOW_3", 45],
-    ["YELLOW_4", 46],
-    ["YELLOW_5", 47],
-    ["YELLOW_6", 48],
-    ["YELLOW_7", 49],
-    ["YELLOW_8", 50],
-    ["YELLOW_9", 51],
-    ["YELLOW_10", 52],
-    ["YELLOW_11", 53],
-    ["YELLOW_12", 54],
-    ["YELLOW_13", 55],
-    ["YELLOW_14", 56],
+    ["YELLOW_1", 29],
+    ["YELLOW_2", 30],
+    ["YELLOW_3", 31],
+    ["YELLOW_4", 32],
+    ["YELLOW_5", 33],
+    ["YELLOW_6", 34],
+    ["YELLOW_7", 35],
+    ["YELLOW_8", 36],
+    ["YELLOW_9", 37],
+    ["YELLOW_10", 38],
+    ["YELLOW_11", 39],
+    ["YELLOW_12", 40],
+    ["YELLOW_13", 41],
+    ["YELLOW_14", 42],
+
+    // BLACK 1-14
+    ["BLACK_1", 43],
+    ["BLACK_2", 44],
+    ["BLACK_3", 45],
+    ["BLACK_4", 46],
+    ["BLACK_5", 47],
+    ["BLACK_6", 48],
+    ["BLACK_7", 49],
+    ["BLACK_8", 50],
+    ["BLACK_9", 51],
+    ["BLACK_10", 52],
+    ["BLACK_11", 53],
+    ["BLACK_12", 54],
+    ["BLACK_13", 55],
+    ["BLACK_14", 56],
+
+    ["SKULL_KING", 57],
+
+    // SIRENS
+    ["SIREN_1", 58],
+    ["SIREN_2", 59],
 
     // PIRATES
-    ["PIRATE_HARRY", 64],
-    ["PIRATE_JUANITA", 61],
     ["PIRATE_RASCAL", 60],
+    ["PIRATE_JUANITA", 61],
     ["PIRATE_ROSIE", 62],
     ["PIRATE_WILL", 63],
+    ["PIRATE_HARRY", 64],
     ["PIRATE_TIGRESS", 65],
 
-    // SIMPLE ESCAPE (fuite)
+    // SIMPLE ESCAPE
     ["ESCAPE_1", 66],
     ["ESCAPE_2", 67],
     ["ESCAPE_3", 68],
@@ -81,12 +87,7 @@ export const cardNameToId = new Map([
     ["LOOT_1", 70],
     ["LOOT_2", 71],
 
-    // SIRENS
-    ["SIREN_1", 58],
-    ["SIREN_2", 59],
-
     // OTHERS
-    ["SKULL_KING", 57],
     ["WHALE", 72],
     ["KRAKEN", 73],
 ]);
