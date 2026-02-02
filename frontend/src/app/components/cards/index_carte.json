@@ -197,200 +197,200 @@
         "description": "Carte de couleur vert avec une valeur de 14"
         },
         {
-        "name":"1 noir",
-        "image":"/images/cards/noir/noir_1.jpg",
-        "id": 29,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 1"
-        },
-        {
-        "name":"2 noir",
-        "image":"/images/cards/noir/noir_2.jpg",
-        "id": 30,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 2"
-        },
-        {
-        "name":"3 noir",
-        "image":"/images/cards/noir/noir_3.jpg",
-        "id": 31,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 3"
-        },
-        {
-        "name":"4 noir",
-        "image":"/images/cards/noir/noir_4.jpg",
-        "id": 32,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 4"
-        },
-        {
-        "name":"5 noir",
-        "image":"/images/cards/noir/noir_5.jpg",
-        "id": 33,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 5"
-        },
-        {
-        "name":"6 noir",
-        "image":"/images/cards/noir/noir_6.jpg",
-        "id": 34,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 6"
-        },
-        {
-        "name":"7 noir",
-        "image":"/images/cards/noir/noir_7.jpg",
-        "id": 35,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 7"
-        },
-        {
-        "name":"8 noir",
-        "image":"/images/cards/noir/noir_8.jpg",
-        "id": 36,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 8"
-        },
-        {
-        "name":"9 noir",
-        "image":"/images/cards/noir/noir_9.jpg",
-        "id": 37,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 9"
-        },
-        {
-        "name":"10 noir",
-        "image":"/images/cards/noir/noir_10.jpg",
-        "id": 38,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 10"
-        },
-        {
-        "name":"11 noir",
-        "image":"/images/cards/noir/noir_11.jpg",
-        "id": 39,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 11"
-        },
-        {
-        "name":"12 noir",
-        "image":"/images/cards/noir/noir_12.jpg",
-        "id": 40,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 12"
-        },
-        {
-        "name":"13 noir",
-        "image":"/images/cards/noir/noir_13.jpg",
-        "id": 41,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 13"
-        },
-        {
-        "name":"14 noir",
-        "image":"/images/cards/noir/noir_14.jpg",
-        "id": 42,
-        "type": "noir",
-        "description": "Carte de couleur noir avec une valeur de 14"
-        },
-        {
         "name":"1 jaune",
         "image":"/images/cards/jaune/jaune_1.jpg",
-        "id": 43,
+        "id": 29,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 1"
         },
         {
         "name":"2 jaune",
         "image":"/images/cards/jaune/jaune_2.jpg",
-        "id": 44,
+        "id": 30,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 2"
         },
         {
         "name":"3 jaune",
         "image":"/images/cards/jaune/jaune_3.jpg",
-        "id": 45,
+        "id": 31,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 3"
         },
         {
         "name":"4 jaune",
         "image":"/images/cards/jaune/jaune_4.jpg",
-        "id": 46,
+        "id": 32,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 4"
         },
         {
         "name":"5 jaune",
         "image":"/images/cards/jaune/jaune_5.jpg",
-        "id": 47,
+        "id": 33,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 5"
         },
         {
         "name":"6 jaune",
         "image":"/images/cards/jaune/jaune_6.jpg",
-        "id": 48,
+        "id": 34,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 6"
         },
         {
         "name":"7 jaune",
         "image":"/images/cards/jaune/jaune_7.jpg",
-        "id": 49,
+        "id": 35,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 7"
         },
         {
         "name":"8 jaune",
         "image":"/images/cards/jaune/jaune_8.jpg",
-        "id": 50,
+        "id": 36,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 8"
         },
         {
         "name":"9 jaune",
         "image":"/images/cards/jaune/jaune_9.jpg",
-        "id": 51,
+        "id": 37,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 9"
         },
         {
         "name":"10 jaune",
         "image":"/images/cards/jaune/jaune_10.jpg",
-        "id": 52,
+        "id": 38,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 10"
         },
         {
         "name":"11 jaune",
         "image":"/images/cards/jaune/jaune_11.jpg",
-        "id": 53,
+        "id": 39,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 11"
         },
         {
         "name":"12 jaune",
         "image":"/images/cards/jaune/jaune_12.jpg",
-        "id": 54,
+        "id": 40,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 12"
         },
         {
         "name":"13 jaune",
         "image":"/images/cards/jaune/jaune_13.jpg",
-        "id": 55,
+        "id": 41,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 13"
         },
         {
         "name":"14 jaune",
         "image":"/images/cards/jaune/jaune_14.jpg",
-        "id": 56,
+        "id": 42,
         "type": "jaune",
         "description": "Carte de couleur jaune avec une valeur de 14"
+        },
+        {
+        "name":"1 noir",
+        "image":"/images/cards/noir/noir_1.jpg",
+        "id": 43,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 1"
+        },
+        {
+        "name":"2 noir",
+        "image":"/images/cards/noir/noir_2.jpg",
+        "id": 44,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 2"
+        },
+        {
+        "name":"3 noir",
+        "image":"/images/cards/noir/noir_3.jpg",
+        "id": 45,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 3"
+        },
+        {
+        "name":"4 noir",
+        "image":"/images/cards/noir/noir_4.jpg",
+        "id": 46,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 4"
+        },
+        {
+        "name":"5 noir",
+        "image":"/images/cards/noir/noir_5.jpg",
+        "id": 47,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 5"
+        },
+        {
+        "name":"6 noir",
+        "image":"/images/cards/noir/noir_6.jpg",
+        "id": 48,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 6"
+        },
+        {
+        "name":"7 noir",
+        "image":"/images/cards/noir/noir_7.jpg",
+        "id": 49,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 7"
+        },
+        {
+        "name":"8 noir",
+        "image":"/images/cards/noir/noir_8.jpg",
+        "id": 50,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 8"
+        },
+        {
+        "name":"9 noir",
+        "image":"/images/cards/noir/noir_9.jpg",
+        "id": 51,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 9"
+        },
+        {
+        "name":"10 noir",
+        "image":"/images/cards/noir/noir_10.jpg",
+        "id": 52,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 10"
+        },
+        {
+        "name":"11 noir",
+        "image":"/images/cards/noir/noir_11.jpg",
+        "id": 53,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 11"
+        },
+        {
+        "name":"12 noir",
+        "image":"/images/cards/noir/noir_12.jpg",
+        "id": 54,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 12"
+        },
+        {
+        "name":"13 noir",
+        "image":"/images/cards/noir/noir_13.jpg",
+        "id": 55,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 13"
+        },
+        {
+        "name":"14 noir",
+        "image":"/images/cards/noir/noir_14.jpg",
+        "id": 56,
+        "type": "noir",
+        "description": "Carte de couleur noir avec une valeur de 14"
         },
         {
         "name": "Skull King",
