@@ -27,11 +27,17 @@ export class webSocketService {
     private onTrickWinnerSubscribers: any[] = []
 
     constructor(){
-        this.websocket = new WebSocket("ws://localhost:8000/ws")
+        this.websocket = this.initWebSocket()
+    }
 
-        this.websocket.addEventListener("open", this.onOpenConnection)
-        this.websocket.addEventListener("message", (event) => this.onMessage(event))
-        this.websocket.addEventListener("error", (event) => this.onError(event))
+    private initWebSocket() {
+        const websocket = new WebSocket("ws://localhost:8000/ws")
+
+        websocket.addEventListener("open", this.onOpenConnection)
+        websocket.addEventListener("message", (event) => this.onMessage(event))
+        websocket.addEventListener("error", (event) => this.onError(event))
+
+        return websocket
     }
 
     onOpenConnection(){
@@ -124,6 +130,9 @@ export class webSocketService {
 
     onCloseConnection(){
         console.log("Websocket connection closed")
+        this.websocket.removeEventListener("open", this.onOpenConnection)
+        this.websocket.removeEventListener("message", this.onMessage)
+        this.websocket.removeEventListener("close", this.onCloseConnection)
     }
 
     private convertBackendCardsToFront(cards: string[]) {
@@ -155,6 +164,12 @@ export class webSocketService {
 
 
     sendName(playerName: string){
+
+        const wsState = this.websocket.readyState
+
+        if (wsState === this.websocket.CLOSED || wsState === this.websocket.CLOSING) {
+             this.websocket = this.initWebSocket()
+        }
         this.websocket.send(JSON.stringify({name: playerName}))
     }
 
