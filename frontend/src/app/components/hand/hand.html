@@ -16,7 +16,8 @@
       [class.flying-card]="flyingCardId === id"
       (dblclick)="playCard($index, $event)"
       [cdkDragData]="{ id: id, index: $index }"
-      [style.transform]="computeArcTransform($index)" [style.zIndex]="$index"
+      [style.transform]="computeArcTransform($index)" 
+      [style.zIndex]="$index"
     />
   }
   

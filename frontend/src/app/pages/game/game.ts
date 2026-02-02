@@ -1,11 +1,10 @@
 import { Component, ViewChild, OnInit, OnDestroy, NgZone, inject, signal, WritableSignal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 
 import { MatIconModule } from '@angular/material/icon';
 
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 
 import { Hand } from '../../components/hand/hand';
@@ -14,7 +13,6 @@ import data from '../../components/cards/index_carte.json';
 
 
 import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-display';
-import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 
 import { webSocketService } from '../../service/websocket/websocket.service';
 import { RoomService } from '../../service/room/room.service';
@@ -39,7 +37,7 @@ interface GameState {
 
 @Component({
   selector: 'app-game',
-  imports: [Hand, CommonModule,  MatIconModule, PlayerPanel, HeadUpDisplay, DropZone],
+  imports: [Hand,  MatIconModule, HeadUpDisplay, DropZone],
   templateUrl: './game.html',
   styleUrl: './game.css',
   standalone: true
@@ -57,7 +55,6 @@ export class Game implements OnInit, OnDestroy {
 
   round: number = 4;
   totalRounds: number = 10;
-  phase: string = "Phase d'attente des joueurs"; // affiché en haut
 
   timer: number = 30;
   totalTime: number = 30;
@@ -91,10 +88,6 @@ export class Game implements OnInit, OnDestroy {
     phase: 'BETTING'
   };
   
-  // Abonnements WebSocket
-  private gameSubscription?: Subscription;
-  private publicSubscription?: Subscription;
-  private isDestroyed = false;
 
   /* --- GAME LOGIC DATA (de main) --- */
  
@@ -167,94 +160,15 @@ export class Game implements OnInit, OnDestroy {
     this.timerProgress = 100;
   }
 
-
-  onCardDropped(cardId: number) {
-    console.log("🃏 Carte déposée :", cardId);
-    
-    // Vérifier que c'est bien le tour du joueur
-    if (this.gameState.currentTurn !== this.playerUuid) {
-      console.warn('⚠️ Ce n\'est pas votre tour !');
-      // TODO: Afficher un message d'erreur
-      return;
-    }
-
-    // Envoyer la carte jouée au serveur via WebSocket
-    
-
-    // Retirer la carte de la main
-    //this.hand.removeCard(cardId);
-  }
-
   
-  onBetPlaced(betAmount: number) {
-    console.log('💰 Pari placé:', betAmount);
-
-    
-    const currentPlayer = this.players.find(p => p.uuid === this.playerUuid);
-    if (currentPlayer) {
-      currentPlayer.bet = betAmount;
-    }
-
-    this.gameState.phase = 'PLAYING';
-  }
-
   
-  leaveGame() {
-    console.log('👋 Quitter la partie');
-    
-    
-
-    this.router.navigate(['/']);
-  }
-
-  
-  isMyTurn(): boolean {
-    return this.gameState.currentTurn === this.playerUuid;
-  }
-
-  
-  getCurrentPlayerName(): string {
-    const player = this.players.find(p => p.uuid === this.gameState.currentTurn);
-    return player ? player.name : 'Inconnu';
-  }
-
   
   ngOnDestroy() {
     console.log('🧹 Nettoyage du composant Game');
-    this.isDestroyed = true;
-
-    if (this.gameSubscription) {
-      this.gameSubscription.unsubscribe();
-    }
-    if (this.publicSubscription) {
-      this.publicSubscription.unsubscribe();
-    }
-
 
     clearInterval(this.intervalId);
   }
 
-  // --------------------------
-  //    SCORE ANIMATION POP
-  //----------------------------
-  increaseScore(amount: number) {
-    this.score += amount;
-    this.scorePopped = true;
-    setTimeout(() => (this.scorePopped = false), 400);
-  }
-
-
-  // --------------------------
-  //    GAGNER UN PLI
-  //----------------------------
-  winTrick() {
-    this.tricksWon++;
-    this.increaseScore(20);
-  }
-  // --------------------------
-  //    Restreint les cartes jouables
-  //----------------------------
-  
 
   /* --------------------------
       CARD VALIDATION (de main)
@@ -283,11 +197,9 @@ export class Game implements OnInit, OnDestroy {
     });
   }
 
-  /*get nonPlayableCards(): number[] {
-    return this.getPlayableCards(this.dropZoneCards());
-  }*/
-
+  
   onCardPlayedError(errorMessage: string) {
+
     this.errorMessage = errorMessage;
     setTimeout(() => (this.errorMessage = ''), 3000);
   }

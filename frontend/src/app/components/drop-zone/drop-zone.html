@@ -12,12 +12,20 @@
   [class.drop-zone-active]="isMyTurn()"
 >
 
-  <div *ngFor="let id of cardsInZone(); let i = index" cdkDrag [cdkDragData]="id" class="absolute card-stack"
-    [style.zIndex]="i + 1" [style.transform]="
-      'translate(' + ((i - (cardsInZone.length - 1) / 2) * 50) + 'px,' +
-      ((i - (cardsInZone.length - 1) / 2) * 2) + 'px) ' +
-      'rotate(' + ((i - (cardsInZone.length - 1) / 2) * 1) + 'deg)'
-    ">
-    <app-cards [id]="id"></app-cards>
-  </div>
+  @for (id of cardsInZone(); track id) {
+    <div 
+      cdkDrag 
+      [cdkDragData]="id" 
+      class="absolute card-stack"
+      [style.zIndex]="$index + 1" 
+      [style.transform]="
+        'translate(' + (($index - (cardsInZone.length - 1) / 2) * 50) + 'px,' +
+        (($index - (cardsInZone.length - 1) / 2) * 2) + 'px) ' +
+        'rotate(' + (($index - (cardsInZone.length - 1) / 2) * 1) + 'deg)'
+      "
+    >
+      <app-cards [id]="id" />
+    </div>
+  }
+  
 </div>

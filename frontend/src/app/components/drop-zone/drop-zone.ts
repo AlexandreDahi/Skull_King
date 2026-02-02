@@ -1,6 +1,6 @@
-import { Component, inject, input, model, ModelSignal, signal } from '@angular/core';
+import { Component, inject, model, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DragDropModule, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Cards } from '../cards/cards';
 
 
@@ -67,11 +67,9 @@ export class DropZone {
     const removedCard = previous[event.item.data.index];
 
     
-    console.log("Sending card id", removedCard, "to the backend")
     this.wsService.sendCard(removedCard)
     
 
-    console.log("removed card : ", removedCard)
     previous.splice(event.item.data.index, 1)
     current.push(removedCard)
       
