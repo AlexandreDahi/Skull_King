@@ -16,8 +16,6 @@ import { DateTime } from 'luxon';
 export class PlayerPanel {
 
   @Input() totalRounds!: number;
-  @Input() timer$!: Observable<number>;
-  @Input() timerProgress$!: Observable<number>;
   @Input() tricksWon!: number;
   @Input() score!: number;
   @Input() scorePopped!: boolean;
@@ -39,36 +37,45 @@ export class PlayerPanel {
       this.round.set(message.hand.length)
 
       const deadline = DateTime.fromISO(message.bet_end_time)
-
-      this.initialRemaining = deadline.diffNow().as("seconds")
-      this.timeRemaining.set(Math.ceil(this.initialRemaining))
-      this.percentageRemaining = 1.0
-
-      clearInterval(this.intervalRef)
-      this.intervalRef = setInterval(() => {
-
-        const remaining =  deadline.diffNow().as("seconds")
-
-        this.percentageRemaining = remaining / this.initialRemaining
-
-        if (remaining > 0) {
-          this.timeRemaining.set(Math.ceil(remaining))
-        } 
-        else {
-          this.timeRemaining.set(0)
-          clearInterval(this.intervalRef)
-          this.intervalRef = undefined
-        }
-
-      }, 1000)
+      this.scheduleTimer(deadline)
     })
 
+    this.wsService.onAskCardEvent((message: any) => {
 
-    //this.wsService.onAskCardEvent
+      const deadline = DateTime.fromISO(message.wait_card_end_time)
+      this.scheduleTimer(deadline)
+    })
+
   }
 
   ngOnDestroy() {
     clearInterval(this.intervalRef)
+  }
+
+
+  scheduleTimer(deadline: DateTime) {
+
+    this.initialRemaining = deadline.diffNow().as("seconds")
+    this.timeRemaining.set(Math.ceil(this.initialRemaining))
+    this.percentageRemaining = 1.0
+
+    clearInterval(this.intervalRef)
+    this.intervalRef = setInterval(() => {
+
+      const remaining =  deadline.diffNow().as("seconds")
+
+      this.percentageRemaining = remaining / this.initialRemaining
+
+      if (remaining > 0) {
+        this.timeRemaining.set(Math.ceil(remaining))
+      } 
+      else {
+        this.timeRemaining.set(0)
+        clearInterval(this.intervalRef)
+        this.intervalRef = undefined
+      }
+
+    }, 1000)
   }
 
   /**
