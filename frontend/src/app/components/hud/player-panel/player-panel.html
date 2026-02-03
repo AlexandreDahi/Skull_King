@@ -9,44 +9,50 @@
             bg-gradient-to-r from-amber-900/30 to-yellow-800/30
             border border-amber-500/40 text-amber-100" [class.score-pop]="scorePopped">
     <mat-icon class=" text-lg">flag</mat-icon>
-    <span class="text-xl  text-amber-100 tabular-nums">Manche {{ round }} / {{ totalRounds }}</span>
+    <span class="text-xl  text-amber-100 tabular-nums">Manche {{ round() }} / {{ totalRounds }}</span>
   </div>
 
   <!-- TIMER -->
   <div class="relative group">
     <!-- Container principal -->
     <div class="flex items-center gap-3 transition-all"
-      [class.hover:border-green-400/50]="(timerProgress$ | async)! > 50"
-      [class.hover:border-yellow-400/50]="(timerProgress$ | async)! <= 50 && (timerProgress$ | async)! > 25"
-      [class.hover:border-red-400/50]="(timerProgress$ | async)! <= 25">
+      [class.hover:border-green-400/50]="percentageRemaining > 0.5"
+      [class.hover:border-yellow-400/50]="percentageRemaining <= 0.5 && percentageRemaining > 0.25"
+      [class.hover:border-red-400/50]="percentageRemaining <= 0.25"
+    >
 
       <div class="relative w-12 h-12">
         <!-- Cercle de fond -->
-        <div class="absolute inset-0 rounded-full" [class.bg-green-900/20]="(timerProgress$ | async)! > 50"
-          [class.bg-yellow-900/20]="(timerProgress$ | async)! <= 50 && (timerProgress$ | async)! > 25"
-          [class.bg-red-900/20]="(timerProgress$ | async)! <= 25">
+        <div class="absolute inset-0 rounded-full" 
+          [class.bg-green-900/20]="percentageRemaining > 0.5"
+          [class.bg-yellow-900/20]="percentageRemaining <= 0.5 && percentageRemaining > 0.25"
+          [class.bg-red-900/20]="percentageRemaining <= 0.25">
         </div>
-
+        
+        <!-- a quoi sert ce truc ?????????????????????????????-->
         <!-- Progress circulaire avec dégradé dynamique -->
         <div class="absolute inset-0 rounded-full transition-all duration-300"
-          [style.background]="getTimerGradient((timerProgress$ | async)!, (timerProgress$ | async)!)">
+          [style.background]="getTimerGradient()">
         </div>
 
         <!-- Centre -->
         <div class="absolute inset-1 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
           <span class="text-sm font-bold transition-colors duration-300"
-            [class.text-green-300]="(timerProgress$ | async)! > 50"
-            [class.text-yellow-300]="(timerProgress$ | async)! <= 50 && (timerProgress$ | async)! > 25"
-            [class.text-red-300]="(timerProgress$ | async)! <= 25">
-            {{ (timer$ | async) }}
+            [class.text-green-300]="percentageRemaining > 0.5"
+            [class.text-yellow-300]="percentageRemaining <= 0.5 && percentageRemaining > 0.25"
+            [class.text-red-300]="percentageRemaining <= 0.25">
+            {{ timeRemaining() }}
           </span>
         </div>
       </div>
     </div>
 
     <!-- Warning quand < 10s -->
-    <div *ngIf="(timer$ | async)! < 10" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping">
-    </div>
+     @if (timeRemaining() <= 10 && timeRemaining() != 0) {
+      <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" >
+      </div>
+     }
+    
   </div>
 
   <!-- SCORE -->

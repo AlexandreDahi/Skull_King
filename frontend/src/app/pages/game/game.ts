@@ -16,7 +16,7 @@ import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-disp
 
 import { webSocketService } from '../../service/websocket/websocket.service';
 import { RoomService } from '../../service/room/room.service';
-
+import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 
 
 interface Player {
@@ -37,7 +37,7 @@ interface GameState {
 
 @Component({
   selector: 'app-game',
-  imports: [Hand,  MatIconModule, HeadUpDisplay, DropZone],
+  imports: [Hand,  MatIconModule, HeadUpDisplay, DropZone, PlayerPanel],
   templateUrl: './game.html',
   styleUrl: './game.css',
   standalone: true
@@ -69,8 +69,8 @@ export class Game implements OnInit, OnDestroy {
 
 
 
-  timer$ = new BehaviorSubject<number>(this.timer);
-  timerProgress$ = new BehaviorSubject<number>(this.timerProgress);
+  //timer$ = new BehaviorSubject<number>(this.timer);
+  //timerProgress$ = new BehaviorSubject<number>(this.timerProgress);
   
 
 
@@ -105,7 +105,7 @@ export class Game implements OnInit, OnDestroy {
       INITIALISATION
   ----------------------------*/
   ngOnInit() {
-    // 1. WebSocket setup (de lobby)
+    
 
     this.wsService.onNewRoundEvent( (message: any) => {
 
@@ -135,10 +135,10 @@ export class Game implements OnInit, OnDestroy {
 
 
     // 4. 
-    this.startInfiniteTimer();
+    //this.startInfiniteTimer();
   }
 
-  startInfiniteTimer() {
+  /*startInfiniteTimer() {
     this.ngZone.run(() => {
       this.intervalId = setInterval(() => {
         if (this.timer > 0) {
@@ -153,7 +153,7 @@ export class Game implements OnInit, OnDestroy {
         }
       }, 1000);
     });
-  }
+  }*/
 
   resetTimer() {
     this.timer = this.totalTime;
