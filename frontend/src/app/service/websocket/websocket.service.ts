@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-
-import { IMessage, RxStomp, RxStompConfig } from "@stomp/rx-stomp";
-import { Observable, ReplaySubject, Subscription } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 
 
 @Injectable({
@@ -9,93 +7,97 @@ import { Observable, ReplaySubject, Subscription } from 'rxjs';
 })
 export class WebSocketService {
 
-
-    private config: RxStompConfig = {
-        brokerURL: "ws://localhost:8080/games",
-        reconnectDelay: 2000,
-        heartbeatIncoming: 10000,
-        heartbeatOutgoing: 10000,
-    }
-
-    private rxStomp = new RxStomp()
+    private ws: WebSocket | null = null;
 
     private roomUuid = ""
     private playerUuid = ""
     private playerToken = ""
     private isPlayerAdmin = false
+    
+
+    // Subjects pour les différents types de messages
+    private publicSubject = new ReplaySubject<any>(10)
+    private privateSubject = new ReplaySubject<any>(10)
+    private lobbySubject = new ReplaySubject<any>(10)
+
+    // Observables publics
+    private publicChannel: Observable<any> = this.publicSubject.asObservable()
+    private privateChannel: Observable<any> = this.privateSubject.asObservable()
+    private lobbyChannel: Observable<any> = this.lobbySubject.asObservable()
 
 
-    private publicSubject  = new ReplaySubject<IMessage>(10)
-    private privateSubject = new ReplaySubject<IMessage>(10)
-    private lobbySubject   = new ReplaySubject<IMessage>(10)
-
-
-    private publicChannel: Observable<IMessage>  = this.publicSubject.asObservable()
-    private privateChannel: Observable<IMessage> = this.privateSubject.asObservable()
-    private lobbyChannel: Observable<IMessage>   = this.lobbySubject.asObservable()
-
-    private _publicSub?: Subscription
-    private _privateSub?: Subscription
-    private _lobbySub?: Subscription
-
-
-    private activateWebSocket() {
-        this.rxStomp.configure(this.config)
-        this.rxStomp.activate()
-
-    } 
-
-    joinRoom(roomUuid: string, playerUuid: string, playerToken: string, isAdmin: boolean = false) {
-
-        if (!this.rxStomp.active) {
-            this.activateWebSocket()
-        }
-
+    joinRoom(roomUuid: string, playerToken: string) {
         this.roomUuid = roomUuid
-        this.playerUuid = playerUuid
         this.playerToken = playerToken
-        this.isPlayerAdmin = isAdmin
+
+        const wsUrl = `ws://localhost:8000/ws/rooms/${roomUuid}?&player_token=${playerToken}`;
 
         console.log('🔌 WebSocket joinRoom:', {
             roomUuid,
-            playerUuid,
             playerToken,
-            isAdmin
+            wsUrl
         });
+        try {
+            this.ws = new WebSocket(wsUrl);
 
-        const pubWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/general`
-        })
+            this.ws.onopen = () => {
+                console.log('✅ WebSocket connecté à:', wsUrl);
+            };
 
-        const privWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/${this.playerUuid}/${this.playerToken}`
-        })
+            this.ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log('📨 Message reçu:', message);
 
-        // ✅ Ajouter /topic pour correspondre au backend
-        const lobbyWatch = this.rxStomp.watch({
-            destination: `/topic/rooms/${this.roomUuid}/lobby-events`  // ← AJOUTER /topic
-        })
 
-        // Clean up previous low-level subscriptions if any
-        this._publicSub?.unsubscribe()
-        this._privateSub?.unsubscribe()
-        this._lobbySub?.unsubscribe()
+                    // Router le message selon son type
+                    if(message)
+                    
+                    if (message.type === 'public') {
+                        this.publicSubject.next(message.data);
+                    } else if (message.type === 'private') {
+                        this.privateSubject.next(message.data);
+                    } else if (message.type === 'lobby') {
+                        this.lobbySubject.next(message.data);
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur parsing message:', error);
+                }
+            };
 
-        this._publicSub = pubWatch.subscribe(msg => this.publicSubject.next(msg))
-        this._privateSub = privWatch.subscribe(msg => this.privateSubject.next(msg))
-        this._lobbySub = lobbyWatch.subscribe(msg => this.lobbySubject.next(msg))
+            this.ws.onerror = (error) => {
+                console.error('❌ Erreur WebSocket:', error);
+            };
 
-        console.log('✅ Channels configurés:');
-        console.log('   - Public: /topic/rooms/' + this.roomUuid);
-        console.log('   - Private: /user/queue/rooms/' + this.roomUuid);
-        console.log('   - Lobby: /topic/rooms/' + this.roomUuid + '/lobby-events');
+            this.ws.onclose = () => {
+                console.log('❌ WebSocket déconnecté');
+                localStorage.removeItem('roomUuid');
+                localStorage.removeItem('playerToken');
+                this.ws = null;
+            };
+
+        } catch (error) {
+            console.error('❌ Erreur création WebSocket:', error);
+        }
     }
 
-    getPLayerUuid() {
-        return this.playerUuid
+    reconnectIfPossible(): void {
+        const roomUuid = localStorage.getItem('roomUuid');
+        const playerToken = localStorage.getItem('playerToken');
+        if (!roomUuid || !playerToken) {
+            console.log('ℹ️ Pas de reconnexion possible');
+            return;
+        }
+        console.log('🔁 Tentative de reconnexion WS', { roomUuid });
+        this.joinRoom(roomUuid, playerToken);
     }
 
 
+    getPlayerToken() {
+        return this.playerToken
+    }
+    
+    
 
     getPublicChannel() {
         return this.publicChannel
@@ -106,13 +108,8 @@ export class WebSocketService {
     }
 
     getLobbyChannel() {
-        if (!this.rxStomp.active) {
-            this.activateWebSocket()
-        }
-        
         return this.lobbyChannel
     }
-
 
     isAdmin(): boolean {
         return this.isPlayerAdmin
@@ -120,22 +117,43 @@ export class WebSocketService {
 
     sendLobbyMessage(message: any) {
         console.log('📤 Envoi message lobby:', message);
-        this.rxStomp.publish({
-            destination: `/app/rooms/${this.roomUuid}/lobby`,
-            body: JSON.stringify(message)
+        this.sendMessage({
+            type: "lobby",
+            data: message
         })
     }
 
-
     sendStartGameSignal() {
         console.log("📤 Envoi du signal de début de partie au serveur.")
-
-        this.rxStomp.publish({
-            destination: `/app/rooms/${this.roomUuid}/start-game`,
-            body: JSON.stringify({
+        this.sendMessage({
+            type: "start_game",
+            data: {
                 userUuid: this.playerUuid,
                 userToken: this.playerToken,
-            })
+            }
         })
+    }
+
+    sendPublicMessage(message: any) {
+        console.log('📤 Envoi message public:', message);
+        this.sendMessage({
+            type: "public",
+            data: message
+        })
+    }
+
+    private sendMessage(message: any) {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            this.ws.send(JSON.stringify(message));
+        } else {
+            console.error('❌ WebSocket non connecté');
+        }
+    }
+
+    disconnect() {
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
     }
 }

@@ -28,13 +28,17 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
 
+    this.roomService.getRooms();
+
     this.roomService.rooms$.subscribe(data => {
+      console.log('🔄 Rooms mises à jour:', data);
+
       this.rooms = data;
       this.filterRooms();
       this.loading = false;
     });
 
-    this.roomService.getRooms();
+    
   }
 
   goToRooms() {
@@ -48,13 +52,13 @@ export class HomeComponent implements OnInit {
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       result = result.filter(room => 
-        room.name.toLowerCase().includes(query) ||
-        room.hostName.toLowerCase().includes(query)
+        room.room_name.toLowerCase().includes(query) ||
+        room.host_name.toLowerCase().includes(query)
       );
     }
 
     // Affiche seulement les rooms disponibles (pas pleines)
-    result = result.filter(room => room.nbPlayers < 8);
+    result = result.filter(room => room.nb_players < 8);
 
     this.filteredRooms = result;
   }

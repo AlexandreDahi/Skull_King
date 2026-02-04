@@ -21,16 +21,13 @@ import { RoomService } from '../../service/room/room.service';
 
 
 
-
-
-
-
 interface Player {
   uuid: string;
   name: string;
   isAdmin?: boolean;
   score?: number;
   bet?: number;
+  cards?: number[];
 }
 
 interface GameState {
@@ -53,13 +50,16 @@ export class Game implements OnInit, OnDestroy {
   // --- GAME DATA ---  //
   handCards: number[] = [];
   dropZoneCards: number[] = [];
+  isPlayerTurn: boolean = false;
 
   round: number = 4;
   totalRounds: number = 10;
+
+  
   phase: string = "Phase d'attente des joueurs"; // affiché en haut
 
-  timer: number = 30;
-  totalTime: number = 30;
+  timer: number = 40;
+  totalTime: number = 40;
   timerProgress: number = 100;
   intervalId: any;
 
@@ -115,6 +115,7 @@ export class Game implements OnInit, OnDestroy {
     // 1. WebSocket setup (de lobby)
     this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
     this.isAdmin = this.wsService.isAdmin();
+
     
     console.log('🎮 === GAME INIT ===');
     console.log('Room UUID:', this.roomUuid);
@@ -132,11 +133,13 @@ export class Game implements OnInit, OnDestroy {
     // 3. S'abonner aux événements de jeu via WebSocket
     this.subscribeToGameEvents();
     this.subscribeToPrivateEvents();
+    
 
 
     // 4. 
     this.startInfiniteTimer();
   }
+
 
   startInfiniteTimer() {
     this.ngZone.run(() => {
@@ -169,13 +172,15 @@ export class Game implements OnInit, OnDestroy {
     
     this.roomService.getPlayers(this.roomUuid).subscribe({
       next: (players: any[]) => {
+        
         console.log('✅ Joueurs chargés:', players);
         this.players = players.map(p => ({
           uuid: p.uuid,
           name: p.name,
           isAdmin: p.isAdmin || false,
           score: 0,
-          bet: undefined
+          bet: undefined,
+          cards: p.cards || [],
         }));
       },
       error: (err) => {
@@ -188,39 +193,27 @@ export class Game implements OnInit, OnDestroy {
   // S'abonner aux événements de jeu via WebSocket
   //
   private subscribeToGameEvents() {
-    console.log('🔌 Abonnement aux événements de jeu...');
+    console.log('🔌 Abonnement aux événements de jeu chanel publique...');
 
     this.publicSubscription = this.wsService.getPublicChannel().subscribe({
       next: (message) => {
         if (this.isDestroyed) return;
         
         console.log('📢 Message public reçu:', message);
-        console.log("Corps du message : ", message.body)
-        try {
-          const data = JSON.parse(message.body);
-          this.handleGameMessage(data);
-        } catch (e) {
-          console.error('Erreur parsing message:', e);
-        }
+        this.handleGameMessage(message);
       },
       error: (err) => console.error('❌ Erreur canal public:', err)
     });
   }
   private subscribeToPrivateEvents() {
-     console.log('🔌 Abonnement aux événements de jeu...');
+     console.log('🔌 Abonnement aux événements de jeu chanel perso...');
 
     this.publicSubscription = this.wsService.getPrivateChannel().subscribe({
       next: (message) => {
         if (this.isDestroyed) return;
         
         console.log('📢 Message privé reçu:', message);
-        console.log("Corps du message : ", message.body)
-        try {
-          const data = JSON.parse(message.body);
-          this.handlePrivateMessage(data);
-        } catch (e) {
-          console.error('Erreur parsing message:', e);
-        }
+        this.handlePrivateMessage(message);
       },
       error: (err) => console.error('❌ Erreur canal privé:', err)
     });
@@ -422,20 +415,28 @@ export class Game implements OnInit, OnDestroy {
       CARD VALIDATION (de main)
   ----------------------------*/
   getPlayableCards(dropZoneCards: number[]): number[] {
+
+  // Si c'est pas le tour du joueur, les cartes ne sont pas jouables
+    if (this.isPlayerTurn === false) {
+      return this.handCards;
+    }
+  // Si la zone de drop est vide, toutes les cartes sont jouables
     if (dropZoneCards.length === 0) {
       return [];
     }
-
+  // Tant que la première carte est de type fuite, toutes les cartes sont jouables
     let i = 0;
     let type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
     while (type === 'fuite' && i < dropZoneCards.length - 1) {
       i++;
       type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
     }
-
+  // Si la carte n'a pas de type, toutes les cartes sont jouables
     if (!type) return [];
+  // Si la première carte est de type spécial, toutes les cartes sont jouables
     if (type === 'special') return [];
 
+  // Filtrer les cartes qui ne correspondent pas au type requis
     if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
 
     const allowed = new Set([type, 'special', 'fuite']);
@@ -453,4 +454,8 @@ export class Game implements OnInit, OnDestroy {
     this.errorMessage = errorMessage;
     setTimeout(() => (this.errorMessage = ''), 3000);
   }
+
+  
+
+
 }

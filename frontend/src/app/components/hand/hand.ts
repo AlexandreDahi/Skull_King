@@ -17,6 +17,7 @@ export class Hand {
 
   @Input() cardIds: number[] = [];
   @Input() nonPlayableCardIds: number[] = [];
+  @Input() isMyTurn: boolean = false;
 
   draggingIndex: number | null = null;
 
@@ -71,6 +72,11 @@ export class Hand {
      --------------------------- */
   playCard(index: number, event: MouseEvent) {
     const cardId = this.cardIds[index];
+
+    if (this.isMyTurn === false) {
+      this.errorEvent.emit('Main non activée !');
+      return;
+    }
 
     if (this.nonPlayableCardIds.includes(cardId)) {
       this.errorEvent.emit('Carte non jouable !');

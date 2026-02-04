@@ -490,30 +490,37 @@
         "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
-        "name":"butin 1",
-        "image": "/images/cards/spe/butin.jpg",
+        "name":"fuite 5",
+        "image": "/images/cards/spe/fuite.jpg",
         "id": 70,
         "type": "fuite",
-        "description": "Le butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        "description": "La carte fuite peut être poser à tout moment et permet de ne pas participer au tour en cours.\nAucun point n'est gagné ou perdu."
         },
         {
-        "name":"butin 2",
+        "name":"butin 1",
         "image": "/images/cards/spe/butin.jpg",
         "id": 71,
         "type": "fuite",
         "description": "Le butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
         },
         {
+        "name":"butin 2",
+        "image": "/images/cards/spe/butin.jpg",
+        "id": 72,
+        "type": "fuite",
+        "description": "Le butin permet de gagner 20 points supplémentaire à la fin de la manche si vous réussissez votre pari ainsi que le joueur ayant remporter le butin."
+        },
+        {
         "name":"baleine",
         "image": "/images/cards/spe/baleine.jpg",
-        "id": 72,
+        "id": 73,
         "type": "special",
         "description": "La baleine annule les effets des cartes spéciales jouées dans le même tour.\nLa première carte jouer de plus haute valeur remporte le tour.\nEn cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         },
         {
         "name":"kraken",
         "image": "/images/cards/spe/kraken.jpg",
-        "id": 73,
+        "id": 74,
         "type": "special",
         "description":"Avec le kraken, aucun joueur ne remporte le plis.\nEn cas de tour avec baleine et kraken, seul l'effet de la deuxième carte jouée est pris en compte."
         }

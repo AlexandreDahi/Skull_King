@@ -12,10 +12,11 @@
     </div>
   </div>
 
-  <app-drop-zone [cardsInZone]="dropZoneCards"></app-drop-zone>
+  <app-drop-zone [cardsInZone]="dropZoneCards" [isMyTurn]="isPlayerTurn"></app-drop-zone>
   <app-hand 
   [nonPlayableCardIds]="nonPlayableCards" 
-  [cardIds]="handCards" 
+  [cardIds]="handCards"
+  [isMyTurn]="isPlayerTurn"
   (playCardEvent)="onCardPlayed($event)"
   (errorEvent)="onCardPlayedError($event)">
   </app-hand>

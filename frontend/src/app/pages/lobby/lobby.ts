@@ -37,12 +37,18 @@ export class Lobby implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
+        this.wsService.reconnectIfPossible
+
         this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
-        this.playerUuid = this.wsService.getPLayerUuid();
+        this.roomService.getRoomName(this.roomUuid).subscribe(res => {
+            this.roomName = res.room_name;
+        });
+        this.playerUuid = this.wsService.getPlayerUuid();
         this.isAdmin = this.wsService.isAdmin();
         
         console.log('=== LOBBY INIT ===');
         console.log('Room UUID:', this.roomUuid);
+        console.log('Room Name:', this.roomName);
         console.log('Player UUID:', this.playerUuid);
         console.log('Is Admin:', this.isAdmin);
         
@@ -53,13 +59,8 @@ export class Lobby implements OnInit, OnDestroy {
         this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
             next: (message) => {
                 if (this.isDestroyed) return;
-                console.log('📨 Message lobby reçu:', message.body);
-                try {
-                    const data = JSON.parse(message.body);
-                    this.handleLobbyMessage(data);
-                } catch (e) {
-                    console.error('Erreur parsing message:', e);
-                }
+                console.log('📨 Message lobby reçu:', message);
+                this.handleLobbyMessage(message);
             },
             error: (err) => console.error('❌ Erreur lobby channel:', err)
         });
@@ -74,12 +75,13 @@ export class Lobby implements OnInit, OnDestroy {
         console.log('🔄 Chargement initial des joueurs...');
         
         this.roomService.getPlayers(this.roomUuid).subscribe({
-            next: (players: any[]) => {
+            next: (response: any) => {
                 if (this.isDestroyed) return;
                 
+                const players = response.players || [];
                 console.log('✅ Joueurs récupérés:', players.length);
                 
-                this.players = players.map(p => ({
+                this.players = players.map((p: any) => ({
                     uuid: p.uuid,
                     name: p.name,
                     isAdmin: p.isAdmin || false

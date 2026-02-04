@@ -33,14 +33,16 @@ export class Room {
     this.roomsService.createRoom(this.name, this.hostName).subscribe({
       next: (res) => {
         console.log('Room créée !', res);
-        
-        const roomId = res.uuid;
-        const playerUuid = res.hostUuid;
+
+        const roomId = res.roomUuid;
         const playerToken = res.hostToken;
 
         // Connecter au WebSocket en tant qu'admin
-        this.wsService.joinRoom(roomId, playerUuid, playerToken, true);
-
+        this.wsService.joinRoom(roomId, playerToken);
+        
+        localStorage.setItem('playerToken', playerToken);
+        localStorage.setItem('roomUuid', roomId);
+        console.log('💾 Token stocké dans le localStorage.');
         // Rediriger vers le lobby
         this.router.navigate(['/lobby', roomId]);  
       },

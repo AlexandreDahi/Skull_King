@@ -55,13 +55,16 @@ export class JoinRoom implements OnInit {
         console.log('Room rejointe !', res);
         
         // Stocker les informations du joueur
-        const playerUuid = res.uuid;
         const playerToken = res.token;
         
         // Connecter au WebSocket
-        this.wsService.joinRoom(this.roomId, playerUuid, playerToken);
+        this.wsService.joinRoom(this.roomId, playerToken);
         
-        // Rediriger vers le lobby au lieu du jeu
+        // Stocker en localStorage
+        localStorage.setItem('playerToken', playerToken);
+        localStorage.setItem('roomUuid', this.roomId);
+        
+        // Rediriger vers le lobby
         this.router.navigate(['/lobby', this.roomId]);
       },
       error: (err) => {

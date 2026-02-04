@@ -15,7 +15,7 @@ export class RoomCard {
   @Input() players!: number;
   @Input() hostName!: string;
   @Input() maxPlayers!: number;
-  @Input() roomId!: number;       // <-- important pour l’URL
+  @Input() roomId!: string;       // <-- important pour l’URL
   @Input() roomNumber!: number;
 
   constructor(private router: Router) {}
@@ -23,14 +23,14 @@ export class RoomCard {
   joinRoom() {
     this.router.navigate(
       ['join-room/', this.roomId],      // mettre roomId dans l’URL
-      {
-        queryParams: {
-          title: this.title,
-          host: this.hostName,
-          players: this.players,
-          maxPlayers: this.maxPlayers
-        }
-      }
+      // {
+      //   queryParams: {
+      //     title: this.title,
+      //     host: this.hostName,
+      //     players: this.players,
+      //     maxPlayers: this.maxPlayers
+      //   }
+      // }
     );
   }
 }

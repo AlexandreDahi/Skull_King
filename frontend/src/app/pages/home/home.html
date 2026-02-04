@@ -1,4 +1,4 @@
-<div class="body">
+<div class="body_home">
   <app-navbar></app-navbar>
   
   <!-- Conteneur centré -->
@@ -88,9 +88,9 @@
         <!-- CARDS ROOM -->
         <app-room-card 
           *ngFor="let room of filteredRooms; let i = index"
-          [title]="room.name"
-          [hostName]="room.hostName"
-          [players]="room.nbPlayers"
+          [title]="room.room_name"
+          [hostName]="room.host_name"
+          [players]="room.nb_players"
           [maxPlayers]="8"
           [roomNumber]="i + 1"  
           [roomId]="room.uuid">

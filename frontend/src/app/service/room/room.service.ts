@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class RoomService {
-  private apiUrl = 'http://localhost:8080/rooms';
+  private apiUrl = 'http://localhost:8000/api/rooms';
 
   // BehaviorSubject garde le dernier état des rooms
   private rooms = new BehaviorSubject<any[]>([]);
@@ -17,6 +17,11 @@ export class RoomService {
   // Création d'une room avec roomName + hostName
   createRoom(roomName: string, hostName: string): Observable<any> {
     return this.http.post(this.apiUrl, { roomName, hostName });
+  }
+
+  // récupération du nom de la room via son UUID
+  getRoomName(roomUuid: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${roomUuid}/room_name`);
   }
 
   // Récupération de la liste des rooms
@@ -37,5 +42,9 @@ export class RoomService {
   // Quitter une room
   leaveRoom(roomUuid: string, playerUuid: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${roomUuid}/leave?playerUuid=${playerUuid}`);
+  }
+
+  getPlayerCards(roomUuid: string, playerUuid: string, num_round: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${roomUuid}/players/${playerUuid}/cards`);
   }
 }
