@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-
+import { BehaviorSubject } from 'rxjs';
 
 import cardData from '../../components/cards/index_carte.json';
 
@@ -17,6 +17,7 @@ export class webSocketService {
     private newRoundMessage = undefined
     private player_uuid: string = ""
     private players_list: {uuid: string, name: string}[] = []
+    private is_host: boolean = false
 
     private onGameStartSubscribers:any[] = []
     private onNewRoundEventSubscribers:any[] = []
@@ -25,6 +26,14 @@ export class webSocketService {
     private onBetRevealSubscribers: any[] = []
     private onRoundScoresSubscribers: any[] = []
     private onTrickWinnerSubscribers: any[] = []
+
+    // Rooms data
+    private roomUuid: string = ""
+    private onGetRoomsAnswerSubscribers: any[] = []
+    private onJoinRoomAnswerSubscribers: any[] = []
+    private onCreateRoomAnswerSubscribers: any[] = []
+
+    public roomPlayers = new BehaviorSubject<{name: string, uuid: string}[]>([])
 
     constructor(){
         this.websocket = this.initWebSocket()
@@ -49,8 +58,50 @@ export class webSocketService {
         const message = JSON.parse(event.data)
         console.log("Websocket event : ", message)
 
-        switch (message.event){
+        switch (message.event) {
+            
+            // -------- Room events ----------- //
+            case "ask_rooms_answer":
+                for (const callback of this.onGetRoomsAnswerSubscribers) {
+                    callback(message)
+                }
+                break
 
+            case "join_room_answer":
+
+                if (message.status === "ok") {
+                    this.player_uuid = message.me
+                    this.is_host = false
+                }
+                
+
+                for (const callback of this.onJoinRoomAnswerSubscribers) {
+                    callback(message)
+                }
+                break
+
+            case "room_update":
+
+                this.roomPlayers.next(message.players)
+                break
+            
+            case "room_creation_answer":
+
+                if (message.status === "ok") {
+                    this.is_host = true
+                    this.player_uuid = message.host_uuid
+                    this.roomUuid = message.room_uuid
+                    this.players_list = [{name: "Vous", uuid: message.host_uuid}]
+
+                }
+            
+                for (const callback of this.onCreateRoomAnswerSubscribers) {
+                    callback(message)
+                }
+                break
+
+
+            // -------- Game events ----------- //
             case "game_start":
                 console.log("Game start !!!")
 
@@ -223,6 +274,49 @@ export class webSocketService {
         this.onRoundScoresSubscribers.push(callback)
     }
 
+
+    // ---------- rooms function --------------------------
+
+    isHost() {
+        return this.is_host
+    }
+
+    createRoom() {
+        this.websocket.send(JSON.stringify({
+            event: "create_room",
+        }))
+    }
+
+    onCreateRoomAnswer(callback: any) {
+        this.onCreateRoomAnswerSubscribers.push(callback)
+    }
+
+    getRooms() {
+        this.websocket.send(JSON.stringify({
+            event: "ask_rooms",
+        }))
+    }
+
+    onGetRoomsAnswer(callback: any) {
+        this.onGetRoomsAnswerSubscribers.push(callback)
+    }
+
+
+    joinRoom(room_uuid: string) {
+        this.websocket.send(JSON.stringify({
+            event: "join_room",
+            room_uuid: room_uuid
+        }))
+    }
+
+    onJoinRoomAnswer(callback: any) {
+        this.onJoinRoomAnswerSubscribers.push(callback)
+    }
     
+    leaveRoom() {
+        this.websocket.send(JSON.stringify({
+            "event": "leave_room",
+        }))
+    }
 
 }

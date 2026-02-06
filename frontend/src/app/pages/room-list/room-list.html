@@ -34,7 +34,7 @@
           <!-- Bouton Créer Room -->
           <button 
             type="button"
-            (click)="goToRooms()"
+            (click)="createRoom()"
             class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
                    px-4 py-2 sm:px-6 rounded-xl shadow-lg transition 
                    flex items-center gap-2 cursor-pointer">
@@ -52,7 +52,7 @@
             type="text"
             maxlength="30"
             [(ngModel)]="searchQuery"
-            (input)="filterRooms()"
+            
             placeholder="Rechercher une partie par nom ou hôte..."
             class="w-full pl-12 pr-4 py-3 p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
                  focus:outline-none focus:ring-2 focus:ring-gray-300">
@@ -69,32 +69,37 @@
         </div>
         
         <!-- Message si aucune room -->
-        <div *ngIf="!loading && filteredRooms.length === 0" 
-             class="flex flex-col items-center justify-center py-12 gap-4">
-          <!-- <mat-icon class="!text-6xl text-white/20">sailing</mat-icon> -->
-          <p class="text-center text-white/70 text-lg">
-            {{ getEmptyMessage() }}
-          </p>
-          <button 
-            *ngIf="rooms.length === 0"
-            (click)="goToRooms()"
-            class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
-                   px-6 py-2 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
-            <mat-icon>add</mat-icon>
-            Créer la première partie
-          </button>
-        </div>
+         @if (filteredRooms().length === 0) {
+          <div class="flex flex-col items-center justify-center py-12 gap-4">
+            <!-- <mat-icon class="!text-6xl text-white/20">sailing</mat-icon> -->
+            <p class="text-center text-white/70 text-lg">
+              {{ getEmptyMessage() }}
+            </p>
+            <button 
+              *ngIf="rooms.length === 0"
+              (click)="createRoom()"
+              class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
+                    px-6 py-2 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer"
+            >
+              <mat-icon>add</mat-icon>
+              Créer la première partie
+            </button>
+          </div>
+         }
+        
         
         <!-- CARDS ROOM -->
-        <app-room-card 
-          *ngFor="let room of filteredRooms; let i = index"
-          [title]="room.name"
-          [hostName]="room.hostName"
-          [players]="room.nbPlayers"
-          [maxPlayers]="8"
-          [roomNumber]="i + 1"  
-          [roomId]="room.uuid">
-        </app-room-card>
+        @for (room of filteredRooms(); track room.room_uuid) {
+          <app-room-card 
+            [hostName]="room.host_name"
+            [players]="room.nb_players"
+            [maxPlayers]="8"
+            [roomNumber]="$index + 1"  
+            [roomId]="room.room_uuid"
+            (onJoinRoom)="joinRoom(room.room_uuid)"
+          />
+        }
+        
       </div>
       
     </div>

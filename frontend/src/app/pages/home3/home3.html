@@ -1,0 +1,14 @@
+
+@if (appState() === "inRoomsList") {
+    <app-room-list [(appState)]="appState"/>
+}
+@else if (appState() === "inLobby") {
+    <app-lobby [(appState)]="appState"/>
+
+}
+@else if (appState() === "inGame") {
+
+}
+@else {
+    <p>Unknown appState: '{{appState()}}'</p>
+}

@@ -1,6 +1,5 @@
-import { Component , Input} from '@angular/core';
+import { Component , input, Input, output} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-room-card',
@@ -11,26 +10,12 @@ import { Router } from '@angular/router';
 })
 
 export class RoomCard {
-  @Input() title!: string;
-  @Input() players!: number;
-  @Input() hostName!: string;
-  @Input() maxPlayers!: number;
-  @Input() roomId!: number;       // <-- important pour l’URL
-  @Input() roomNumber!: number;
+  players = input.required<number>()
+  hostName = input.required<string>()
+  maxPlayers = input.required<number>()
+  roomId = input.required<string>()
+  roomNumber = input.required<number>()
 
-  constructor(private router: Router) {}
+  onJoinRoom = output<void>()
 
-  joinRoom() {
-    this.router.navigate(
-      ['join-room/', this.roomId],      // mettre roomId dans l’URL
-      {
-        queryParams: {
-          title: this.title,
-          host: this.hostName,
-          players: this.players,
-          maxPlayers: this.maxPlayers
-        }
-      }
-    );
-  }
 }

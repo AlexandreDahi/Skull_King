@@ -3,12 +3,14 @@ import { webSocketService } from "../../service/websocket/websocket.service";
 import { FormsModule } from "@angular/forms";
 
 import { Game } from "../game/game";
+import { Lobby } from "../lobby/lobby";
+import { Room } from "../room/room";
 
 @Component({
     selector: "home-2",
     templateUrl: './home2.html',
     styleUrls: ['./home2.css'],
-    imports: [FormsModule, Game]
+    imports: [FormsModule, Game, Lobby, Room]
 })
 export class Home2Component {
 
