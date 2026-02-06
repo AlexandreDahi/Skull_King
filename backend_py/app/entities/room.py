@@ -26,6 +26,9 @@ class Room:
 
     def count_players(self) -> int:
         return 1 + len(self.guests_list)
+    
+    def players(self)-> List[Player]:
+        return [self.host] + self.guests_list
 
 
     def get_players(self) -> List[Player]:

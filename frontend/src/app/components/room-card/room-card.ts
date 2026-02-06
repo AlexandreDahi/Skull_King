@@ -16,21 +16,27 @@ export class RoomCard {
   @Input() hostName!: string;
   @Input() maxPlayers!: number;
   @Input() roomId!: string;       // <-- important pour l’URL
+
   @Input() roomNumber!: number;
 
   constructor(private router: Router) {}
 
   joinRoom() {
+    if (!this.roomId) {
+      console.error('❌ roomId est undefined ! Navigation annulée.');
+      return;
+    }
+
     this.router.navigate(
       ['join-room/', this.roomId],      // mettre roomId dans l’URL
-      // {
-      //   queryParams: {
-      //     title: this.title,
-      //     host: this.hostName,
-      //     players: this.players,
-      //     maxPlayers: this.maxPlayers
-      //   }
-      // }
+      {
+        queryParams: {
+          title: this.title,
+          host: this.hostName,
+          players: this.players,
+          maxPlayers: this.maxPlayers
+        }
+      }
     );
   }
 }

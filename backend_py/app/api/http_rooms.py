@@ -10,6 +10,9 @@ class CreateRoomRequest(BaseModel):
     roomName: str
     hostName: str
 
+class JoinRoomRequest(BaseModel):
+    playerName: str
+
 @router.post("/rooms")
 async def create_room(payload: CreateRoomRequest):
     new_room = roomManager.create_room(
@@ -21,7 +24,7 @@ async def create_room(payload: CreateRoomRequest):
         "hostUuid": str(new_room.host.uuid),
         "hostToken": new_room.host.token,
         "roomName": new_room.name,
-        "hostName": new_room.host.name
+        "hostIsAdmin": new_room.host.is_admin
     }
 
 @router.get("/rooms")
@@ -44,7 +47,7 @@ async def get_room_players(room_uuid: str):
     if room:
         return {
             "room_uuid": room_uuid,
-            "players": [p.name for p in [room.host, *room.guests_list]]
+            "players": [p for p in [room.host, *room.guests_list]]
         }
     return {"room_uuid": room_uuid, "players": []}
 
@@ -57,4 +60,24 @@ async def get_room_name(room_uuid: str):
             "room_name": room.name
         }
     return {"room_uuid": room_uuid, "room_name": None}
+
+@router.put("/rooms/{room_uuid}/join")
+async def join_room(room_uuid: str, payload: JoinRoomRequest):
+    room = roomManager.get_room(room_uuid)
+    if not room:
+        return {"error": "Room not found"}, 404
+    
+    # Ajouter le joueur comme guest
+    guest = roomManager.add_guest(room_uuid, payload.playerName)
+    
+    if not guest:
+        return {"error": "Failed to add guest to room"}, 400
+    
+    return {
+        "room_uuid": room_uuid,
+        "player_uuid": str(guest.uuid),
+        "player_name": guest.name,
+        "token": guest.token,
+        "is_admin": guest.is_admin
+    }
 

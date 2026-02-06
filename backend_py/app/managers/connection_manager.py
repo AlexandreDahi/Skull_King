@@ -26,28 +26,31 @@ class ConnectionManager:
         player_token = player.token
         is_admin = player.is_admin
 
-        self.active_connections[room_uuid][player_uuid] = websocket
-        self.players_info[room_uuid][player_uuid] = {
+        self.active_connections[room_uuid][str(player.uuid)] = websocket
+        self.players_info[room_uuid][player_token] = {
             "uuid": player_uuid,
             "token": player_token,
-            "is_admin": is_admin
+            "isAdmin": is_admin
         }
+        try:
+            await websocket.send_json({
+                "type": "JOIN_SUCCESS",
+                "data": {
+                    "playerUuid":str(player_uuid),
+                    "isPlayerAdmin":is_admin
+                }
+            })
+        except:
+            print(f"❌ Erreur lors de l'envoi des données d'identification du joueur")
         
-        # Envoyer les infos du joueur au frontend
-        await websocket.send_json({
-            "type": "player_info",
-            "data": {
-                "player_uuid": player_uuid,
-                "is_admin": is_admin
-            }
-        })
-        
-        print(f"✅ Joueur {str(player.uuid)} connecté à la room {room_uuid}")
+        print(f"✅ Joueur {str(player.name)} connecté à la room {room_uuid}")
         
         # Notifier tous les joueurs de la room qu'un nouveau joueur a rejoint
         await self.broadcast_to_lobby(room_uuid, {
-            "event": "player_joined",
-            "player": str(player.uuid),
+            "type": "LOBBY_UPDATE",
+            "player_name": str(player.name),
+            "player_uuid": str(player.uuid),
+            "isPlayerAdmin": player.is_admin,
             "players_count": len(self.active_connections[room_uuid])
         })
 
@@ -110,14 +113,6 @@ class ConnectionManager:
         """Vérifie si un joueur est admin"""
         player_info = self.get_player_info(room_uuid, player_uuid)
         return player_info.get("is_admin", False) if player_info else False
-    
-    def get_player_by_token(self, room_uuid: str, token: str):
-        """Récupère les infos d'un joueur via son token"""
-        if room_uuid in self.players_info:
-            for player_uuid, info in self.players_info[room_uuid].items():
-                if info.get("token") == token:
-                    return info
-        return None
     
 ### Création de l'instance ConnectionManager globale
 manager = ConnectionManager()

@@ -21,7 +21,7 @@ interface Player {
 })
 export class Lobby implements OnInit, OnDestroy {
     players: Player[] = [];
-    isAdmin: boolean = false;
+    isAdmin?: boolean ;
     roomName: string = '';
     roomUuid: string = '';
     playerUuid: string = '';
@@ -37,36 +37,37 @@ export class Lobby implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.wsService.reconnectIfPossible
+        this.wsService.reconnectIfPossible();
 
         this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
         this.roomService.getRoomName(this.roomUuid).subscribe(res => {
             this.roomName = res.room_name;
         });
-        this.playerUuid = this.wsService.getPlayerUuid();
-        this.isAdmin = this.wsService.isAdmin();
-        
-        console.log('=== LOBBY INIT ===');
-        console.log('Room UUID:', this.roomUuid);
-        console.log('Room Name:', this.roomName);
-        console.log('Player UUID:', this.playerUuid);
-        console.log('Is Admin:', this.isAdmin);
-        
-        // ✅ Chargement initial UNE SEULE FOIS
-        this.loadPlayers();
+
+        // ✅ ATTENDRE que les infos du joueur arrivent AVANT de continuer
+        this.wsService.playerInfoReady$.subscribe(() => {
+            this.playerUuid = this.wsService.getPlayerUuid();
+            this.isAdmin = this.wsService.isAdmin();
+            
+            console.log('=== LOBBY INIT ===');
+            console.log('Room UUID:', this.roomUuid);
+            console.log('Room Name:', this.roomName);
+            console.log('Player UUID:', this.playerUuid);
+            console.log('Is Admin:', this.isAdmin);
+            
+            // ✅ Chargement initial UNE SEULE FOIS
+            this.loadPlayers();
+        });
         
         // ✅ S'abonner au WebSocket pour les mises à jour en temps réel
         this.lobbySubscription = this.wsService.getLobbyChannel().subscribe({
             next: (message) => {
                 if (this.isDestroyed) return;
-                console.log('📨 Message lobby reçu:', message);
+                console.log('📨 Message recue dans le lobby :', message);
                 this.handleLobbyMessage(message);
             },
             error: (err) => console.error('❌ Erreur lobby channel:', err)
         });
-
-        // ❌ SUPPRIMER LE POLLING
-        // Plus besoin de setInterval !
     }
 
     private loadPlayers() {
@@ -100,19 +101,24 @@ export class Lobby implements OnInit, OnDestroy {
     private handleLobbyMessage(data: any) {
         if (this.isDestroyed) return;
         
-        console.log("Données reçues : ", data)
+        console.log("Données reçues dans la fonction handleLobbyMessage: ", data)
         console.log('📥 Type de message WebSocket:', data.type);
         
         switch(data.type) {
             case 'LOBBY_UPDATE':
-                // ✅ Mise à jour complète de la liste via WebSocket
-                console.log('🔄 Mise à jour du lobby:', data.players.length, 'joueurs');
-                console.log('Joueurs:', data.players);
-                this.players = data.players.map((p: any) => ({
-                    uuid: p.uuid,
-                    name: p.name,
-                    isAdmin: p.isAdmin || false
-                }));
+                // ✅ Un nouveau joueur a rejoint - l'ajouter à la liste
+                console.log('👤 Nouveau joueur:', data.player_name);
+                
+                // Vérifier que le joueur n'existe pas déjà
+                const playerExists = this.players.some(p => p.uuid === data.player_uuid);
+                if (!playerExists) {
+                    this.players.push({
+                        uuid: data.player_uuid,
+                        name: data.player_name,
+                        isAdmin: data.isPlayerAdmin || false
+                    });
+                    console.log('✅ Joueur ajouté. Total:', this.players.length);
+                }
                 
                 this.cdr.detectChanges();
                 break;

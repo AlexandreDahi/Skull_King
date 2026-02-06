@@ -18,6 +18,15 @@ class RoomManager:
     def get_room(self, room_uuid: str) -> Room:
         return self.rooms.get(room_uuid)
     
+    def add_guest(self, room_uuid: str, player_name: str) -> Player:
+        """Ajoute un guest à une room et retourne le joueur créé"""
+        room = self.get_room(room_uuid)
+        if not room:
+            return None
+        guest = Player(name=player_name, is_admin=False)
+        room.add_guest(guest)
+        return guest
+    
     def delete_room(self, room_uuid: str) -> None:
         if room_uuid in self.rooms:
             del self.rooms[room_uuid]

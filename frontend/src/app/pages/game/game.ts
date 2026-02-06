@@ -10,7 +10,7 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { Hand } from '../../components/hand/hand';
 import { DropZone } from '../../components/drop-zone/drop-zone';
-import data from '../../components/cards/index_carte.json';
+import data_cards from '../../components/cards/index_carte.json';
 
 
 import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-display';
@@ -52,7 +52,7 @@ export class Game implements OnInit, OnDestroy {
   dropZoneCards: number[] = [];
   isPlayerTurn: boolean = false;
 
-  round: number = 4;
+  round ?: number ;
   totalRounds: number = 10;
 
   
@@ -98,7 +98,7 @@ export class Game implements OnInit, OnDestroy {
   /* --- GAME LOGIC DATA (de main) --- */
  
 
-  jsonData = data.index_carte;
+  jsonData_cards = data_cards.index_carte;
 
   constructor(
     private ngZone: NgZone,
@@ -112,14 +112,20 @@ export class Game implements OnInit, OnDestroy {
       INITIALISATION
   ----------------------------*/
   ngOnInit() {
+    // relancé la websocket en cas de crach :
+    this.wsService.reconnectIfPossible();
     // 1. WebSocket setup (de lobby)
     this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
-    this.isAdmin = this.wsService.isAdmin();
 
+    this.wsService.playerInfoReady$.subscribe(() => {
+      this.isAdmin = this.wsService.isAdmin();
+       this.playerUuid = this.wsService.getPlayerUuid();
+      console.log('🎮 === GAME INIT ===');
+      console.log('Room UUID:', this.roomUuid);
+      console.log('Is Admin:', this.isAdmin);
+      console.log('playerUuid',this.playerUuid)
+    });
     
-    console.log('🎮 === GAME INIT ===');
-    console.log('Room UUID:', this.roomUuid);
-    console.log('Is Admin:', this.isAdmin);
     
     if (!this.roomUuid) {
       console.error('❌ Pas de room UUID, retour à l\'accueil');
@@ -134,8 +140,6 @@ export class Game implements OnInit, OnDestroy {
     this.subscribeToGameEvents();
     this.subscribeToPrivateEvents();
     
-
-
     // 4. 
     this.startInfiniteTimer();
   }
@@ -426,10 +430,10 @@ export class Game implements OnInit, OnDestroy {
     }
   // Tant que la première carte est de type fuite, toutes les cartes sont jouables
     let i = 0;
-    let type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
+    let type = this.jsonData_cards.find(c => c.id === dropZoneCards[i])?.type;
     while (type === 'fuite' && i < dropZoneCards.length - 1) {
       i++;
-      type = this.jsonData.find(c => c.id === dropZoneCards[i])?.type;
+      type = this.jsonData_cards.find(c => c.id === dropZoneCards[i])?.type;
     }
   // Si la carte n'a pas de type, toutes les cartes sont jouables
     if (!type) return [];
@@ -437,11 +441,11 @@ export class Game implements OnInit, OnDestroy {
     if (type === 'special') return [];
 
   // Filtrer les cartes qui ne correspondent pas au type requis
-    if (this.handCards.filter(id => this.jsonData.find(c => c.id === id)?.type === type).length === 0) return [];
+    if (this.handCards.filter(id => this.jsonData_cards.find(c => c.id === id)?.type === type).length === 0) return [];
 
     const allowed = new Set([type, 'special', 'fuite']);
     return this.handCards.filter(id => {
-      const t = this.jsonData.find(c => c.id === id)?.type;
+      const t = this.jsonData_cards.find(c => c.id === id)?.type;
       return !(t != null && allowed.has(t));
     });
   }

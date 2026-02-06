@@ -36,13 +36,19 @@ export class Room {
 
         const roomId = res.roomUuid;
         const playerToken = res.hostToken;
+        const playerUuid = res.hostUuid
+        const playerIsAdmin = res.hostIsAdmin
 
         // Connecter au WebSocket en tant qu'admin
         this.wsService.joinRoom(roomId, playerToken);
         
         localStorage.setItem('playerToken', playerToken);
         localStorage.setItem('roomUuid', roomId);
+        localStorage.setItem('playerUuid',playerUuid)
+        localStorage.setItem('playerIsAdmin',playerIsAdmin)
+
         console.log('💾 Token stocké dans le localStorage.');
+
         // Rediriger vers le lobby
         this.router.navigate(['/lobby', roomId]);  
       },
