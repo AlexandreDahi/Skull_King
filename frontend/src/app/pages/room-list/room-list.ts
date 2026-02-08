@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RoomService } from '../../service/room/room.service';
 import { CommonModule } from '@angular/common';
 import { webSocketService } from '../../service/websocket/websocket.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-room-list',
@@ -19,7 +20,7 @@ export class RoomListComponent implements OnInit {
 
   appState = model.required<string>()
 
-  rooms = signal<{room_uuid: string, host_name: string, nb_players: number}[]>([])
+  rooms = signal<{ room_uuid: string, host_name: string, nb_players: number }[]>([])
   searchQuery = signal("")
   filteredRooms = computed(() => this.filterRooms(this.rooms(), this.searchQuery()))
 
@@ -27,38 +28,42 @@ export class RoomListComponent implements OnInit {
   wsService = inject(webSocketService)
 
   loading = true;
-  
-  
 
-  constructor(
-    private router: Router,
-  ) {}
+
+
+  constructor() {
+    this.wsService.roomsList
+      .pipe(takeUntilDestroyed())
+      .subscribe((roomsList) => {
+        this.rooms.set(roomsList)
+      })
+  }
 
   ngOnInit() {
     this.loading = false;
 
-    this.wsService.onGetRoomsAnswer((message: any) => {
-      this.rooms.set(message.rooms)
-    })
 
-    setTimeout(() => this.wsService.getRooms(), 500) // bad
+
+    //setTimeout(() => , 500) // bad
+
+    this.wsService.getRooms()
 
     this.wsService.onJoinRoomAnswer((message: any) => {
-      
+
       if (message.status === "ok") {
         this.appState.set("inLobby")
       } else {
         console.log("erreur join room : ", message.reason)
       }
     })
-    
+
     this.wsService.onCreateRoomAnswer((message: any) => {
       if (message.status === "ok") {
         this.appState.set("inLobby")
       } else {
         console.log("erreur join room : ", message.reason)
       }
-      
+
     })
 
 
@@ -67,7 +72,7 @@ export class RoomListComponent implements OnInit {
   joinRoom(room_uuid: string) {
 
     this.wsService.joinRoom(room_uuid)
-    
+
   }
 
   createRoom() {
@@ -82,7 +87,7 @@ export class RoomListComponent implements OnInit {
     // Filtre par recherche
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      result = result.filter(room => 
+      result = result.filter(room =>
         //room.name.toLowerCase().includes(query) ||
         room.host_name.toLowerCase().includes(query)
       );
@@ -92,12 +97,6 @@ export class RoomListComponent implements OnInit {
     result = result.filter(room => room.nb_players < 8);
 
     return result;
-  }
-
-  refreshRooms() {
-    this.loading = true;
-    this.wsService.getRooms()
-    this.loading = false;
   }
 
   getEmptyMessage(): string {

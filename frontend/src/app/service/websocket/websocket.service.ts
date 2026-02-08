@@ -4,10 +4,12 @@ import { BehaviorSubject } from 'rxjs';
 import cardData from '../../components/cards/index_carte.json';
 
 import { cardNameToId, idToCardName } from '../mapCardFrontBack';
+import { measureMemory } from 'vm';
+import { subscribe } from 'diagnostics_channel';
 
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class webSocketService {
 
@@ -16,55 +18,68 @@ export class webSocketService {
     private websocket: WebSocket
     private newRoundMessage = undefined
     private player_uuid: string = ""
-    private players_list: {uuid: string, name: string}[] = []
+    private players_list: { uuid: string, name: string }[] = []
     private is_host: boolean = false
 
-    private onGameStartSubscribers:any[] = []
-    private onNewRoundEventSubscribers:any[] = []
-    private onCardPlayedSubscribers:any[] = []
+    private onGameStartSubscribers: any[] = []
+    private onNewRoundEventSubscribers: any[] = []
+    private onCardPlayedSubscribers: any[] = []
     private onAskCardSubscribers: any[] = []
     private onBetRevealSubscribers: any[] = []
     private onRoundScoresSubscribers: any[] = []
     private onTrickWinnerSubscribers: any[] = []
 
     // Rooms data
+    private callGetRoomsWhenConnected = false
     private roomUuid: string = ""
-    private onGetRoomsAnswerSubscribers: any[] = []
     private onJoinRoomAnswerSubscribers: any[] = []
     private onCreateRoomAnswerSubscribers: any[] = []
 
-    public roomPlayers = new BehaviorSubject<{name: string, uuid: string}[]>([])
+    public roomPlayers = new BehaviorSubject<{ name: string, uuid: string }[]>([])
+    public roomsList = new BehaviorSubject<{
+        room_uuid: string,
+        host_name: string,
+        nb_players: number
+    }[]
+    >([])
 
-    constructor(){
+    constructor() {
         this.websocket = this.initWebSocket()
     }
 
     private initWebSocket() {
+        console.log("callGetRoomsWhenConnected (0): ", this.callGetRoomsWhenConnected)
+        this.callGetRoomsWhenConnected = false
+        console.log("callGetRoomsWhenConnected (1): ", this.callGetRoomsWhenConnected)
         const websocket = new WebSocket("ws://localhost:8000/ws")
 
-        websocket.addEventListener("open", this.onOpenConnection)
+        websocket.addEventListener("open", () => this.onOpenConnection())
         websocket.addEventListener("message", (event) => this.onMessage(event))
         websocket.addEventListener("error", (event) => this.onError(event))
 
         return websocket
     }
 
-    onOpenConnection(){
+    onOpenConnection() {
         console.log("Websocket connection open")
+        console.log("callGetRoomsWhenConnected (2): ", this.callGetRoomsWhenConnected)
+
+        if (this.callGetRoomsWhenConnected) {
+            this._getRooms()
+            this.callGetRoomsWhenConnected = false
+        }
     }
 
-    onMessage(event: MessageEvent){
+    onMessage(event: MessageEvent) {
 
         const message = JSON.parse(event.data)
         console.log("Websocket event : ", message)
 
         switch (message.event) {
-            
+
             // -------- Room events ----------- //
-            case "ask_rooms_answer":
-                for (const callback of this.onGetRoomsAnswerSubscribers) {
-                    callback(message)
-                }
+            case "rooms_list_update":
+                this.roomsList.next(message.rooms)
                 break
 
             case "join_room_answer":
@@ -73,7 +88,7 @@ export class webSocketService {
                     this.player_uuid = message.me
                     this.is_host = false
                 }
-                
+
 
                 for (const callback of this.onJoinRoomAnswerSubscribers) {
                     callback(message)
@@ -84,17 +99,17 @@ export class webSocketService {
 
                 this.roomPlayers.next(message.players)
                 break
-            
+
             case "room_creation_answer":
 
                 if (message.status === "ok") {
                     this.is_host = true
                     this.player_uuid = message.host_uuid
                     this.roomUuid = message.room_uuid
-                    this.players_list = [{name: "Vous", uuid: message.host_uuid}]
+                    this.players_list = [{ name: "Vous", uuid: message.host_uuid }]
 
                 }
-            
+
                 for (const callback of this.onCreateRoomAnswerSubscribers) {
                     callback(message)
                 }
@@ -112,10 +127,10 @@ export class webSocketService {
                     callback(message)
                 }
                 break
-            
+
             case "new_round":
                 console.log("New round start")
-                
+
                 // Cards conversion
                 const front_hand = this.convertBackendCardsToFront(message.hand).sort((a, b) => a - b)
                 message.hand = front_hand
@@ -138,7 +153,7 @@ export class webSocketService {
 
             case "ask_card":
                 console.log("Card asked")
-                
+
                 for (const callback of this.onAskCardSubscribers) {
                     callback(message)
                 }
@@ -155,7 +170,7 @@ export class webSocketService {
                     callback(message)
                 }
                 break
-            
+
             case "trick_winner":
                 console.log("End of trick")
 
@@ -163,10 +178,10 @@ export class webSocketService {
                     callback(message)
                 }
                 break
-            
+
             case "round_scores":
                 console.log("End of round")
-                
+
                 for (const callback of this.onRoundScoresSubscribers) {
                     callback(message)
                     break
@@ -175,11 +190,11 @@ export class webSocketService {
         }
     }
 
-    onError(event: Event ){
+    onError(event: Event) {
         console.log("Websocket error : ", event)
     }
 
-    onCloseConnection(){
+    onCloseConnection() {
         console.log("Websocket connection closed")
         this.websocket.removeEventListener("open", this.onOpenConnection)
         this.websocket.removeEventListener("message", this.onMessage)
@@ -191,14 +206,14 @@ export class webSocketService {
             .map(card_back => cardNameToId.get(card_back))
             .filter(id => id !== undefined);
     }
-    
+
 
     getCardIdFromCardName(card: string) {
         for (const card_front of this.cardsInfo) {
 
-          if (card === card_front.name){
-            return card_front.id
-          }
+            if (card === card_front.name) {
+                return card_front.id
+            }
         }
 
         return undefined
@@ -214,14 +229,14 @@ export class webSocketService {
 
 
 
-    sendName(playerName: string){
+    sendName(playerName: string) {
 
         const wsState = this.websocket.readyState
 
         if (wsState === this.websocket.CLOSED || wsState === this.websocket.CLOSING) {
-             this.websocket = this.initWebSocket()
+            this.websocket = this.initWebSocket()
         }
-        this.websocket.send(JSON.stringify({name: playerName}))
+        this.websocket.send(JSON.stringify({ name: playerName }))
     }
 
 
@@ -235,15 +250,15 @@ export class webSocketService {
     sendCard(player_card: number) {
         this.websocket.send(JSON.stringify({
             event: "card_transmission",
-            card: idToCardName.get(player_card) ,
+            card: idToCardName.get(player_card),
         }))
     }
 
-    onGameStartEvent(callback: any){
+    onGameStartEvent(callback: any) {
         this.onGameStartSubscribers.push(callback)
     }
 
-    onNewRoundEvent(callback: any){
+    onNewRoundEvent(callback: any) {
 
         this.onNewRoundEventSubscribers.push(callback)
 
@@ -269,7 +284,7 @@ export class webSocketService {
     onTrickWinner(callback: any) {
         this.onTrickWinnerSubscribers.push(callback)
     }
-    
+
     onRoundScores(callback: any) {
         this.onRoundScoresSubscribers.push(callback)
     }
@@ -291,16 +306,25 @@ export class webSocketService {
         this.onCreateRoomAnswerSubscribers.push(callback)
     }
 
-    getRooms() {
+    private _getRooms() {
+
+        console.log("_get rooms appelé")
         this.websocket.send(JSON.stringify({
             event: "ask_rooms",
+            subscribe: true
         }))
     }
+    getRooms() {
 
-    onGetRoomsAnswer(callback: any) {
-        this.onGetRoomsAnswerSubscribers.push(callback)
+        if (this.websocket.readyState === this.websocket.CONNECTING) {
+            console.log("coucou --------------")
+            this.callGetRoomsWhenConnected = true
+        }
+        else {
+            this._getRooms()
+        }
+
     }
-
 
     joinRoom(room_uuid: string) {
         this.websocket.send(JSON.stringify({
@@ -312,7 +336,7 @@ export class webSocketService {
     onJoinRoomAnswer(callback: any) {
         this.onJoinRoomAnswerSubscribers.push(callback)
     }
-    
+
     leaveRoom() {
         this.websocket.send(JSON.stringify({
             "event": "leave_room",

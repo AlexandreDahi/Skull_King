@@ -1,15 +1,15 @@
 <div class="body">
   <app-navbar></app-navbar>
-  
+
   <!-- Conteneur centré -->
   <div class="max-w-4xl mx-auto py-6 px-4 md:py-4 md:px-6">
 
     <!-- Carte centrale -->
     <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
-      
+
       <!-- HEADER avec logo et boutons -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-        
+
         <!-- Logo + Titre -->
         <div class="flex items-center space-x-3">
           <img src="/images/skullking_logo_icon.png" class="h-16 w-16 md:h-20 md:w-20" />
@@ -20,22 +20,9 @@
 
         <!-- Boutons -->
         <div class="flex gap-2">
-          <!-- Bouton Actualiser -->
-          <button 
-            (click)="refreshRooms()"
-            [disabled]="loading"
-            class="bg-white/10 hover:bg-white/20 text-white font-semibold 
-                   px-4 py-2 rounded-xl shadow-lg transition 
-                   flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-            <mat-icon [class.animate-spin]="loading">refresh</mat-icon>
-            <span class="hidden sm:inline">Actualiser</span>
-          </button>
 
           <!-- Bouton Créer Room -->
-          <button 
-            type="button"
-            (click)="createRoom()"
-            class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
+          <button type="button" (click)="createRoom()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
                    px-4 py-2 sm:px-6 rounded-xl shadow-lg transition 
                    flex items-center gap-2 cursor-pointer">
             <mat-icon>add</mat-icon>
@@ -48,60 +35,41 @@
       <div class="mb-4">
         <div class="relative">
           <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">search</mat-icon>
-          <input 
-            type="text"
-            maxlength="30"
-            [(ngModel)]="searchQuery"
-            
-            placeholder="Rechercher une partie par nom ou hôte..."
-            class="w-full pl-12 pr-4 py-3 p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
+          <input type="text" maxlength="30" [(ngModel)]="searchQuery"
+            placeholder="Rechercher une partie par nom ou hôte..." class="w-full pl-12 pr-4 py-3 p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400
                  focus:outline-none focus:ring-2 focus:ring-gray-300">
         </div>
       </div>
 
       <!-- LISTE DES ROOMS -->
       <div class="space-y-4 max-h-96 overflow-y-auto pr-2 scrollbar-grey">
-        
-        <!-- Loader -->
-        <div *ngIf="loading" class="flex flex-col justify-center items-center h-40 gap-4">
-          <div class="animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-yellow-500"></div>
-          <p class="text-white/60 text-sm">Chargement des parties...</p>
-        </div>
-        
+
+
+
         <!-- Message si aucune room -->
-         @if (filteredRooms().length === 0) {
-          <div class="flex flex-col items-center justify-center py-12 gap-4">
-            <!-- <mat-icon class="!text-6xl text-white/20">sailing</mat-icon> -->
-            <p class="text-center text-white/70 text-lg">
-              {{ getEmptyMessage() }}
-            </p>
-            <button 
-              *ngIf="rooms.length === 0"
-              (click)="createRoom()"
-              class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
-                    px-6 py-2 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer"
-            >
-              <mat-icon>add</mat-icon>
-              Créer la première partie
-            </button>
-          </div>
-         }
-        
-        
+        @if (filteredRooms().length === 0) {
+        <div class="flex flex-col items-center justify-center py-12 gap-4">
+          <!-- <mat-icon class="!text-6xl text-white/20">sailing</mat-icon> -->
+          <p class="text-center text-white/70 text-lg">
+            {{ getEmptyMessage() }}
+          </p>
+          <button *ngIf="rooms.length === 0" (click)="createRoom()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold 
+                    px-6 py-2 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
+            <mat-icon>add</mat-icon>
+            Créer la première partie
+          </button>
+        </div>
+        }
+
+
         <!-- CARDS ROOM -->
         @for (room of filteredRooms(); track room.room_uuid) {
-          <app-room-card 
-            [hostName]="room.host_name"
-            [players]="room.nb_players"
-            [maxPlayers]="8"
-            [roomNumber]="$index + 1"  
-            [roomId]="room.room_uuid"
-            (onJoinRoom)="joinRoom(room.room_uuid)"
-          />
+        <app-room-card [hostName]="room.host_name" [players]="room.nb_players" [maxPlayers]="8"
+          [roomNumber]="$index + 1" [roomId]="room.room_uuid" (onJoinRoom)="joinRoom(room.room_uuid)" />
         }
-        
+
       </div>
-      
+
     </div>
   </div>
 </div>
