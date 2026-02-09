@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-leaderboard',
   imports: [CommonModule],
@@ -7,13 +8,18 @@ import { CommonModule } from '@angular/common';
   styleUrl: './leaderboard.css',
 })
 export class Leaderboard {
-   myMap = new Map<string, string>([
-    ['player1', '100'],
-    ['player2', '200'],
-    ['player3', '-30'],
-  ]);
+  @Input() players: any[] = [];
+
+  // Générer la Map dynamiquement à partir des joueurs
+  get myMap(): Map<string, string> {
+    const map = new Map<string, string>();
+    this.players.forEach((player: any) => {
+      map.set(player.name, String(player.score ?? 0));
+    });
+    return map;
+  }
+
   get mapEntries() {
     return Array.from(this.myMap.entries());
   }
-
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,Input } from '@angular/core';
 import { PlaceBet } from '../place-bet/place-bet';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,4 +16,5 @@ export class ExpandablePlaceBet {
       console.log("expanding place bet");
       this.isExpanded = !this.isExpanded;
     }
+    @Input() players: any[] = [];
 }

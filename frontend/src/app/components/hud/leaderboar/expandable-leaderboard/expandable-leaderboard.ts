@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { Leaderboard } from '../leaderboard/leaderboard';
@@ -16,4 +16,5 @@ export class ExpandableLeaderboard {
     console.log("expanding place bet");
     this.isExpanded = !this.isExpanded;
   }
+  @Input() players: any[] = [];
 }

@@ -20,7 +20,9 @@
   (playCardEvent)="onCardPlayed($event)"
   (errorEvent)="onCardPlayedError($event)">
   </app-hand>
-  <app-head-up-display></app-head-up-display>
+  <app-head-up-display
+  [players] = "otherPlayers">
+  </app-head-up-display>
   <app-player-panel
   [round]="round"
   [totalRounds]="totalRounds"

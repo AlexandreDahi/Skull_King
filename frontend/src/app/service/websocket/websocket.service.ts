@@ -75,6 +75,9 @@ export class WebSocketService {
                                 case 'GAME_STARTED':
                                     this.publicSubject.next(message_data);
                                     break;
+                                case 'GIVING_CARD':
+                                    this.publicSubject.next(message_data);
+                                    break;
                                 default:
                                     this.publicSubject.next(message_data);
                             }

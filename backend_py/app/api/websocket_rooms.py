@@ -66,12 +66,10 @@ async def websocket_endpoint(
                     roomManager.start_game(room_uuid)
                     # Notifier tous les joueurs du démarrage
                     await manager.broadcast_to_room(room_uuid, {
-                            "type": "BETTING",
+                            "type": "NEW_ROUND",
                             "message": "Tout le monde est à bord, la partie commence !",
                             "room_uuid": room_uuid,
                     })
-                    await manager.send_private_messages_to_all_players(room_uuid)
-
 
             ## ICI on gère les messages privés lier à un joueur (ex: main du joueur, messages d'erreur spécifiques, etc.)
             elif message.get('type') == 'private':

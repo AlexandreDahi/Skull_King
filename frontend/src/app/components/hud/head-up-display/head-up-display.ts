@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,Input, Output } from '@angular/core';
 import { ExpandableLeaderboard } from '../leaderboar/expandable-leaderboard/expandable-leaderboard';
 import { ExpandablePlaceBet } from '../bet/expandable-place-bet/expandable-place-bet';
 import { OtherPlayers } from '../players/other-players/other-players';
@@ -10,5 +10,6 @@ import { OtherPlayers } from '../players/other-players/other-players';
   styleUrl: './head-up-display.css',
 })
 export class HeadUpDisplay {
+  @Input() players: any[] = [];
 
 }

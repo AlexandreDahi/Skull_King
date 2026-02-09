@@ -1,8 +1,9 @@
-<app-other-players></app-other-players>
+<app-other-players [players]="players"></app-other-players>
 
 <div class = "expandables-container">
-    <app-expandable-place-bet></app-expandable-place-bet>
-    <app-expandable-leaderboard></app-expandable-leaderboard>
+    <app-expandable-place-bet
+    [players]="players"></app-expandable-place-bet>
+    <app-expandable-leaderboard [players]="players"></app-expandable-leaderboard>
     
 </div>
 

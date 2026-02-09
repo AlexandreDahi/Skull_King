@@ -24,9 +24,9 @@ import { RoomService } from '../../service/room/room.service';
 interface Player {
   uuid: string;
   name: string;
-  isAdmin?: boolean;
   score?: number;
   bet?: number;
+  obtained?: number;
   cards?: number[];
 }
 
@@ -82,8 +82,8 @@ export class Game implements OnInit, OnDestroy {
   /* --- WEBSOCKET DATA (de lobby) --- */
   roomUuid: string = '';
   playerUuid: string = '';
-  isAdmin: boolean = false;
-  players: Player[] = [];
+  playerSelf: Player | null = null;  // Notre joueur
+  otherPlayers: Player[] = [];         // Les autres joueurs
   gameState: GameState = {
     roundNumber: 1,
     turnNumber: 1,
@@ -126,12 +126,11 @@ export class Game implements OnInit, OnDestroy {
     }
     // ✅ ATTENDRE que les infos du joueur arrivent AVANT de continuer
     this.wsService.playerInfoReady$.subscribe(() => {
-      this.isAdmin = this.wsService.isAdmin();
+
       this.playerUuid = this.wsService.getPlayerUuid();
       
       console.log('🎮 === GAME INIT ===');
       console.log('Room UUID:', this.roomUuid);
-      console.log('Is Admin:', this.isAdmin);
       console.log('playerUuid:', this.playerUuid);
 
       // 2. Charger l'état initial de la partie
@@ -185,19 +184,25 @@ export class Game implements OnInit, OnDestroy {
     
     this.roomService.getPlayers(this.roomUuid).subscribe({
       next: (response: any[]) => {
-        console.log('✅ Joueurs chargés dans la focntion loadGameState de game:', response);
-        this.players = response.map(p => ({
+        console.log('✅ Joueurs chargés:', response);
+        
+        // Séparer le joueur courant des autres
+        const allPlayers = response.map(p => ({
           uuid: p.uuid,
           name: p.name,
-          isAdmin: p.isAdmin || false,
           score: 0,
           bet: undefined,
-          cards: p.cards || [],
+          obtained: undefined
         }));
-        console.log('✅ Joueurs formatés:', this.players);
+        
+        this.playerSelf = allPlayers.find(p => p.uuid === this.playerUuid) || null;
+        this.otherPlayers = allPlayers.filter(p => p.uuid !== this.playerUuid);
+        
+        console.log('✅ Joueur courant:', this.playerSelf);
+        console.log('✅ Autres joueurs:', this.otherPlayers);
       },
       error: (err) => {
-        console.error('❌ Erreur chargement joueurs das game:', err);
+        console.error('❌ Erreur chargement joueurs:', err);
       }
     });
   }
@@ -257,41 +262,12 @@ export class Game implements OnInit, OnDestroy {
         }
         break;
       
-      case 'BETTING_PHASE_START':
-        console.log("Il est temps de faire un pari");
-        
-        break;
-      case 'PLAYER_BET':
-        console.log('💰 Pari reçu:', data.playerUuid, data.bet);
-        const player = this.players.find(p => p.uuid === data.playerUuid);
-        if (player) {
-          player.bet = data.bet;
-        }
-        break;
+      case 'NEW_ROUND':
+        console.log('🎯 Nouvelle manche !');
 
-      case 'CARD_PLAYED':
-        console.log('🃏 Carte jouée par:', data.playerUuid);
-        break;
-
-      case 'ROUND_START':
-        console.log('🎯 Nouvelle manche:', data.round);
-        this.gameState.roundNumber = data.round;
-        this.gameState.phase = 'BETTING';
-        break;
-
-      case 'TURN_CHANGED':
-        console.log('🔄 Tour du joueur:', data.playerUuid);
-        this.gameState.currentTurnPlayer = data.playerUuid;
-        break;
-
-      case 'ROUND_END':
-        console.log('🏁 Fin de manche');
-        this.gameState.phase = 'ROUND_END';
-        break;
-
-      case 'GAME_END':
-        console.log('🎊 Fin de partie !');
-        this.gameState.phase = 'GAME_END';
+        this.wsService.sendPublicMessage({
+          type: 'ROUND_START'
+        });
         break;
 
       default:
@@ -331,7 +307,7 @@ export class Game implements OnInit, OnDestroy {
       roomUuid: this.roomUuid
     });
 
-    const currentPlayer = this.players.find(p => p.uuid === this.playerUuid);
+    const currentPlayer = this.playerSelf;
     if (currentPlayer) {
       currentPlayer.bet = betAmount;
     }
@@ -339,30 +315,8 @@ export class Game implements OnInit, OnDestroy {
     this.gameState.phase = 'PLAYING';
   }
 
-  
-  leaveGame() {
-    console.log('👋 Quitter la partie');
-    
-    this.wsService.sendLobbyMessage({
-      type: 'LEAVE_GAME',
-      roomUuid: this.roomUuid
-    });
 
-    this.router.navigate(['/']);
-  }
 
-  
-  isMyTurn(): boolean {
-    return this.gameState.currentTurnPlayer === this.playerUuid;
-  }
-
-  
-  getCurrentPlayerName(): string {
-    const player = this.players.find(p => p.uuid === this.gameState.currentTurnPlayer);
-    return player ? player.name : 'Inconnu';
-  }
-
-  
   ngOnDestroy() {
     console.log('🧹 Nettoyage du composant Game');
     this.isDestroyed = true;

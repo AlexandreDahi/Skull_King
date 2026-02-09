@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, effect } from '@angular/core';
 import { Direction } from '../../../../service/direction.enum';
 import { CommonModule } from '@angular/common';
 
@@ -11,24 +11,26 @@ import { CommonModule } from '@angular/common';
 export class OtherPlayer {
   
   playerDisplayLocation: string = "init";
-  player = input.required<{direction:Direction,name:string,bet:number,obtained:number}>();
+  player = input.required<{direction:Direction, uuid: string, name:string, bet?:number, obtained?:number, isAdmin?: boolean}>();
   playerName: string = "Player 1";
   valueObtained: number = 0;
   valueBetted: number = 0;
   specificDirectionclass:string = "";
-  constructor() {
-  }
 
-  ngOnInit() {
-    this.playerDisplayLocation = this.getDirectionClass();
-    this.specificDirectionclass = this.playerDisplayLocation;
-    this.playerName = this.player().name;
-    this.valueBetted = this.player().bet;
-    this.valueObtained = this.player().obtained;
+  constructor() {
+    // Utiliser effect() pour réagir aux changements du signal
+    effect(() => {
+      const playerData = this.player();
+      this.playerDisplayLocation = this.getDirectionClass(playerData.direction);
+      this.specificDirectionclass = this.playerDisplayLocation;
+      this.playerName = playerData.name;
+      this.valueBetted = playerData.bet || 0;
+      this.valueObtained = playerData.obtained || 0;
+    });
   }
   
-  getDirectionClass(): string {
-    switch (this.player().direction) {  
+  getDirectionClass(direction: Direction): string {
+    switch (direction) {  
       case Direction.Top:
         return 'top-player';
       case Direction.Left:

@@ -1,4 +1,4 @@
-import { Component,AfterViewInit} from '@angular/core';
+import { Component, OnChanges, SimpleChanges, Input} from '@angular/core';
 import { OtherPlayer } from '../other-player/other-player';
 import { Direction } from '../../../../service/direction.enum';
 import { CommonModule,  } from '@angular/common';
@@ -9,28 +9,20 @@ import { CommonModule,  } from '@angular/common';
   templateUrl: './other-players.html',
   styleUrls: ['./other-players.css'],
 })
-export class OtherPlayers 
-{
-  players: any[] = [];
+export class OtherPlayers implements OnChanges {
+
+  @Input() players: any[] = [];
+  
   direction = Direction.Right;
 
-  ngOnInit() {
-    this.players = this.getPlayerList();
-    this.setCss();
-  }
-
-
-
-  getPlayerList() {
-    const listDirection = [];
-    listDirection.push({ direction: null, name: "Player 1", bet: 5, obtained: 0 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-    listDirection.push({ direction: null, name: "Player 2", bet: 5, obtained: 3 });
-
-    return listDirection;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['players'] && !changes['players'].firstChange) {
+      // Les joueurs ont changé, mettre à jour le CSS
+      this.setCss();
+    } else if (changes['players'] && changes['players'].firstChange && this.players.length > 0) {
+      // Premier chargement avec des joueurs
+      this.setCss();
+    }
   }
   getPlayersByClass(className: string): any[] {
     return this.players.filter(player => this.getDirectionClass(player.direction) === className);
