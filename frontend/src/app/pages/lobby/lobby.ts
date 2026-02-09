@@ -18,7 +18,7 @@ interface Player {
   standalone: true,
   imports: [CommonModule, Navbar]
 })
-export class Lobby implements OnInit, OnDestroy {
+export class Lobby implements OnDestroy {
 
     appState = model.required<string>()
 
@@ -33,15 +33,10 @@ export class Lobby implements OnInit, OnDestroy {
     constructor() {
         this.wsService.roomPlayers
             .pipe(takeUntilDestroyed())
-            .subscribe((players) => {
-                this.players.set(players)
+            .subscribe((room) => {
+                this.players.set(room.players)
+                this.isAdmin.set(room.host === this.wsService.getPlayerUuid())
             })
-    }
-
-    ngOnInit() {
-
-        this.isAdmin.set(this.wsService.isHost())
-
     }
 
     private handleLobbyMessage(data: any) {

@@ -4,9 +4,12 @@ import { BehaviorSubject } from 'rxjs';
 import cardData from '../../components/cards/index_carte.json';
 
 import { cardNameToId, idToCardName } from '../mapCardFrontBack';
-import { measureMemory } from 'vm';
-import { subscribe } from 'diagnostics_channel';
 
+
+type RoomUpdateType = {
+    host: string,
+    players: { name: string, uuid: string }[]
+}
 
 @Injectable({
     providedIn: 'root',
@@ -35,7 +38,7 @@ export class webSocketService {
     private onJoinRoomAnswerSubscribers: any[] = []
     private onCreateRoomAnswerSubscribers: any[] = []
 
-    public roomPlayers = new BehaviorSubject<{ name: string, uuid: string }[]>([])
+    public roomPlayers = new BehaviorSubject<RoomUpdateType>({host: "", players: []})
     public roomsList = new BehaviorSubject<{
         room_uuid: string,
         host_name: string,
@@ -97,7 +100,7 @@ export class webSocketService {
 
             case "room_update":
 
-                this.roomPlayers.next(message.players)
+                this.roomPlayers.next(message)
                 break
 
             case "room_creation_answer":
@@ -107,6 +110,11 @@ export class webSocketService {
                     this.player_uuid = message.host_uuid
                     this.roomUuid = message.room_uuid
                     this.players_list = [{ name: "Vous", uuid: message.host_uuid }]
+
+                    this.roomPlayers.next({
+                        host: message.host_uuid,
+                        players: [{uuid: message.host_uuid, name: "Vous"}]
+                    })
 
                 }
 
