@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap,map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -36,8 +36,9 @@ export class RoomService {
 
   // Récupération des joueurs d'une room
   getPlayers(roomUuid: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${roomUuid}/players`);
-  }
+    return this.http.get<any>(`${this.apiUrl}/${roomUuid}/players`).pipe(
+      map(response => response.players || [])
+  ); }
 
   // Quitter une room
   leaveRoom(roomUuid: string, playerUuid: string): Observable<any> {

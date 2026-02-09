@@ -46,10 +46,9 @@ async def get_room_players(room_uuid: str):
     room = roomManager.get_room(room_uuid)
     if room:
         return {
-            "room_uuid": room_uuid,
-            "players": [p for p in [room.host, *room.guests_list]]
+            "players": [room.host, *room.guests_list]
         }
-    return {"room_uuid": room_uuid, "players": []}
+    return {"players": []}
 
 @router.get("/rooms/{room_uuid}/room_name")
 async def get_room_name(room_uuid: str):

@@ -70,7 +70,14 @@ export class WebSocketService {
                             break;
 
                         case 'public':
-                            this.publicSubject.next(message.data);
+                            const message_data = message.data;
+                            switch(message_data.type) {
+                                case 'GAME_STARTED':
+                                    this.publicSubject.next(message_data);
+                                    break;
+                                default:
+                                    this.publicSubject.next(message_data);
+                            }
                             break;
 
                         case 'private':

@@ -2,6 +2,7 @@
 from typing import Dict
 from app.entities import Room
 from app.entities import Player
+from app.entities import Game
 
 
 class RoomManager:
@@ -33,6 +34,11 @@ class RoomManager:
     
     def list_rooms(self) -> Dict[str, Room]:
         return list(self.rooms.values())
+    
+    def start_game(self, room_uuid: str) -> None:
+        room = self.get_room(room_uuid)
+        # Création de la game
+        room.start_game()
 
 ### Création de l'instance roomManager globale
 roomManager = RoomManager()

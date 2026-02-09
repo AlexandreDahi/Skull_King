@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Optional
 
 from app.entities.player import Player
 from app.entities.game import Game
@@ -13,7 +13,7 @@ class Room:
         self.host: Player = host
         self.guests_list: List[Player] = []
 
-        self.game: Game = Game()
+        self.game: Optional[Game] = None
 
     def add_guest(self, player: Player) -> None:
         if player not in self.guests_list:
@@ -52,3 +52,17 @@ class Room:
             if guest.uuid == player_uuid:
                 return guest
         return None
+    
+    def start_game(self) -> None:
+        self.game = Game()
+        self.game.add_player(self.host)
+        for guest in self.guests_list:
+            self.game.add_player(guest)
+            
+        self.game.start_game()
+        
+
+
+
+
+    

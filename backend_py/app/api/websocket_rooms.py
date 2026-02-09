@@ -29,6 +29,7 @@ async def websocket_endpoint(
             data = await websocket.receive_text()
             message = json.loads(data)
             
+            ## ICI je devais traiter les messages lier au lencement de la partie, mais c'est à refaire
             # Traiter les différents types de messages
             if message.get('type') == 'start_game':
                 # Vérifier que c'est l'admin qui lance la partie
@@ -54,13 +55,25 @@ async def websocket_endpoint(
                     "data": message.get('data')
                 })
             
+            ## ICI on gère les messages liés à la partie en cours (ex: jouer une carte, faire une annonce, etc.)
             elif message.get('type') == 'public':
-                # Broadcast un message public
-                await manager.broadcast_to_room(room_uuid, {
-                    "type": "public",
-                    "data": message.get('data')
-                })
-            
+                # recupération du message
+                core_message = message.data
+
+                # Message pour initialiser le début de la partie (distribution des cartes, etc.)
+                if core_message.get('type') == 'GAME_STARTED':
+                    print(f"🎮 La partie a commencé dans la room {room_uuid}")
+                    roomManager.start_game(room_uuid)
+                    # Notifier tous les joueurs du démarrage
+                    await manager.broadcast_to_room(room_uuid, {
+                            "type": "BETTING",
+                            "message": "Tout le monde est à bord, la partie commence !",
+                            "room_uuid": room_uuid,
+                    })
+                    await manager.send_private_messages_to_all_players(room_uuid)
+
+
+            ## ICI on gère les messages privés lier à un joueur (ex: main du joueur, messages d'erreur spécifiques, etc.)
             elif message.get('type') == 'private':
                 # Envoyer un message privé
                 target_uuid = message.get('data', {}).get('target_uuid')

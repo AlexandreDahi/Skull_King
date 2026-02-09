@@ -31,9 +31,10 @@ interface Player {
 }
 
 interface GameState {
-  currentRound: number;
-  currentTurn: string; // UUID du joueur dont c'est le tour
-  phase: 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
+  roundNumber: number;
+  turnNumber: number;
+  currentTurnPlayer: string; // UUID du joueur dont c'est le tour
+  phase: 'GIVING_CARD' | 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
 }
 
 
@@ -46,13 +47,12 @@ interface GameState {
   standalone: true
 })
 export class Game implements OnInit, OnDestroy {
-
   // --- GAME DATA ---  //
   handCards: number[] = [];
   dropZoneCards: number[] = [];
   isPlayerTurn: boolean = false;
 
-  round ?: number ;
+  round : number = 1;
   totalRounds: number = 10;
 
   
@@ -85,9 +85,10 @@ export class Game implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   players: Player[] = [];
   gameState: GameState = {
-    currentRound: 1,
-    currentTurn: '',
-    phase: 'BETTING'
+    roundNumber: 1,
+    turnNumber: 1,
+    currentTurnPlayer: '',
+    phase: 'GIVING_CARD'
   };
   
   // Abonnements WebSocket
@@ -114,34 +115,42 @@ export class Game implements OnInit, OnDestroy {
   ngOnInit() {
     // relancé la websocket en cas de crach :
     this.wsService.reconnectIfPossible();
+    
     // 1. WebSocket setup (de lobby)
     this.roomUuid = this.route.snapshot.paramMap.get('id') || '';
 
-    this.wsService.playerInfoReady$.subscribe(() => {
-      this.isAdmin = this.wsService.isAdmin();
-       this.playerUuid = this.wsService.getPlayerUuid();
-      console.log('🎮 === GAME INIT ===');
-      console.log('Room UUID:', this.roomUuid);
-      console.log('Is Admin:', this.isAdmin);
-      console.log('playerUuid',this.playerUuid)
-    });
-    
-    
     if (!this.roomUuid) {
       console.error('❌ Pas de room UUID, retour à l\'accueil');
       this.router.navigate(['/']);
       return;
     }
+    // ✅ ATTENDRE que les infos du joueur arrivent AVANT de continuer
+    this.wsService.playerInfoReady$.subscribe(() => {
+      this.isAdmin = this.wsService.isAdmin();
+      this.playerUuid = this.wsService.getPlayerUuid();
+      
+      console.log('🎮 === GAME INIT ===');
+      console.log('Room UUID:', this.roomUuid);
+      console.log('Is Admin:', this.isAdmin);
+      console.log('playerUuid:', this.playerUuid);
 
-    // 2. Charger l'état initial de la partie
-    this.loadGameState();
+      // 2. Charger l'état initial de la partie
+      this.loadGameState();
 
-    // 3. S'abonner aux événements de jeu via WebSocket
-    this.subscribeToGameEvents();
-    this.subscribeToPrivateEvents();
-    
-    // 4. 
-    this.startInfiniteTimer();
+      // 3. S'abonner aux événements de jeu via WebSocket
+      this.subscribeToGameEvents();
+      this.subscribeToPrivateEvents();
+      
+      // 4. Démarrer le timer
+      this.startInfiniteTimer();
+
+      // 5. Dire au backend que la partie peut commencer :
+      console.log('🚀 Notifier le backend que la partie peut commencer');
+      this.wsService.sendPublicMessage({
+        type: 'GAME_STARTED',
+        roomUuid: this.roomUuid
+      });
+    });
   }
 
 
@@ -175,10 +184,9 @@ export class Game implements OnInit, OnDestroy {
     console.log('📡 Chargement de l\'état de la partie...');
     
     this.roomService.getPlayers(this.roomUuid).subscribe({
-      next: (players: any[]) => {
-        
-        console.log('✅ Joueurs chargés:', players);
-        this.players = players.map(p => ({
+      next: (response: any[]) => {
+        console.log('✅ Joueurs chargés dans la focntion loadGameState de game:', response);
+        this.players = response.map(p => ({
           uuid: p.uuid,
           name: p.name,
           isAdmin: p.isAdmin || false,
@@ -186,9 +194,10 @@ export class Game implements OnInit, OnDestroy {
           bet: undefined,
           cards: p.cards || [],
         }));
+        console.log('✅ Joueurs formatés:', this.players);
       },
       error: (err) => {
-        console.error('❌ Erreur chargement joueurs:', err);
+        console.error('❌ Erreur chargement joueurs das game:', err);
       }
     });
   }
@@ -266,13 +275,13 @@ export class Game implements OnInit, OnDestroy {
 
       case 'ROUND_START':
         console.log('🎯 Nouvelle manche:', data.round);
-        this.gameState.currentRound = data.round;
+        this.gameState.roundNumber = data.round;
         this.gameState.phase = 'BETTING';
         break;
 
       case 'TURN_CHANGED':
         console.log('🔄 Tour du joueur:', data.playerUuid);
-        this.gameState.currentTurn = data.playerUuid;
+        this.gameState.currentTurnPlayer = data.playerUuid;
         break;
 
       case 'ROUND_END':
@@ -295,7 +304,7 @@ export class Game implements OnInit, OnDestroy {
     console.log("🃏 Carte déposée :", cardId);
     
     // Vérifier que c'est bien le tour du joueur
-    if (this.gameState.currentTurn !== this.playerUuid) {
+    if (this.gameState.currentTurnPlayer !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');
       // TODO: Afficher un message d'erreur
       return;
@@ -344,12 +353,12 @@ export class Game implements OnInit, OnDestroy {
 
   
   isMyTurn(): boolean {
-    return this.gameState.currentTurn === this.playerUuid;
+    return this.gameState.currentTurnPlayer === this.playerUuid;
   }
 
   
   getCurrentPlayerName(): string {
-    const player = this.players.find(p => p.uuid === this.gameState.currentTurn);
+    const player = this.players.find(p => p.uuid === this.gameState.currentTurnPlayer);
     return player ? player.name : 'Inconnu';
   }
 
@@ -374,7 +383,7 @@ export class Game implements OnInit, OnDestroy {
   //----------------------------
   onCardPlayed(cardId: number) {
     // Vérifier que c'est le tour du joueur (WebSocket)
-    if (this.gameState.currentTurn !== this.playerUuid) {
+    if (this.gameState.currentTurnPlayer !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');
       return;
     }

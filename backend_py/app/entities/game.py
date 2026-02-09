@@ -39,13 +39,21 @@ class Game:
     # -------------------
     # Gestion des joueurs
     # -------------------
+    def add_player(self, player: Player) -> None:
+        self.players[player.uuid] = player
+
     def start_game(self) -> None:
         self.current_players_order = list(self.players.keys())
         self.first_player_uuid = rnd.choice(self.current_players_order)
+        self.player_round_order(self.first_player_uuid)
+        self.give_players_cards(list(self.players.values()))
+        
+
+    
   
-    def player_round_order(self) -> None:
-        beginer_index = self.current_players_order.index(self.first_player_uuid)
-        self.current_players_order = self.current_players_order[beginer_index+(self.current_round-1):] + self.current_players_order[:beginer_index+(self.current_round-1)]
+    def player_round_order(self,player_uuid) -> None:
+        beginer_index = self.current_players_order.index(player_uuid)
+        self.current_players_order = self.current_players_order[beginer_index:] + self.current_players_order[:beginer_index]
     
     def give_players_cards(self, players_list: List[Player]) -> None:
         # Création d'un deck complet

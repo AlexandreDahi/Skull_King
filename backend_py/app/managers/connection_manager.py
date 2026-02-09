@@ -78,6 +78,19 @@ class ConnectionManager:
                     "data": message
                 })
 
+    async def broadcast_private_message(self, room_uuid: str, message: dict, exclude_player: str = None):
+        """Envoie un message privé à TOUS les joueurs d'une room"""
+        if room_uuid in self.active_connections:
+            for player_uuid, websocket in self.active_connections[room_uuid].items():
+                if player_uuid != exclude_player:
+                    try:
+                        await websocket.send_json({
+                            "type": "private",
+                            "data": message
+                        })
+                    except:
+                        print(f"❌ Erreur lors de l'envoi privé à {player_uuid}")
+
     async def broadcast_to_room(self, room_uuid: str, message: dict, exclude_player: str = None):
         """Envoie un message public à tous les joueurs d'une room"""
         if room_uuid in self.active_connections:

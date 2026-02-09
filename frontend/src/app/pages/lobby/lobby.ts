@@ -78,11 +78,10 @@ export class Lobby implements OnInit, OnDestroy {
         this.roomService.getPlayers(this.roomUuid).subscribe({
             next: (response: any) => {
                 if (this.isDestroyed) return;
-                
-                const players = response.players || [];
-                console.log('✅ Joueurs récupérés:', players.length);
-                
-                this.players = players.map((p: any) => ({
+                // const players = response.players || [];
+                console.log('✅ Joueurs récupérés:', response);
+
+                this.players = response.map((p: any) => ({
                     uuid: p.uuid,
                     name: p.name,
                     isAdmin: p.isAdmin || false
