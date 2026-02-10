@@ -4,3 +4,8 @@
   min-height: 100vh;
 }
 
+app-profile {
+  position: fixed;
+  bottom: 0;
+  left: 40%;
+}

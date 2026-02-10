@@ -246,7 +246,10 @@ export class webSocketService {
         if (wsState === this.websocket.CLOSED || wsState === this.websocket.CLOSING) {
             this.websocket = this.initWebSocket()
         }
-        this.websocket.send(JSON.stringify({ name: playerName }))
+        this.websocket.send(JSON.stringify({
+            event: "set_name",
+            name: playerName 
+        }))
     }
 
 

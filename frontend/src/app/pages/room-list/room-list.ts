@@ -1,20 +1,20 @@
 import { Component, computed, inject, model, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { RoomCard } from '../../components/room-card/room-card';
 import { Navbar } from '../../components/navbar/navbar';
 import { MatIconModule } from '@angular/material/icon';
-import { RoomService } from '../../service/room/room.service';
 import { CommonModule } from '@angular/common';
 import { webSocketService } from '../../service/websocket/websocket.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { Profile } from '../../components/profile/profile';
 
 @Component({
   selector: 'app-room-list',
   standalone: true,
   templateUrl: './room-list.html',
   styleUrls: ['./room-list.css'],
-  imports: [RoomCard, MatIconModule, Navbar, CommonModule, FormsModule],
+  imports: [RoomCard, MatIconModule, Navbar, CommonModule, FormsModule, Profile],
 })
 export class RoomListComponent implements OnInit {
 
