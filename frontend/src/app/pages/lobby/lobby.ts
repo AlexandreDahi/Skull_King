@@ -18,7 +18,7 @@ interface Player {
   standalone: true,
   imports: [CommonModule, Navbar]
 })
-export class Lobby implements OnDestroy {
+export class Lobby {
 
     appState = model.required<string>()
 
@@ -37,16 +37,12 @@ export class Lobby implements OnDestroy {
                 this.players.set(room.players)
                 this.isAdmin.set(room.host === this.wsService.getPlayerUuid())
             })
+
+        this.wsService.onGameStartEvent((message: any) => {
+            this.appState.set("inGame")
+        })
     }
 
-    private handleLobbyMessage(data: any) {
-        
-    }
-
-    ngOnDestroy() {
-        
-
-    }
 
     startGame() {
         if (!this.isAdmin) {
@@ -54,21 +50,16 @@ export class Lobby implements OnDestroy {
             return;
         }
         
-        if (this.players.length < 2) {
+        if (this.players().length < 2) {
             console.warn('⚠️ Pas assez de joueurs (min: 2, actuel: ' + this.players.length + ')');
             alert('Il faut au moins 2 joueurs pour lancer la partie !');
             return;
         }
         
         console.log('🚀 Envoi du signal START_GAME au serveur...');
-        
-        /*this.wsService.sendLobbyMessage({
-            type: 'START_GAME'
-        });*/
 
-        //this.wsService.sendStartGameSignal()
+        this.wsService.startGame()
         
-        console.log('⏳ En attente de la confirmation du serveur...');
     }
 
     leaveLobby() {

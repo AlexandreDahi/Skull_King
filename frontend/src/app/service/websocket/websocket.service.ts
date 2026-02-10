@@ -183,8 +183,10 @@ export class webSocketService {
                 console.log("End of trick")
 
                 for (const callback of this.onTrickWinnerSubscribers) {
-                    callback(message)
-                }
+                        callback(message)
+                    }
+
+                
                 break
 
             case "round_scores":
@@ -325,7 +327,6 @@ export class webSocketService {
     getRooms() {
 
         if (this.websocket.readyState === this.websocket.CONNECTING) {
-            console.log("coucou --------------")
             this.callGetRoomsWhenConnected = true
         }
         else {
@@ -348,6 +349,13 @@ export class webSocketService {
     leaveRoom() {
         this.websocket.send(JSON.stringify({
             "event": "leave_room",
+        }))
+    }
+
+
+    startGame() {
+        this.websocket.send(JSON.stringify({
+            "event": "launch_game"
         }))
     }
 
