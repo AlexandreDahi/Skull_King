@@ -39,6 +39,15 @@ export class Hand {
 
     this.wsService.onCardPlayed((message: any) => {
       this.isMyTurn.set(false)
+
+      // Remove the card played if it was chosen automatically
+      // i.e. the player didn't play in time
+      if (this.cardIds().includes(message.card)) {
+        const cards = this.cardIds().filter(n => n !== message.card)
+        this.cardIds.set(cards)
+      }
+        
+
     })
   }
 

@@ -28,20 +28,19 @@ export class DropZone {
     this.wsService.onCardPlayed((message: any) => {
 
       if (this.isMyTurn()) {
-        // This block prevent the card played being displayed twice
-        // i.e. once when the user drag and drop the card and once 
-        // when the server broadcast the card played
         this.isMyTurn.set(false)
-        return
       }
 
-      if (message.card === undefined) {
-        console.log("Card sent from server is not known : ", message.card)
-        return
+
+      // This condition prevents the card played being displayed twice
+      // i.e. once when the user drag and drop the card and once 
+      // when the server broadcast the card played
+      if (!this.cardsInZone().includes(message.card)) {
+        const cardsPlayed = [...this.cardsInZone(), message.card]
+        this.cardsInZone.set(cardsPlayed)
       }
 
-      const cardsPlayed = [...this.cardsInZone(), message.card]
-      this.cardsInZone.set(cardsPlayed)
+      
     })
 
     this.wsService.onTrickWinner((message: any) => {
