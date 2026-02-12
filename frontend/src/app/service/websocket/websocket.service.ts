@@ -51,7 +51,7 @@ export class WebSocketService {
                 try {
                     const message = JSON.parse(event.data);
                     console.log('📨 Message reçu dans le service websocket:', message);
-
+                    
                     switch (message.type) {
 
                         case 'JOIN_SUCCESS':
@@ -70,17 +70,7 @@ export class WebSocketService {
                             break;
 
                         case 'public':
-                            const message_data = message.data;
-                            switch(message_data.type) {
-                                case 'GAME_STARTED':
-                                    this.publicSubject.next(message_data);
-                                    break;
-                                case 'GIVING_CARD':
-                                    this.publicSubject.next(message_data);
-                                    break;
-                                default:
-                                    this.publicSubject.next(message_data);
-                            }
+                            this.publicSubject.next(message.data);
                             break;
 
                         case 'private':
@@ -153,7 +143,7 @@ export class WebSocketService {
 
     sendStartGameSignal() {
         console.log("📤 Envoi du signal de début de partie au serveur.")
-        this.sendMessage({
+        this.sendLobbyMessage({
             type: "start_game",
             data: {
                 userUuid: this.playerUuid,
@@ -162,10 +152,17 @@ export class WebSocketService {
         })
     }
 
-    sendPublicMessage(message: any) {
+    sendGameMessage(message: any) {
         console.log('📤 Envoi message public:', message);
         this.sendMessage({
-            type: "public",
+            type: "game",
+            data: message
+        })
+    }
+    sendPrivateMessage(message: any) {
+        console.log('📤 Envoi message privé:', message);
+        this.sendMessage({
+            type: "private",
             data: message
         })
     }

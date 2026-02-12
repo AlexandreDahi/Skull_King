@@ -19,22 +19,21 @@ import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 import { WebSocketService } from '../../service/websocket/websocket.service';
 import { RoomService } from '../../service/room/room.service';
 
-
-
 interface Player {
   uuid: string;
   name: string;
   score?: number;
   bet?: number;
   obtained?: number;
-  cards?: number[];
+
 }
 
 interface GameState {
   roundNumber: number;
   turnNumber: number;
   currentTurnPlayer: string; // UUID du joueur dont c'est le tour
-  phase: 'GIVING_CARD' | 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
+  currentPlayerOrder: string[]; // Ordre des joueurs pour la manche en cours
+  // phase: 'GIVING_CARD' | 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
 }
 
 
@@ -88,7 +87,8 @@ export class Game implements OnInit, OnDestroy {
     roundNumber: 1,
     turnNumber: 1,
     currentTurnPlayer: '',
-    phase: 'GIVING_CARD'
+    currentPlayerOrder: [],
+    // phase: 'GIVING_CARD'
   };
   
   // Abonnements WebSocket
@@ -128,26 +128,21 @@ export class Game implements OnInit, OnDestroy {
     this.wsService.playerInfoReady$.subscribe(() => {
 
       this.playerUuid = this.wsService.getPlayerUuid();
-      
       console.log('🎮 === GAME INIT ===');
       console.log('Room UUID:', this.roomUuid);
       console.log('playerUuid:', this.playerUuid);
 
-      // 2. Charger l'état initial de la partie
-      this.loadGameState();
-
-      // 3. S'abonner aux événements de jeu via WebSocket
+      // 1. S'abonner aux événements de jeu via WebSocket
       this.subscribeToGameEvents();
       this.subscribeToPrivateEvents();
       
-      // 4. Démarrer le timer
+      // 2. Démarrer le timer
       this.startInfiniteTimer();
 
-      // 5. Dire au backend que la partie peut commencer :
-      console.log('🚀 Notifier le backend que la partie peut commencer');
-      this.wsService.sendPublicMessage({
-        type: 'GAME_STARTED',
-        roomUuid: this.roomUuid
+      // 3. Récupérer les infos de la parite en cours (cartes en main, état du jeu, etc.)
+      console.log('🚀 Récupéré toutes les infos en cours de la parites depuis le backend');
+      this.wsService.sendGameMessage({
+        type: 'game_info'
       });
     });
   }
@@ -175,38 +170,6 @@ export class Game implements OnInit, OnDestroy {
     this.timerProgress = 100;
   }
 
-
-  //
-  // Charger l'état initial de la partie via l'API
-  //
-  private loadGameState() {
-    console.log('📡 Chargement de l\'état de la partie...');
-    
-    this.roomService.getPlayers(this.roomUuid).subscribe({
-      next: (response: any[]) => {
-        console.log('✅ Joueurs chargés:', response);
-        
-        // Séparer le joueur courant des autres
-        const allPlayers = response.map(p => ({
-          uuid: p.uuid,
-          name: p.name,
-          score: 0,
-          bet: undefined,
-          obtained: undefined
-        }));
-        
-        this.playerSelf = allPlayers.find(p => p.uuid === this.playerUuid) || null;
-        this.otherPlayers = allPlayers.filter(p => p.uuid !== this.playerUuid);
-        
-        console.log('✅ Joueur courant:', this.playerSelf);
-        console.log('✅ Autres joueurs:', this.otherPlayers);
-      },
-      error: (err) => {
-        console.error('❌ Erreur chargement joueurs:', err);
-      }
-    });
-  }
-
   //
   // S'abonner aux événements de jeu via WebSocket
   //
@@ -226,7 +189,7 @@ export class Game implements OnInit, OnDestroy {
   private subscribeToPrivateEvents() {
      console.log('🔌 Abonnement aux événements de jeu chanel perso...');
 
-    this.publicSubscription = this.wsService.getPrivateChannel().subscribe({
+    this.gameSubscription = this.wsService.getPrivateChannel().subscribe({
       next: (message) => {
         if (this.isDestroyed) return;
         
@@ -240,12 +203,37 @@ export class Game implements OnInit, OnDestroy {
     if (this.isDestroyed) return;
     console.log('📥 Type de message privé:', data.type);
     switch(data.type) {
-      case 'SEND_HAND_EVENT':
-        console.log('🃏 Réception de la main de cartes privée');
-        this.handCards = data.hand || [];
+      case 'GAME_INFO_EVENT':
+        console.log('🃏 Réception des informations du jeu:', data);
+        this.handCards = data.cards || [];
+        console.log('✅ Cartes en main:', this.handCards);
+        this.dropZoneCards = data.turn_cards || [];
+        console.log('✅ Cartes sur la table:', this.dropZoneCards);
+        this.gameState.roundNumber = data.current_round ;
+        this.gameState.turnNumber = data.current_turn  ;
+        this.gameState.currentTurnPlayer = data.current_player;
+        this.gameState.currentPlayerOrder = data.current_players_order;
+        console.log('✅ État du jeu:', this.gameState);
+
+        // Récupérer et séparer les joueurs
+
+        if (data.players && Array.isArray(data.players)) {
+          const allPlayers: Player[] = data.players.map((p: any) => ({
+            uuid: p.uuid || p.get('uuid'),
+            name: p.name || p.get('name'),
+            score: p.score || 0,
+            bet: p.bet || 0,
+            obtained: p.obtained || 0
+          }));
+          this.playerSelf = allPlayers.find((p: Player) => p.uuid === this.playerUuid) || null;
+          this.otherPlayers = allPlayers.filter((p: Player) => p.uuid !== this.playerUuid);
+
+          console.log('✅ Joueur courant:', this.playerSelf);
+          console.log('✅ Autres joueurs:', this.otherPlayers);
+        }
         break;
       default:
-      console.log('⚠️ Message non géré:', data.type);
+      console.log('⚠️ Message non géré par private message:', data.type);
     }
   }
 
@@ -264,10 +252,12 @@ export class Game implements OnInit, OnDestroy {
       
       case 'NEW_ROUND':
         console.log('🎯 Nouvelle manche !');
-
-        this.wsService.sendPublicMessage({
-          type: 'ROUND_START'
-        });
+        // Seulement l'admin demande la distribution des cartes
+        if (this.wsService.isAdmin()) {
+          this.wsService.sendGameMessage({
+            type: 'GIVING_CARD'
+          });
+        }
         break;
 
       default:
@@ -311,8 +301,6 @@ export class Game implements OnInit, OnDestroy {
     if (currentPlayer) {
       currentPlayer.bet = betAmount;
     }
-
-    this.gameState.phase = 'PLAYING';
   }
 
 

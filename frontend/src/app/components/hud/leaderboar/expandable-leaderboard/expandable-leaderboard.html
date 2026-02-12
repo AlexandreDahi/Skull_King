@@ -3,7 +3,7 @@
     <!-- Contenu expandable avec animation -->
     <div class="expandable-content" [class.expanded]="isExpanded">
         <app-leaderboard *ngIf="isExpanded"
-        [players]="players"></app-leaderboard>
+        [players]="players" [player]="player"></app-leaderboard>
     </div>
 
     <!-- Bouton -->

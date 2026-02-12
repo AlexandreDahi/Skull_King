@@ -17,4 +17,5 @@ export class ExpandableLeaderboard {
     this.isExpanded = !this.isExpanded;
   }
   @Input() players: any[] = [];
+  @Input() player: any;
 }

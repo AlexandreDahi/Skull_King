@@ -27,8 +27,17 @@ class Room:
     def count_players(self) -> int:
         return 1 + len(self.guests_list)
     
-    def players(self)-> List[Player]:
-        return [self.host] + self.guests_list
+    def get_players_info(self) -> List[dict]:
+        players_info = []
+        for player in self.get_players():
+            players_info.append({
+                "uuid": str(player.uuid),
+                "name": player.name,
+                "score": player.score,
+                "bet": player.bet,
+                "obtained": player.number_of_wins,
+            })
+        return players_info
 
 
     def get_players(self) -> List[Player]:

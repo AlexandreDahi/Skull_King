@@ -21,7 +21,8 @@
   (errorEvent)="onCardPlayedError($event)">
   </app-hand>
   <app-head-up-display
-  [players] = "otherPlayers">
+  [players] = "otherPlayers"
+  [player] = "playerSelf">
   </app-head-up-display>
   <app-player-panel
   [round]="round"

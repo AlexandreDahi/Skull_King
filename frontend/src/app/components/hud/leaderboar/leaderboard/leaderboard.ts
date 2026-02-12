@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 })
 export class Leaderboard {
   @Input() players: any[] = [];
+  @Input() player: any;
 
   // Générer la Map dynamiquement à partir des joueurs
   get myMap(): Map<string, string> {
@@ -16,10 +17,14 @@ export class Leaderboard {
     this.players.forEach((player: any) => {
       map.set(player.name, String(player.score ?? 0));
     });
+    map.set(this.player.name, String(this.player.score ?? 0)); // Assurez-vous d'inclure le joueur actuel
+
     return map;
   }
 
   get mapEntries() {
-    return Array.from(this.myMap.entries());
+    return Array.from(this.myMap.entries()).sort((a, b) => {
+      return Number(b[1]) - Number(a[1]);
+    });
   }
 }

@@ -157,10 +157,6 @@ export class Lobby implements OnInit, OnDestroy {
         
         console.log('🚀 Envoi du signal START_GAME au serveur...');
         
-        /*this.wsService.sendLobbyMessage({
-            type: 'START_GAME'
-        });*/
-
         this.wsService.sendStartGameSignal()
         
         console.log('⏳ En attente de la confirmation du serveur...');

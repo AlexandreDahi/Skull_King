@@ -39,7 +39,7 @@
 
 /* ...existing code... */
 .card-on-arc.grayed {
-  filter: grayscale(80%);
-  opacity: 0.9;
+  filter: grayscale(20%);
+  opacity: 0.75;
   /* si tu veux empêcher les interactions visuelles mais garder le drag, ne pas mettre pointer-events:none */
 }

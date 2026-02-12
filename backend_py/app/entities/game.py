@@ -39,14 +39,22 @@ class Game:
     # -------------------
     # Gestion des joueurs
     # -------------------
+
+    def get_current_players_order(self) -> List[str]:
+        return [str(p) for p in self.current_players_order]
+    
+    def get_turn_cards(self) -> List[int]:
+        return list(self.turn_cards.values()) 
+
     def add_player(self, player: Player) -> None:
         self.players[player.uuid] = player
 
     def start_game(self) -> None:
-        self.current_players_order = list(self.players.keys())
-        self.first_player_uuid = rnd.choice(self.current_players_order)
-        self.player_round_order(self.first_player_uuid)
-        self.give_players_cards(list(self.players.values()))
+        self.current_players_order = list(self.players.keys()) # ordre initial des joueurs (ordre d'arrivée dans la partie)
+        self.first_player_uuid = rnd.choice(self.current_players_order) # désigne le joueur qui commence la première manche de manière aléatoire
+        self.player_round_order(self.first_player_uuid) # réordonne les joueurs pour que le joueur qui commence soit en premier dans l'ordre de jeu
+        self.current_player = self.players[self.first_player_uuid] # le joueur qui commence la première manche est le joueur actif au début de la partie
+        self.give_players_cards(list(self.players.values())) # distribue les cartes aux joueurs en fonction du numéro de la manche courante
         
 
     
