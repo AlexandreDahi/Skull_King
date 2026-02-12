@@ -61,16 +61,16 @@ async def websocket_endpoint(
                         "turn_cards": room.game.get_turn_cards(),
                         "current_players_order": room.game.get_current_players_order(),
                         "current_player" : str(room.game.current_player.uuid) if room.game.current_player else None
-
                     })
-
-                if core_message.get('type') == 'GIVING_CARD':
-                    print(f"🃏 Distribution des cartes pour la room {room_uuid}")
-                    # Envoyer les cartes à TOUS les joueurs de la room
-                    for p in room.get_players():
-                        await manager.send_private_message(room_uuid, str(p.uuid), {
-                            "type": "SEND_HAND_EVENT",
-                            "hand": p.cards
+                if core_message.get('type') == 'place_bet':
+                    player.bet = core_message.get('bet')
+                    await manager.broadcast_to_room(room_uuid, {"type": "BET_PLACED_EVENT", "message": f"Le joueur {player.name} a misé"})
+                    if room.game.all_bets_placed() != []: 
+                        print("Toutes les mises sont placées, début de la manche !")
+                        await manager.broadcast_to_room(room_uuid, {
+                            "type": "ROUND_START_EVENT",
+                            "message": "Début de la manche !",
+                            "turn_bet":room.game.all_bets_placed()
                         })
                     
 

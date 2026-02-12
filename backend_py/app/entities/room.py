@@ -67,7 +67,6 @@ class Room:
         self.game.add_player(self.host)
         for guest in self.guests_list:
             self.game.add_player(guest)
-            
         self.game.start_game()
         
 

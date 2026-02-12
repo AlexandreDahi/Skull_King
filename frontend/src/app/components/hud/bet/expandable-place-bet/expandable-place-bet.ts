@@ -11,10 +11,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './expandable-place-bet.css',
 })
 export class ExpandablePlaceBet {
+
   isExpanded = false;
     toggleExpand() {
       console.log("expanding place bet");
       this.isExpanded = !this.isExpanded;
-    }
-    @Input() players: any[] = [];
+  }
+  @Input() player: any;
 }

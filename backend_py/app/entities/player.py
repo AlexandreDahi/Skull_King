@@ -1,6 +1,6 @@
 import uuid
 import secrets
-from typing import List
+from typing import List,Optional
 
 
 class Player:
@@ -11,7 +11,7 @@ class Player:
         self.is_admin: bool = is_admin
         
         self.cards: List[int] = []
-        self.bet: int = 0
+        self.bet: Optional[int] = None
         self.number_of_wins: int = 0
 
 

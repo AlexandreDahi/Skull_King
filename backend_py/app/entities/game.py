@@ -1,7 +1,8 @@
 import uuid
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 import random as rnd
 import json
+
 filename = 'C:/Users/adahi/Projects/Skull_king/backend_py/index_carte.json'
 
 from app.entities.player import Player
@@ -18,23 +19,22 @@ class Game:
         self.current_round: int = 1
         # Le nombre de tours dans la manche courante
         self.current_turn: int = 1
+        #Cartes jouées dans le tour en cours (dictionnaire player_uuid: card_id)
         self.turn_cards: Dict[uuid.UUID, int] = {}
+        #Ancien gagnant du tour précédent (None pour le premier tour de la partie)
         self.last_turn_winner: Optional[uuid.UUID] = None
 
         # Ordre des joueurs Pour jouer
         self.current_players_order: List[uuid.UUID] = []
         self.first_player_uuid: Optional[uuid.UUID] = None
 
+        self.current_player: Optional[Player] = None
         
-
         # Json contenant les cartes
         with open(filename, "r") as f:
             self.cards = json.load(f)
 
         
-
-        self.game_phase: Optional[GamePhase] = None
-        self.current_player: Optional[Player] = None
 
     # -------------------
     # Gestion des joueurs
@@ -56,6 +56,10 @@ class Game:
         self.current_player = self.players[self.first_player_uuid] # le joueur qui commence la première manche est le joueur actif au début de la partie
         self.give_players_cards(list(self.players.values())) # distribue les cartes aux joueurs en fonction du numéro de la manche courante
         
+    def all_bets_placed(self):
+        if any(p.bet is None for p in self.players.values()):
+            return []
+        return [(str(p.uuid), p.bet) for p in self.players.values()]
 
     
   

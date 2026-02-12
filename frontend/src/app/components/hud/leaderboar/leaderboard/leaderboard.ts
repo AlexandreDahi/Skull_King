@@ -18,7 +18,6 @@ export class Leaderboard {
       map.set(player.name, String(player.score ?? 0));
     });
     map.set(this.player.name, String(this.player.score ?? 0)); // Assurez-vous d'inclure le joueur actuel
-
     return map;
   }
 

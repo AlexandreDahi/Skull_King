@@ -222,7 +222,7 @@ export class Game implements OnInit, OnDestroy {
             uuid: p.uuid || p.get('uuid'),
             name: p.name || p.get('name'),
             score: p.score || 0,
-            bet: p.bet || 0,
+            bet: p.bet ?? null,
             obtained: p.obtained || 0
           }));
           this.playerSelf = allPlayers.find((p: Player) => p.uuid === this.playerUuid) || null;
@@ -243,6 +243,16 @@ export class Game implements OnInit, OnDestroy {
     console.log('📥 Type de message:', data.type);
 
     switch(data.type) {
+      case 'BET_PLACED_EVENT':
+        console.log('💰 Un joueur a placé une mise:',data.message);
+        break;
+      case 'ROUND_START_EVENT':
+        console.log('🎯 Nouvelle manche commencée !', data.message);
+        const turn_bet = data.turn_bet || [];
+        turn_bet.forEach((tb: any) => { const player = this.otherPlayers.find(p => p.uuid === tb[0]); if (player) { player.bet = tb[1]; } });
+
+        break;
+
       case 'GAME_STATE_UPDATE':
         console.log('🔄 Mise à jour de l\'état du jeu');
         if (data.gameState) {
@@ -291,16 +301,15 @@ export class Game implements OnInit, OnDestroy {
   onBetPlaced(betAmount: number) {
     console.log('💰 Pari placé:', betAmount);
 
-    this.wsService.sendLobbyMessage({
-      type: 'PLACE_BET',
-      bet: betAmount,
-      roomUuid: this.roomUuid
-    });
-
-    const currentPlayer = this.playerSelf;
-    if (currentPlayer) {
-      currentPlayer.bet = betAmount;
+    if (this.playerSelf) {
+      this.playerSelf.bet = betAmount;
+      console.log('✅ Mise mise à jour pour playerSelf:', this.playerSelf.bet);
     }
+
+    this.wsService.sendGameMessage({
+      type: 'place_bet',
+      bet: betAmount,
+    });
   }
 
 
