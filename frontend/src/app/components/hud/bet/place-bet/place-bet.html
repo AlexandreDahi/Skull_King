@@ -1,7 +1,7 @@
 <div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
 
   <!-- ÉTAT : MISE À PLACER -->
-  <div *ngIf="!isBetPlaced" class="px-6 py-6 text-center space-y-6">
+  <div *ngIf="!player?.bet" class="px-6 py-6 text-center space-y-6">
 
     <p class="text-white text-[70px] leading-none font-[Pirata One]" style="font-family: 'Pirata One';">
       {{ value }}
@@ -30,7 +30,7 @@
   </div>
 
   <!-- ÉTAT : MISE VALIDÉE -->
-  <div *ngIf="isBetPlaced" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
+  <div *ngIf="player?.bet" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
 
     <!-- Boîte score -->
     <div
@@ -39,14 +39,14 @@
       style="background-image: url('/images/whiteLine.png'); width: 140px; height: 140px;"
     >
 
-      <!-- Mise -->
+      <!-- Nombre de plis gagnés -->
       <p class="absolute top-2 left-8 text-white text-[60px] leading-none" [ngClass]="resultClass">
-        {{ player?.bet }}
+        {{ player?.obtained }}
       </p>
 
-      <!-- Résultat -->
+      <!-- mise de départ -->
       <p class="absolute bottom-2 right-10 text-white text-[60px] leading-none" [ngClass]="resultClass">
-        {{ player?.obtained }}
+        {{ player?.bet }}
       </p>
     </div>
 

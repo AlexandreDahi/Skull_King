@@ -22,7 +22,8 @@
   </app-hand>
   <app-head-up-display
   [players] = "otherPlayers"
-  [player] = "playerSelf">
+  [player] = "playerSelf"
+  (betChanged)="onBetPlaced($event)">
   </app-head-up-display>
   <app-player-panel
   [round]="round"

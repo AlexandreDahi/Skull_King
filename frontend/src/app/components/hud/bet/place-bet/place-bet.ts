@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
@@ -17,16 +17,16 @@ export class PlaceBet implements OnInit {
   private wsService = inject(WebSocketService) 
 
   @Input() player: any;
+  @Output() betChanged = new EventEmitter<number>();
+  
   value: number = 0;
   private maxBet: number = 10;
   private minBet: number = 0;
-  isBetPlaced: boolean = false;
 
   ngOnInit() {
-    // Demander la mise sauvegardée au back
-    if (this.player?.bet !== null) {  
-      this.value = this.player?.bet ?? 0;
-      this.isBetPlaced = true;
+    // Initialiser la mise depuis le player si elle existe déjà
+    if (this.player?.bet !== null && this.player?.bet !== undefined) {
+      this.value = this.player.bet;
     }
   }
 
@@ -40,13 +40,8 @@ export class PlaceBet implements OnInit {
     return 'text-white';
   }
   placeBet() {
-    this.isBetPlaced = true;
-    this.wsService.sendGameMessage({
-      type: "place_bet",
-      bet: this.value,
-    });
-    
-
+    // Émettre l'événement au parent
+    this.betChanged.emit(this.value);
   }
 
   increase() {

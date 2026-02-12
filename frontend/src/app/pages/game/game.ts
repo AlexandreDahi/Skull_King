@@ -297,7 +297,7 @@ export class Game implements OnInit, OnDestroy {
     //this.hand.removeCard(cardId);
   }
 
-  
+  // Logique d'envoie de la mise au serveur via WebSocket
   onBetPlaced(betAmount: number) {
     console.log('💰 Pari placé:', betAmount);
 
@@ -305,7 +305,6 @@ export class Game implements OnInit, OnDestroy {
       this.playerSelf.bet = betAmount;
       console.log('✅ Mise mise à jour pour playerSelf:', this.playerSelf.bet);
     }
-
     this.wsService.sendGameMessage({
       type: 'place_bet',
       bet: betAmount,
