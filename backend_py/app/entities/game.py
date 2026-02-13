@@ -24,18 +24,18 @@ class Game:
         #Ancien gagnant du tour précédent (None pour le premier tour de la partie)
         self.last_turn_winner: Optional[uuid.UUID] = None
 
-        # Ordre des joueurs Pour jouer
-        self.current_players_order: List[uuid.UUID] = []
+        # Premier joueur à joué, pour l'ordre des manches :
         self.first_player_uuid: Optional[uuid.UUID] = None
 
+        # Ordre des joueurs Pour jouer
+        self.current_players_order: List[uuid.UUID] = []
         self.current_player: Optional[Player] = None
         
         # Json contenant les cartes
         with open(filename, "r") as f:
             self.cards = json.load(f)
 
-        
-
+    
     # -------------------
     # Gestion des joueurs
     # -------------------
@@ -43,31 +43,92 @@ class Game:
     def get_current_players_order(self) -> List[str]:
         return [str(p) for p in self.current_players_order]
     
+    # permet de récupérer les cartes jouées dans le tour en cours
     def get_turn_cards(self) -> List[int]:
         return list(self.turn_cards.values()) 
 
+    # Permet d'ajouter un joueur à la partie
     def add_player(self, player: Player) -> None:
         self.players[player.uuid] = player
 
+    ##### permet de lancer la partie : initialise l'ordre de jeu, distribue les cartes aux joueurs, etc.
     def start_game(self) -> None:
         self.current_players_order = list(self.players.keys()) # ordre initial des joueurs (ordre d'arrivée dans la partie)
         self.first_player_uuid = rnd.choice(self.current_players_order) # désigne le joueur qui commence la première manche de manière aléatoire
         self.player_round_order(self.first_player_uuid) # réordonne les joueurs pour que le joueur qui commence soit en premier dans l'ordre de jeu
         self.current_player = self.players[self.first_player_uuid] # le joueur qui commence la première manche est le joueur actif au début de la partie
         self.give_players_cards(list(self.players.values())) # distribue les cartes aux joueurs en fonction du numéro de la manche courante
-        
+    
+    ### permet de lancer le tour quand tous les joueurs ont miser
     def all_bets_placed(self):
         if any(p.bet is None for p in self.players.values()):
             return []
         return [(str(p.uuid), p.bet) for p in self.players.values()]
 
+    ### Logique de jeu lorsq'un joueur joue une carte 
+    def card_played_event(self, player_uuid: uuid.UUID, card_id: int) -> None:
+        if player_uuid != self.current_player.uuid:
+            return {"type":"CARD_PLAYED_ERROR","error_message": "Ce n'est pas le tour du joueur."}
+        if not self.is_card_legal(player_uuid, card_id, self.get_turn_cards()):
+            return {"type":"CARD_PLAYED_ERROR","error_message": "La carte jouée n'est pas légale."}
+        
+        self.turn_cards[player_uuid] = card_id
+        # Supprimer la carte de la main du joueur
+        self.players[player_uuid].remove_card(card_id)
+        # Passer au joueur suivant
+        if self.current_player.uuid != self.current_players_order[-1]: # Si ce n'est pas le dernier joueur de l'ordre
+            self.current_player = self.players[self.current_players_order[self.current_players_order.index(self.current_player.uuid) + 1]]
+            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid)}
+        else:
+            message = self.end_turn()
+            return {"type":"TURN_END", "message": message}
     
-  
+    ##### Fonction de fin de tour/round :
+
+    def end_turn(self) -> Tuple[Optional[uuid.UUID], Dict[str, int]]:
+        self.last_turn_winner = self.turn_winner()
+        
+        if self.current_turn < self.current_round:
+            self.current_turn += 1
+            self.turn_cards = {}
+            self.give_players_cards(list(self.players.values()))
+            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner.uuid), "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
+        elif self.current_turn == self.current_round and self.current_round < self.MAX_ROUND:
+            self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
+            self.current_round += 1
+            self.current_turn = 1
+            self.player_round_order(self.first_player_uuid)
+            self.turn_cards = {}
+            self.give_players_cards(list(self.players.values()))
+            return {"type": "ROUND_ENDED", "current_player":str(self.first_player_uuid), "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
+        else :
+            self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
+            return {"type": "GAME_ENDED", "message": "Fin de la partie !"}
+
+    ## Fonction pour ajouter les points des paris :
+    def add_bet_points(self) -> None:
+        for player in self.players.values():
+            if player.bet == 0 :
+                if player.get_number_of_wins() == 0:
+                    player.increase_score(10*self.current_round)
+                else:
+                    player.increase_score(-10*self.current_round)
+            else:
+                if player.get_number_of_wins() == player.bet:
+                    player.increase_score(20*player.bet)
+                else:
+                    player.increase_score(-10*abs(player.bet - player.get_number_of_wins()))
+        
+    
     def player_round_order(self,player_uuid) -> None:
         beginer_index = self.current_players_order.index(player_uuid)
         self.current_players_order = self.current_players_order[beginer_index:] + self.current_players_order[:beginer_index]
+        self.first_player_uuid = self.current_players_order[1]
     
     def give_players_cards(self, players_list: List[Player]) -> None:
+        for player in players_list:
+            player.cards = []  # Réinitialise les cartes du joueur avant de distribuer les nouvelles
+
         # Création d'un deck complet
         deck = list(range(1, self.TOTALE_CARDS + 1))
         rnd.shuffle(deck)  # Mélanger le deck
@@ -125,13 +186,7 @@ class Game:
                     return False
         return True  # Si aucune règle n'est violée, la carte est légale
 
-    def play_card(self, player_uuid: uuid.UUID, card: int) -> bool:
-        if not self.is_card_legal(player_uuid, card, list(self.turn_cards.values())):
-            return False
-        self.turn_cards[player_uuid] = card
-        self.players[player_uuid].remove_card(card)
-        return True
-    
+
     def change_turn_player_order(self,turn_winner_uuid: uuid.UUID) -> None:
         if turn_winner_uuid not in self.players:
             print(f"Joueur {turn_winner_uuid} non trouvé.")
@@ -139,40 +194,102 @@ class Game:
         winner_index = self.current_players_order.index(turn_winner_uuid)
         self.current_players_order = self.current_players_order[winner_index:] + self.current_players_order[:winner_index]
     
-    def turn_winner(self) -> Optional[uuid.UUID]:
+    def turn_winner(self) -> uuid.UUID:
 
         turn_card_ids = list(self.turn_cards.values())
         turn_player_uuids = list(self.turn_cards.keys())
         turn_cards = [self.get_card_by_id(card_id) for card_id in turn_card_ids]
 
         winner_index = None
-        counter = {'pirate': 0, 'sirene': 0, 'skull_king': 0}  # compteur de carte spéciale : pirate, sirène, skull_king
+        counter = {'pirate': 0, 'sirene': 0, 'skull_king': 0, '14_classique': 0, '14_noir': 0}  # compteur de carte spéciale : pirate, sirène, skull_king
 
         for i in range(len(turn_cards)):
+
+            if turn_cards[i]['type'] == 'color':
+                if turn_cards[i]['value'] == 14:
+                    if turn_cards[i]['specification'] == 'noir':
+                        counter['14_noir'] += 1
+                    else:
+                        counter['14_classique'] += 1
 
             if turn_cards[i]['type'] == 'fuite':
                 continue
 
             if turn_cards[i]['type'] == 'autre':
+
                 ## Cas de la baleine
                 if turn_cards[i]['specification'] == 'baleine':
-                    winner_index = max(
-                        (j for j in range(len(turn_cards)) if turn_cards[j]['type'] == 'color'),
-                        key=lambda j: turn_cards[j]['value'],
-                        default=None
-                    )
-                    if winner_index is not None:
-                        self.last_turn_winner = turn_player_uuids[winner_index]
-                        turn_player_uuids[winner_index].increse_number_of_wins()
-                        self.change_turn_player_order(self.last_turn_winner)
-                        return turn_player_uuids[winner_index]
-                    else:
-                        self.last_turn_winner = turn_player_uuids[i]
-                        self.change_turn_player_order(self.last_turn_winner)
-                        return self.last_turn_winner
+                    for card in range(i, len(turn_cards)):
+                        if turn_cards[card]['specification'] == 'kraken':
+                            return self.kraken_effect()
+                    return self.baleine_effect()
+                    
                 ## Cas du kraken
                 if turn_cards[i]['specification'] == 'kraken':
-                    return None
+                    for card in range(i, len(turn_cards)):
+                        if turn_cards[card]['specification'] == 'baleine':
+                            return self.baleine_effect()
+                    return self.kraken_effect()
+
+            if winner_index is None:
+                ## Premier joueur non fuite devient le gagnant provisoire
+                winner_index = i
+
+            else :
+                if turn_cards[winner_index]['type'] == 'color':
+                    if turn_cards[i]['type'] == 'color':
+                        if turn_cards[winner_index]['specification'] == turn_cards[i]['specification']:
+                            if turn_cards[winner_index]['value'] < turn_cards[i]['value']:
+                                winner_index = i
+                        elif turn_cards[i]['specification'] == 'noir' and turn_cards[winner_index]['specification'] != 'noir':
+                            winner_index = i
+                    if turn_cards[i]['type'] == 'special':
+                        winner_index = i
+                        counter[turn_cards[i]['specification']] += 1
+
+                if turn_cards[winner_index]['type'] == 'special' and turn_cards[i]['type'] == 'special':
+
+                    if turn_cards[i]['specification'] == 'pirate':
+                        counter['pirate'] += 1
+                        if turn_cards[winner_index]['specification'] == 'sirene' and counter['skull_king'] == 0:
+                            winner_index = i
+                    if turn_cards[i]['specification'] == 'skull_king':
+                        counter['skull_king'] += 1
+                        if turn_cards[winner_index]['specification'] == 'pirate' and counter['sirene'] == 0:
+                            winner_index = i
+                        elif turn_cards[winner_index]['specification'] == 'pirate' and counter['sirene'] == 1:
+                            for j in range(len(turn_cards)):
+                                if turn_cards[j]['specification'] == 'sirene':
+                                    winner_index = j
+                    if turn_cards[i]['specification'] == 'sirene':
+                        counter['sirene'] += 1
+                        if turn_cards[winner_index]['specification'] == 'skull_king' :
+                            winner_index = i
+
+        if winner_index is not None:
+            bonus = self.end_turn_point(counter)
+            self.last_turn_winner = turn_player_uuids[winner_index]
+            self.players[self.last_turn_winner].increase_score(bonus)
+            self.players[self.last_turn_winner].increase_number_of_wins()
+            self.change_turn_player_order(self.last_turn_winner)
+            return turn_player_uuids[winner_index]
+        else :
+            self.last_turn_winner = turn_player_uuids[0]
+            self.change_turn_player_order(self.last_turn_winner)
+            return turn_player_uuids[0]
+
+
+    def kraken_effect(self) -> uuid.UUID:
+        turn_card_ids = list(self.turn_cards.values())
+        turn_player_uuids = list(self.turn_cards.keys())
+        turn_cards = [self.get_card_by_id(card_id) for card_id in turn_card_ids]
+        winner_index = None
+        counter = {'pirate': 0, 'sirene': 0, 'skull_king': 0}
+
+        for i in range(len(turn_cards)):
+
+            if turn_cards[i]['type'] == 'fuite' or turn_cards[i]['type'] == 'autre':
+                continue
 
             if winner_index is None:
                 ## Premier joueur non fuite devient le gagnant provisoire
@@ -211,9 +328,51 @@ class Game:
 
         if winner_index is not None:
             self.last_turn_winner = turn_player_uuids[winner_index]
-            self.players[self.last_turn_winner].increse_number_of_wins()
             self.change_turn_player_order(self.last_turn_winner)
             return turn_player_uuids[winner_index]
         else :
             self.last_turn_winner = turn_player_uuids[0]
+            self.change_turn_player_order(self.last_turn_winner)
             return turn_player_uuids[0]
+        
+    def baleine_effect(self) -> uuid.UUID:
+        turn_card_ids = list(self.turn_cards.values())
+        turn_player_uuids = list(self.turn_cards.keys())
+        turn_cards = [self.get_card_by_id(card_id) for card_id in turn_card_ids]
+        counter = {'14_classique': 0, '14_noir': 0}
+        for i in range(len(turn_cards)):
+            if turn_cards[i]['type'] == 'color':
+                    if turn_cards[i]['value'] == 14:
+                        if turn_cards[i]['specification'] == 'noir':
+                            counter['14_noir'] += 1
+                        else:
+                            counter['14_classique'] += 1
+        bonus = 20*(counter.get('14_noir'))+10*(counter.get('14_classique'))
+    
+        winner_index = max(
+            (j for j in range(len(turn_cards)) if turn_cards[j]['type'] == 'color'),
+            key=lambda j: turn_cards[j]['value'],
+            default=None
+        )
+        if winner_index is not None:
+            self.last_turn_winner = turn_player_uuids[winner_index]
+            self.players[self.last_turn_winner].increase_number_of_wins()
+            self.players[self.last_turn_winner].increase_score(bonus)
+            self.change_turn_player_order(self.last_turn_winner)
+            
+            return turn_player_uuids[winner_index]
+        else:
+            self.last_turn_winner = turn_player_uuids[i]
+            self.change_turn_player_order(self.last_turn_winner)
+            return self.last_turn_winner
+    
+    def end_turn_point(self,counter):
+        bonus = 20*(counter.get('14_noir'))+10*(counter.get('14_classique'))
+        if counter.get('pirate') > 0 and counter.get('skull_king') == 0:
+            bonus += 20*counter.get('sirene')
+        if counter.get('skull_king') > 0 and counter.get('sirene') == 0:
+            bonus += 30*counter.get('pirate')
+        if counter.get('sirene') > 0 and counter.get('skull_king') > 0:
+            bonus += 40*counter.get('skull_king')
+        return bonus
+        

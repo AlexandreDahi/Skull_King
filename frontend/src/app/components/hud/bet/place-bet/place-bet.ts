@@ -25,7 +25,7 @@ export class PlaceBet implements OnInit {
 
   ngOnInit() {
     // Initialiser la mise depuis le player si elle existe déjà
-    if (this.player?.bet !== null && this.player?.bet !== undefined) {
+    if (this.player?.bet !== null ) {
       this.value = this.player.bet;
     }
   }

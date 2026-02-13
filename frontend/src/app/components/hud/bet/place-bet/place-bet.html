@@ -1,7 +1,7 @@
 <div class="backdrop-blur-md bg-black/40 rounded-t-xl w-full">
 
   <!-- ÉTAT : MISE À PLACER -->
-  <div *ngIf="!player?.bet" class="px-6 py-6 text-center space-y-6">
+  <div *ngIf="player?.bet === null || player?.bet === undefined" class="px-6 py-6 text-center space-y-6">
 
     <p class="text-white text-[70px] leading-none font-[Pirata One]" style="font-family: 'Pirata One';">
       {{ value }}
@@ -30,7 +30,7 @@
   </div>
 
   <!-- ÉTAT : MISE VALIDÉE -->
-  <div *ngIf="player?.bet" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
+  <div *ngIf="player?.bet !== null && player?.bet !== undefined" class="px-6 py-6 text-center space-y-6" style="font-family: 'Pirata One'; font-size: 24px;">
 
     <!-- Boîte score -->
     <div

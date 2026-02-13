@@ -36,15 +36,16 @@ class Player:
         return self.cards
     
     # Logique des scores
-    def increse_score(self, points: int) -> None:
+    def increase_score(self, points: int) -> None:
         self.score += points
-        self.list_score_by_round.append(points)
+        
     def get_score(self) -> int:
         return self.score
 
     # Logique du gagnt du tour (pour savoir qui commence)
-    def is_turn_winer(self):
-        return self.is_turn_winer == True
+    def is_turn_winner(self):
+        return self.is_turn_winner == True
+
     
     # Logique des paris
     def set_bet(self, bet: int, turn : int) -> None:

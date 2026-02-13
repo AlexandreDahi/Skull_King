@@ -11,7 +11,7 @@ import { Leaderboard } from '../leaderboard/leaderboard';
   styleUrl: './expandable-leaderboard.css',
 })
 export class ExpandableLeaderboard {
-  isExpanded = true;
+  isExpanded = false;
   toggleExpand() {
     console.log("expanding place bet");
     this.isExpanded = !this.isExpanded;

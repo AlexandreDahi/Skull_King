@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 
 import { MatIconModule } from '@angular/material/icon';
 
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, Subject } from 'rxjs';
 
 
 import { Hand } from '../../components/hand/hand';
@@ -49,7 +49,6 @@ export class Game implements OnInit, OnDestroy {
   // --- GAME DATA ---  //
   handCards: number[] = [];
   dropZoneCards: number[] = [];
-  isPlayerTurn: boolean = false;
 
   round : number = 1;
   totalRounds: number = 10;
@@ -170,6 +169,11 @@ export class Game implements OnInit, OnDestroy {
     this.timerProgress = 100;
   }
 
+  // Getter : isPlayerTurn dépend de currentTurnPlayer
+  get isPlayerTurn(): boolean {
+    return this.gameState.currentTurnPlayer === this.playerUuid && this.otherPlayers.every(p => p.bet !== null);
+  }
+
   //
   // S'abonner aux événements de jeu via WebSocket
   //
@@ -216,7 +220,6 @@ export class Game implements OnInit, OnDestroy {
         console.log('✅ État du jeu:', this.gameState);
 
         // Récupérer et séparer les joueurs
-
         if (data.players && Array.isArray(data.players)) {
           const allPlayers: Player[] = data.players.map((p: any) => ({
             uuid: p.uuid || p.get('uuid'),
@@ -232,6 +235,11 @@ export class Game implements OnInit, OnDestroy {
           console.log('✅ Autres joueurs:', this.otherPlayers);
         }
         break;
+      case 'CARD_PLAYED_ERROR':
+        console.warn('⚠️ Erreur lors du jeu de la carte:', data.error_message);
+        this.onCardPlayedError(data.error_message);
+        break;
+
       default:
       console.log('⚠️ Message non géré par private message:', data.type);
     }
@@ -249,55 +257,31 @@ export class Game implements OnInit, OnDestroy {
       case 'ROUND_START_EVENT':
         console.log('🎯 Nouvelle manche commencée !', data.message);
         const turn_bet = data.turn_bet || [];
-        turn_bet.forEach((tb: any) => { const player = this.otherPlayers.find(p => p.uuid === tb[0]); if (player) { player.bet = tb[1]; } });
 
+        this.otherPlayers = this.otherPlayers.map(p => {
+          const tb = turn_bet.find((t: any) => t[0] === p.uuid);
+          return tb ? { ...p, bet: tb[1] } : p;
+        });
         break;
-
-      case 'GAME_STATE_UPDATE':
-        console.log('🔄 Mise à jour de l\'état du jeu');
-        if (data.gameState) {
-          this.gameState = data.gameState;
-        }
-        break;
-      
-      case 'NEW_ROUND':
-        console.log('🎯 Nouvelle manche !');
-        // Seulement l'admin demande la distribution des cartes
-        if (this.wsService.isAdmin()) {
-          this.wsService.sendGameMessage({
-            type: 'GIVING_CARD'
-          });
-        }
-        break;
+        case 'CARD_PLAYED_SUCCESS':
+          console.log('🃏 Une carte a été jouée avec succès !', data.type);
+          this.gameState = {
+            ...this.gameState,
+            currentTurnPlayer: data.current_player
+          };
+          break;
+        case 'TURN_END':
+          console.log('🔄 Fin du tour !', data.type);
+          break;
 
       default:
         console.log('⚠️ Message non géré:', data.type);
     }
   }
 
-  
-  onCardDropped(cardId: number) {
-    console.log("🃏 Carte déposée :", cardId);
-    
-    // Vérifier que c'est bien le tour du joueur
-    if (this.gameState.currentTurnPlayer !== this.playerUuid) {
-      console.warn('⚠️ Ce n\'est pas votre tour !');
-      // TODO: Afficher un message d'erreur
-      return;
-    }
-
-    // Envoyer la carte jouée au serveur via WebSocket
-    this.wsService.sendLobbyMessage({
-      type: 'PLAY_CARD',
-      cardId: cardId,
-      roomUuid: this.roomUuid
-    });
-
-    // Retirer la carte de la main
-    //this.hand.removeCard(cardId);
-  }
-
-  // Logique d'envoie de la mise au serveur via WebSocket
+  // --------------------------
+  //    Placer un pari
+  //----------------------------
   onBetPlaced(betAmount: number) {
     console.log('💰 Pari placé:', betAmount);
 
@@ -308,6 +292,27 @@ export class Game implements OnInit, OnDestroy {
     this.wsService.sendGameMessage({
       type: 'place_bet',
       bet: betAmount,
+    });
+  }
+
+  // --------------------------
+  //    JOUER UNE CARTE
+  //----------------------------
+  onCardPlayed(cardId: number) {
+    // Vérifier que c'est le tour du joueur (WebSocket)
+    if (this.gameState.currentTurnPlayer !== this.playerUuid) {
+      console.warn('⚠️ Ce n\'est pas votre tour !');
+      return;
+    }
+    // Logique locale
+    this.dropZoneCards.push(cardId);
+    const index = this.handCards.indexOf(cardId);
+    if (index > -1) this.handCards.splice(index, 1);
+
+    // Envoyer au serveur via WebSocket
+    this.wsService.sendGameMessage({
+      type: 'card_played',
+      cardId: cardId
     });
   }
 
@@ -328,28 +333,7 @@ export class Game implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
   }
 
-  // --------------------------
-  //    JOUER UNE CARTE
-  //----------------------------
-  onCardPlayed(cardId: number) {
-    // Vérifier que c'est le tour du joueur (WebSocket)
-    if (this.gameState.currentTurnPlayer !== this.playerUuid) {
-      console.warn('⚠️ Ce n\'est pas votre tour !');
-      return;
-    }
-
-    // Logique locale
-    this.dropZoneCards.push(cardId);
-    const index = this.handCards.indexOf(cardId);
-    if (index > -1) this.handCards.splice(index, 1);
-
-    // Envoyer au serveur via WebSocket
-    this.wsService.sendLobbyMessage({
-      type: 'PLAY_CARD',
-      cardId: cardId,
-      roomUuid: this.roomUuid
-    });
-  }
+  
 
  
   // --------------------------
