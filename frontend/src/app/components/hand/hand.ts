@@ -84,7 +84,9 @@ export class Hand {
     }
 
     // récupérer la position de la carte
+    console.log('CLICK TARGET:', event.target);
     const cardElement = (event.target as HTMLElement).closest('.card-on-arc') as HTMLElement;
+    console.log('CARD ELEMENT:', cardElement);
     if (!cardElement) return;
 
     const rect = cardElement.getBoundingClientRect();

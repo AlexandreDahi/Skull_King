@@ -271,7 +271,23 @@ export class Game implements OnInit, OnDestroy {
           };
           break;
         case 'TURN_END':
-          console.log('🔄 Fin du tour !', data.type);
+          console.log('🔄 Fin du tour !');
+          const inner_message = data.message;
+          switch (inner_message.type) {
+            case 'TURN_ENDED':
+              console.log('📊 Détails du tour terminé:', inner_message);
+              this.gameState = {
+                ...this.gameState,
+                currentTurnPlayer: inner_message.current_player
+              };
+              //  IL FAUT remettre à zero les compteur de plis gagner, enlever les cartes sur la table, remettre les paris en undifine et player.cards = []
+              this.dropZoneCards = [...[]];
+              this.otherPlayers = this.otherPlayers.map(p => ({ ...p, bet: undefined, obtained: 0 }));
+
+              break;
+            default:
+              console.log('⚠️ Message non géré dans TURN_END:', inner_message.type);
+          }
           break;
 
       default:
@@ -299,6 +315,7 @@ export class Game implements OnInit, OnDestroy {
   //    JOUER UNE CARTE
   //----------------------------
   onCardPlayed(cardId: number) {
+    console.log('🃏 Tentative de jouer la carte ID:', cardId);
     // Vérifier que c'est le tour du joueur (WebSocket)
     if (this.gameState.currentTurnPlayer !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');

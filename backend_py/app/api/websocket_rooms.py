@@ -80,7 +80,9 @@ async def websocket_endpoint(
                     elif message.get("type") == "CARD_PLAYED_SUCCESS":
                         await manager.broadcast_to_room(room_uuid, message)
                     else:
+                        # inner_message = message.get("message", "")
                         await manager.broadcast_to_room(room_uuid, message)
+
 
             ## ICI on gère les messages privés lier à un joueur (ex: main du joueur, messages d'erreur spécifiques, etc.)
             elif message.get('type') == 'private':
