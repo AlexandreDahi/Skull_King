@@ -12,6 +12,7 @@ import { OtherPlayers } from '../players/other-players/other-players';
 export class HeadUpDisplay {
   @Input() players: any[] = [];
   @Input() player: any;
+  @Input() currentRoundNumber?: number;
   @Output() betChanged = new EventEmitter<number>();
 
   onBetPlaced(betAmount: number) {

@@ -17,10 +17,11 @@ export class PlaceBet implements OnInit {
   private wsService = inject(WebSocketService) 
 
   @Input() player: any;
+  @Input() currentRoundNumber ?: number;
   @Output() betChanged = new EventEmitter<number>();
   
   value: number = 0;
-  private maxBet: number = 10;
+  private maxBet: number = this.currentRoundNumber || 1;
   private minBet: number = 0;
 
   ngOnInit() {

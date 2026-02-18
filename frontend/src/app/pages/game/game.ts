@@ -312,10 +312,10 @@ export class Game implements OnInit, OnDestroy {
   }
 
   // --------------------------
-  //    JOUER UNE CARTE
+  //    JOUER UNE CARTE avec le double click
   //----------------------------
   onCardPlayed(cardId: number) {
-    console.log('🃏 Tentative de jouer la carte ID:', cardId);
+    console.log('🃏 Tentative de jouer la carte ID:', cardId, 'par le joueur', this.playerSelf?.name);
     // Vérifier que c'est le tour du joueur (WebSocket)
     if (this.gameState.currentTurnPlayer !== this.playerUuid) {
       console.warn('⚠️ Ce n\'est pas votre tour !');

@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ExpandablePlaceBet {
   @Input() player: any;
+  @Input() currentRoundNumber?: number;
   @Output() betChanged = new EventEmitter<number>();
 
   isExpanded = false;

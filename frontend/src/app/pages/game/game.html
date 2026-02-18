@@ -23,6 +23,7 @@
   <app-head-up-display
   [players] = "otherPlayers"
   [player] = "playerSelf"
+  [currentRoundNumber]="gameState.roundNumber"
   (betChanged)="onBetPlaced($event)">
   </app-head-up-display>
   <app-player-panel

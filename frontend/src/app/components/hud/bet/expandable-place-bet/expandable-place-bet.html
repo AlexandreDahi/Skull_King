@@ -3,6 +3,7 @@
   <app-place-bet 
     *ngIf="isExpanded" 
     [player]="player"
+    [currentRoundNumber]="currentRoundNumber"
     (betChanged)="onBetPlaced($event)">
   </app-place-bet>
 

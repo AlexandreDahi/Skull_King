@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input,Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Cards } from '../cards/cards';
@@ -14,17 +14,23 @@ export class DropZone {
   @Input() cardsInZone: number[] = [];
   @Input() connectedLists: string[] = [];
 
-  @Input() isMyTurn: boolean = false;
+  @Input() isMyTurn: boolean = false; 
+
+  @Output() cardPlayedEvent = new EventEmitter<number>();
 
   onDrop(event: CdkDragDrop<number[]>) {
-    if (event.previousContainer === event.container) return;
-
-    const previous = event.previousContainer.data;
-    const current = event.container.data;
-
-    const removedCard = previous[event.item.data.index];
-    previous.splice(event.item.data.index, 1);
-    current.push(removedCard);
+    console.log('OnDrop event POULOULOU:', event);
+    if (event.previousContainer !== event.container) {
+      const cardId = event.item.data.id; // récupérer l'ID depuis cdkDragData
+      
+      // Émettre l'événement
+      this.cardPlayedEvent.emit(cardId);
+      console.log('Carte jouée avec ID:', cardId);
+      
+      // Manipuler les données
+      event.previousContainer.data.splice(event.previousIndex, 1);
+      this.cardsInZone.push(cardId);
+    }
   }
 
 }

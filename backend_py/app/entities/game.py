@@ -55,8 +55,7 @@ class Game:
     def start_game(self) -> None:
         self.current_players_order = list(self.players.keys()) # ordre initial des joueurs (ordre d'arrivée dans la partie)
         self.first_player_uuid = rnd.choice(self.current_players_order) # désigne le joueur qui commence la première manche de manière aléatoire
-        self.player_round_order(self.first_player_uuid) # réordonne les joueurs pour que le joueur qui commence soit en premier dans l'ordre de jeu
-        self.current_player = self.players[self.first_player_uuid] # le joueur qui commence la première manche est le joueur actif au début de la partie
+        self.player_round_order() # réordonne les joueurs pour que le joueur qui commence soit en premier dans l'ordre de jeu
         self.give_players_cards(list(self.players.values())) # distribue les cartes aux joueurs en fonction du numéro de la manche courante
     
     ### permet de lancer le tour quand tous les joueurs ont miser
@@ -76,6 +75,7 @@ class Game:
         # Supprimer la carte de la main du joueur
         self.players[player_uuid].remove_card(card_id)
         # Passer au joueur suivant
+        print(f"{self.current_players_order},{self.current_player.uuid}")
         if self.current_player.uuid != self.current_players_order[-1]: # Si ce n'est pas le dernier joueur de l'ordre
             self.current_player = self.players[self.current_players_order[self.current_players_order.index(self.current_player.uuid) + 1]]
             return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid)}
@@ -97,14 +97,14 @@ class Game:
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             self.current_round += 1
             self.current_turn = 1
-            self.player_round_order(self.first_player_uuid)
+            self.player_round_order()
             self.turn_cards = {}
             for player in self.players.values():
                 player.bet = None # Réinitialise les paris des joueurs pour la nouvelle manche
                 player.number_of_wins = 0 # Réinitialise le nombre de plis gagnés par les joueurs pour la nouvelle manche
                 player.cards = []
             self.give_players_cards(list(self.players.values()))
-            return {"type": "ROUND_ENDED", "current_player":str(self.first_player_uuid),"List_score": [p.score for p in self.players.values()], "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
+            return {"type": "ROUND_ENDED", "current_player":str(self.current_player.uuid),"List_score": [p.score for p in self.players.values()], "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
         else :
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             for player in self.players.values():
@@ -128,15 +128,17 @@ class Game:
                     player.increase_score(-10*abs(player.bet - player.get_number_of_wins()))
         
     
-    def player_round_order(self,player_uuid) -> None:
-        beginer_index = self.current_players_order.index(player_uuid)
+    def player_round_order(self) -> None:
+        beginer_index = self.current_players_order.index(self.first_player_uuid)
         self.current_players_order = self.current_players_order[beginer_index:] + self.current_players_order[:beginer_index]
-        self.first_player_uuid = self.current_players_order[1]
+        new_beginer_index = self.current_round - 1
+        new_beginer_uuid = self.current_players_order[new_beginer_index]
+        self.current_player = self.players[new_beginer_uuid]
+        self.current_players_order = self.current_players_order[new_beginer_index:] + self.current_players_order[:new_beginer_index]
     
     def give_players_cards(self, players_list: List[Player]) -> None:
         for player in players_list:
             player.cards = []  # Réinitialise les cartes du joueur avant de distribuer les nouvelles
-
         # Création d'un deck complet
         deck = list(range(1, self.TOTALE_CARDS + 1))
         rnd.shuffle(deck)  # Mélanger le deck

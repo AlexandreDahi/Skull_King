@@ -59,11 +59,16 @@ export class Hand {
   }
 
   drop(event: CdkDragDrop<number[]>) {
+    console.log('Drop event POULOULOU:', event);
     if (event.previousContainer !== event.container) {
       // Drop vers dropzone
       const card = this.cardIds[event.previousIndex];
+      
       event.previousContainer.data.splice(event.previousIndex, 1);
+      
       event.container.data.push(card);
+    } else {
+      console.log('⚠️ Pas de changement de container');
     }
   }
 
