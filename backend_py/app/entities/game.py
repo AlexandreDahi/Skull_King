@@ -67,6 +67,7 @@ class Game:
     ### Logique de jeu lorsq'un joueur joue une carte 
     def card_played_event(self, player_uuid: uuid.UUID, card_id: int) -> None:
         if player_uuid != self.current_player.uuid:
+            print(f"Ce n'est pas le tour du joueur {player_uuid}. C'est le tour du joueur {self.current_player.uuid}.")
             return {"type":"CARD_PLAYED_ERROR","error_message": "Ce n'est pas le tour du joueur."}
         if not self.is_card_legal(player_uuid, card_id, self.get_turn_cards()):
             return {"type":"CARD_PLAYED_ERROR","error_message": "La carte jouée n'est pas légale."}
@@ -78,8 +79,9 @@ class Game:
         print(f"{self.current_players_order},{self.current_player.uuid}")
         if self.current_player.uuid != self.current_players_order[-1]: # Si ce n'est pas le dernier joueur de l'ordre
             self.current_player = self.players[self.current_players_order[self.current_players_order.index(self.current_player.uuid) + 1]]
-            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid)}
+            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid),"card_id": card_id}
         else:
+            print("fin du tour, d'une manche ou de la partie")
             message = self.end_turn()
             return {"type":"TURN_END", "message": message}
     
@@ -91,8 +93,7 @@ class Game:
         if self.current_turn < self.current_round:
             self.current_turn += 1
             self.turn_cards = {}
-            self.give_players_cards(list(self.players.values()))
-            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner.uuid), "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
+            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner),"number_of_wins": self.players[self.last_turn_winner].number_of_wins, "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
         elif self.current_turn == self.current_round and self.current_round < self.MAX_ROUND:
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             self.current_round += 1
@@ -131,7 +132,7 @@ class Game:
     def player_round_order(self) -> None:
         beginer_index = self.current_players_order.index(self.first_player_uuid)
         self.current_players_order = self.current_players_order[beginer_index:] + self.current_players_order[:beginer_index]
-        new_beginer_index = self.current_round - 1
+        new_beginer_index = (self.current_round - 1) % len(self.current_players_order)
         new_beginer_uuid = self.current_players_order[new_beginer_index]
         self.current_player = self.players[new_beginer_uuid]
         self.current_players_order = self.current_players_order[new_beginer_index:] + self.current_players_order[:new_beginer_index]
@@ -203,6 +204,7 @@ class Game:
             return
         winner_index = self.current_players_order.index(turn_winner_uuid)
         self.current_players_order = self.current_players_order[winner_index:] + self.current_players_order[:winner_index]
+        self.current_player = self.players[turn_winner_uuid]
     
     def turn_winner(self) -> uuid.UUID:
 

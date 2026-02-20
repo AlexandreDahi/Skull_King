@@ -171,7 +171,11 @@ export class Game implements OnInit, OnDestroy {
 
   // Getter : isPlayerTurn dépend de currentTurnPlayer
   get isPlayerTurn(): boolean {
-    return this.gameState.currentTurnPlayer === this.playerUuid && this.otherPlayers.every(p => p.bet !== null);
+    return (
+      this.gameState.currentTurnPlayer === this.playerUuid &&
+      this.otherPlayers.every(p => p.bet !== undefined) &&
+      this.playerSelf?.bet !== undefined
+    );
   }
 
   //
@@ -217,7 +221,6 @@ export class Game implements OnInit, OnDestroy {
         this.gameState.turnNumber = data.current_turn  ;
         this.gameState.currentTurnPlayer = data.current_player;
         this.gameState.currentPlayerOrder = data.current_players_order;
-        console.log('✅ État du jeu:', this.gameState);
 
         // Récupérer et séparer les joueurs
         if (data.players && Array.isArray(data.players)) {
@@ -230,15 +233,16 @@ export class Game implements OnInit, OnDestroy {
           }));
           this.playerSelf = allPlayers.find((p: Player) => p.uuid === this.playerUuid) || null;
           this.otherPlayers = allPlayers.filter((p: Player) => p.uuid !== this.playerUuid);
-
-          console.log('✅ Joueur courant:', this.playerSelf);
-          console.log('✅ Autres joueurs:', this.otherPlayers);
         }
         break;
       case 'CARD_PLAYED_ERROR':
         console.warn('⚠️ Erreur lors du jeu de la carte:', data.error_message);
         this.onCardPlayedError(data.error_message);
         break;
+      case 'SEND_CARDS':
+        console.log('🃏 Le serveur envoie les cartes du joueur:', data.cards);
+        this.handCards = data.cards;
+      break;
 
       default:
       console.log('⚠️ Message non géré par private message:', data.type);
@@ -265,25 +269,60 @@ export class Game implements OnInit, OnDestroy {
         break;
         case 'CARD_PLAYED_SUCCESS':
           console.log('🃏 Une carte a été jouée avec succès !', data.type);
+          if (!this.dropZoneCards.includes(data.card_id)) {
+            this.dropZoneCards.push(data.card_id);
+          }
           this.gameState = {
             ...this.gameState,
             currentTurnPlayer: data.current_player
           };
           break;
+
         case 'TURN_END':
-          console.log('🔄 Fin du tour !');
+          console.log('🔄 Changement !');
           const inner_message = data.message;
           switch (inner_message.type) {
             case 'TURN_ENDED':
-              console.log('📊 Détails du tour terminé:', inner_message);
+              console.log('📊 Détails du tour terminé:', inner_message.message);
               this.gameState = {
                 ...this.gameState,
-                currentTurnPlayer: inner_message.current_player
+                currentTurnPlayer: inner_message.current_player,
+                turnNumber: this.gameState.turnNumber + 1
               };
               //  IL FAUT remettre à zero les compteur de plis gagner, enlever les cartes sur la table, remettre les paris en undifine et player.cards = []
               this.dropZoneCards = [...[]];
-              this.otherPlayers = this.otherPlayers.map(p => ({ ...p, bet: undefined, obtained: 0 }));
 
+              if (this.playerSelf && this.playerSelf.uuid === inner_message.current_player) {
+                this.playerSelf = {
+                  ...this.playerSelf,
+                  obtained: inner_message.number_of_wins
+                };
+              } else {
+                this.otherPlayers = this.otherPlayers.map(p => {
+                  if (p.uuid === inner_message.current_player) {
+                    return { ...p, obtained: inner_message.number_of_wins };
+                  }
+                  return p;
+                });
+              }
+              break;
+            
+            case 'ROUND_ENDED':
+              console.log('🏁 Manche terminée !', inner_message.message);
+              this.gameState = {
+                ...this.gameState,
+                currentTurnPlayer: inner_message.current_player,
+                turnNumber: 1,
+                roundNumber: this.gameState.roundNumber + 1
+              };
+              this.otherPlayers = this.otherPlayers.map(p => ({ ...p, bet: undefined, obtained: 0 }));
+              this.playerSelf = this.playerSelf ? { ...this.playerSelf, bet: undefined, obtained: 0 } : null;
+              this.dropZoneCards = [...[]];
+
+              this.wsService.sendGameMessage({
+                type: 'ask_card',
+              });
+              
               break;
             default:
               console.log('⚠️ Message non géré dans TURN_END:', inner_message.type);

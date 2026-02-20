@@ -79,9 +79,17 @@ async def websocket_endpoint(
                         await manager.send_private_message(room_uuid, str(player.uuid), message)
                     elif message.get("type") == "CARD_PLAYED_SUCCESS":
                         await manager.broadcast_to_room(room_uuid, message)
-                    else:
+                    elif message.get("type") == "TURN_END":
                         # inner_message = message.get("message", "")
                         await manager.broadcast_to_room(room_uuid, message)
+                        
+                if core_message.get('type') == 'ask_card':
+                    print(f"le joueur {player.name} demande ses cartes en main ")
+                    await manager.send_private_message(room_uuid, str(player.uuid), {
+                        "type": "SEND_CARDS",
+                        "cards": player.cards
+                    })
+
 
 
             ## ICI on gère les messages privés lier à un joueur (ex: main du joueur, messages d'erreur spécifiques, etc.)
@@ -91,6 +99,7 @@ async def websocket_endpoint(
 
                 
 
-            
+
     except WebSocketDisconnect:
         manager.disconnect(room_uuid, player.uuid)
+
