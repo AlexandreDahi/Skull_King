@@ -287,7 +287,7 @@ export class Game implements OnInit, OnDestroy {
               this.gameState = {
                 ...this.gameState,
                 currentTurnPlayer: inner_message.current_player,
-                turnNumber: this.gameState.turnNumber + 1
+                turnNumber: inner_message.turn_number
               };
               //  IL FAUT remettre à zero les compteur de plis gagner, enlever les cartes sur la table, remettre les paris en undifine et player.cards = []
               this.dropZoneCards = [...[]];
@@ -313,10 +313,28 @@ export class Game implements OnInit, OnDestroy {
                 ...this.gameState,
                 currentTurnPlayer: inner_message.current_player,
                 turnNumber: 1,
-                roundNumber: this.gameState.roundNumber + 1
+                roundNumber: inner_message.round_number
+
               };
-              this.otherPlayers = this.otherPlayers.map(p => ({ ...p, bet: undefined, obtained: 0 }));
-              this.playerSelf = this.playerSelf ? { ...this.playerSelf, bet: undefined, obtained: 0 } : null;
+              console.log('mise à jour de, roundNumber:', this.gameState.roundNumber);
+              const listScore: Record<string, number> = inner_message.List_score;
+              // Mise à jour des autres joueurs
+              this.otherPlayers = this.otherPlayers.map(p => ({
+                ...p,
+                score: listScore[p.uuid] ?? p.score, // mise à jour score
+                bet: undefined,
+                obtained: 0
+              }));
+
+              // Mise à jour de playerSelf
+              if (this.playerSelf) {
+                this.playerSelf = {
+                  ...this.playerSelf,
+                  score: listScore[this.playerSelf.uuid] ?? this.playerSelf.score,
+                  bet: undefined,
+                  obtained: 0
+                };
+              }
               this.dropZoneCards = [...[]];
 
               this.wsService.sendGameMessage({

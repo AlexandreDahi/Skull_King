@@ -15,6 +15,8 @@ export class HeadUpDisplay {
   @Input() currentRoundNumber?: number;
   @Output() betChanged = new EventEmitter<number>();
 
+  
+
   onBetPlaced(betAmount: number) {
     this.betChanged.emit(betAmount);
   }

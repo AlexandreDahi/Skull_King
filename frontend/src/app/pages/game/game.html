@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <app-drop-zone [cardsInZone]="dropZoneCards" [isMyTurn]="isPlayerTurn"></app-drop-zone>
+  <app-drop-zone [cardsInZone]="dropZoneCards" [isMyTurn]="isPlayerTurn" (playCardEvent)="onCardPlayed($event)"></app-drop-zone>
   <app-hand 
   [nonPlayableCardIds]="nonPlayableCards" 
   [cardIds]="handCards"

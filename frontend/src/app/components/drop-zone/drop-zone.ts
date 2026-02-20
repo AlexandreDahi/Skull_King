@@ -16,7 +16,8 @@ export class DropZone {
 
   @Input() isMyTurn: boolean = false; 
 
-  @Output() cardPlayedEvent = new EventEmitter<number>();
+  // @Output() cardPlayedEvent = new EventEmitter<number>();
+  @Output() playCardEvent = new EventEmitter<number>();
 
   onDrop(event: CdkDragDrop<number[]>) {
     console.log('OnDrop event POULOULOU:', event);
@@ -24,12 +25,12 @@ export class DropZone {
       const cardId = event.item.data.id; // récupérer l'ID depuis cdkDragData
       
       // Émettre l'événement
-      this.cardPlayedEvent.emit(cardId);
+      this.playCardEvent.emit(cardId);
       console.log('Carte jouée avec ID:', cardId);
       
       // Manipuler les données
-      event.previousContainer.data.splice(event.previousIndex, 1);
-      this.cardsInZone.push(cardId);
+      // event.previousContainer.data.splice(event.previousIndex, 1);
+      // this.cardsInZone.push(cardId);
     }
   }
 

@@ -21,8 +21,12 @@ export class PlaceBet implements OnInit {
   @Output() betChanged = new EventEmitter<number>();
   
   value: number = 0;
-  private maxBet: number = this.currentRoundNumber || 1;
+  private maxBet: number = 1;
   private minBet: number = 0;
+
+  ngOnChanges() {
+    this.maxBet = this.currentRoundNumber || 1;
+  }
 
   ngOnInit() {
     // Initialiser la mise depuis le player si elle existe déjà

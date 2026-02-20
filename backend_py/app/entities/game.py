@@ -93,7 +93,7 @@ class Game:
         if self.current_turn < self.current_round:
             self.current_turn += 1
             self.turn_cards = {}
-            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner),"number_of_wins": self.players[self.last_turn_winner].number_of_wins, "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
+            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner),"number_of_wins": self.players[self.last_turn_winner].number_of_wins,"turn_number":self.current_turn, "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
         elif self.current_turn == self.current_round and self.current_round < self.MAX_ROUND:
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             self.current_round += 1
@@ -105,7 +105,7 @@ class Game:
                 player.number_of_wins = 0 # Réinitialise le nombre de plis gagnés par les joueurs pour la nouvelle manche
                 player.cards = []
             self.give_players_cards(list(self.players.values()))
-            return {"type": "ROUND_ENDED", "current_player":str(self.current_player.uuid),"List_score": [p.score for p in self.players.values()], "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
+            return {"type": "ROUND_ENDED", "current_player":str(self.current_player.uuid),"List_score": {str(p.uuid): p.score for p in self.players.values()},"round_number":self.current_round, "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
         else :
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             for player in self.players.values():
