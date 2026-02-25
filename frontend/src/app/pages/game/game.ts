@@ -34,6 +34,7 @@ interface GameState {
   currentTurnPlayer: string; // UUID du joueur dont c'est le tour
   currentPlayerOrder: string[]; // Ordre des joueurs pour la manche en cours
   // phase: 'GIVING_CARD' | 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
+  timerStamp: number;
 }
 
 
@@ -56,8 +57,8 @@ export class Game implements OnInit, OnDestroy {
   
   phase: string = "Phase d'attente des joueurs"; // affiché en haut
 
-  timer: number = 40;
-  totalTime: number = 40;
+  timer: number = 45;
+  totalTime: number = 45;
   timerProgress: number = 100;
   intervalId: any;
 
@@ -88,6 +89,7 @@ export class Game implements OnInit, OnDestroy {
     currentTurnPlayer: '',
     currentPlayerOrder: [],
     // phase: 'GIVING_CARD'
+    timerStamp: 0,
   };
   
   // Abonnements WebSocket
@@ -134,22 +136,25 @@ export class Game implements OnInit, OnDestroy {
       // 1. S'abonner aux événements de jeu via WebSocket
       this.subscribeToGameEvents();
       this.subscribeToPrivateEvents();
-      
-      // 2. Démarrer le timer
-      this.startInfiniteTimer();
 
-      // 3. Récupérer les infos de la parite en cours (cartes en main, état du jeu, etc.)
+      // 2. Récupérer les infos de la parite en cours (cartes en main, état du jeu, etc.)
       console.log('🚀 Récupéré toutes les infos en cours de la parites depuis le backend');
       this.wsService.sendGameMessage({
         type: 'game_info'
       });
+      // 3. mettre à jour le timer
+      this.startTimer();
     });
   }
 
 
-  startInfiniteTimer() {
+  startTimer() {
     this.ngZone.run(() => {
+      
       this.intervalId = setInterval(() => {
+        
+        console.log("⏲️ le timer!",this.timer, this.totalTime)
+
         if (this.timer > 0) {
           this.timer--;
           this.timerProgress = (this.timer / this.totalTime) * 100;
@@ -159,14 +164,16 @@ export class Game implements OnInit, OnDestroy {
           this.timerProgress$.next(this.timerProgress);
         } else {
           this.resetTimer();
+          this.wsService.sendGameMessage({
+        type: 'game_info'
+      });
         }
       }, 1000);
     });
   }
 
   resetTimer() {
-    this.timer = this.totalTime;
-    this.timerProgress = 100;
+    clearInterval(this.intervalId);
   }
 
   // Getter : isPlayerTurn dépend de currentTurnPlayer
@@ -221,6 +228,9 @@ export class Game implements OnInit, OnDestroy {
         this.gameState.turnNumber = data.current_turn  ;
         this.gameState.currentTurnPlayer = data.current_player;
         this.gameState.currentPlayerOrder = data.current_players_order;
+        // this.gameState.timerStamp = new Date(data.timer).getTime();
+        this.totalTime = data.total_time
+        this.timer = data.time
 
         // Récupérer et séparer les joueurs
         if (data.players && Array.isArray(data.players)) {
@@ -266,6 +276,12 @@ export class Game implements OnInit, OnDestroy {
           const tb = turn_bet.find((t: any) => t[0] === p.uuid);
           return tb ? { ...p, bet: tb[1] } : p;
         });
+
+        this.resetTimer();
+        this.gameState.timerStamp = new Date(data.player_timer).getTime();
+        this.totalTime = data.time;
+        this.startTimer()
+
         break;
         case 'CARD_PLAYED_SUCCESS':
           console.log('🃏 Une carte a été jouée avec succès !', data.type);
@@ -340,8 +356,12 @@ export class Game implements OnInit, OnDestroy {
               this.wsService.sendGameMessage({
                 type: 'ask_card',
               });
-              
               break;
+
+            case 'GAME_ENDED':
+              console.log(inner_message.message)
+              break;
+
             default:
               console.log('⚠️ Message non géré dans TURN_END:', inner_message.type);
           }

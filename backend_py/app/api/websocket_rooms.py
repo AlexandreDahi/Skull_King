@@ -2,6 +2,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from app.managers import manager
 from app.managers import roomManager
 import json
+from datetime import datetime
 
 router = APIRouter()
 
@@ -52,6 +53,9 @@ async def websocket_endpoint(
 
                 if core_message.get('type') == 'game_info':
                     print(f"le joueur {player.name} ({player.uuid}) veut recevoir ses infos de partie")
+                    print("SERVER NOW:", datetime.utcnow())
+                    print("NEXT STAMP:", room.game.next_time_stamp)
+                    print("DIFF:", room.game.next_time_stamp - datetime.utcnow())
                     await manager.send_private_message(room_uuid, str(player.uuid), {
                         "type": "GAME_INFO_EVENT",
                         "cards": player.cards,
@@ -60,7 +64,9 @@ async def websocket_endpoint(
                         "current_turn": room.game.current_turn,
                         "turn_cards": room.game.get_turn_cards(),
                         "current_players_order": room.game.get_current_players_order(),
-                        "current_player" : str(room.game.current_player.uuid) if room.game.current_player else None
+                        "current_player" : str(room.game.current_player.uuid) if room.game.current_player else None,
+                        "total_time" : room.game.time_duration_in_seconde,
+                        "time" : int((room.game.next_time_stamp - datetime.utcnow() ).total_seconds())
                     })
                 if core_message.get('type') == 'place_bet':
                     player.bet = core_message.get('bet')
@@ -70,7 +76,10 @@ async def websocket_endpoint(
                         await manager.broadcast_to_room(room_uuid, {
                             "type": "ROUND_START_EVENT",
                             "message": "Début de la manche !",
-                            "turn_bet":room.game.all_bets_placed()
+                            "turn_bet":room.game.all_bets_placed(),
+                            "player_timer" : str(room.game.next_time_stamp.isoformat()),
+                            "total_time" : room.game.time_duration_in_seconde,
+                            "time" : int((room.game.next_time_stamp - datetime.utcnow() ).total_seconds())
                         })
                 if core_message.get('type') == 'card_played':
                     print(f"le joueur {player.name} à jouer la carte {core_message.get('cardId')} ")
