@@ -5,6 +5,7 @@ import cardData from '../../components/cards/index_carte.json';
 
 import { cardNameToId, idToCardName } from '../mapCardFrontBack';
 
+import {environment} from '../../../environments/environment';
 
 type RoomUpdateType = {
     host: string,
@@ -54,7 +55,7 @@ export class webSocketService {
         console.log("callGetRoomsWhenConnected (0): ", this.callGetRoomsWhenConnected)
         this.callGetRoomsWhenConnected = false
         console.log("callGetRoomsWhenConnected (1): ", this.callGetRoomsWhenConnected)
-        const websocket = new WebSocket("ws://localhost:8000/ws")
+        const websocket = new WebSocket(environment.wsApiUrl)
 
         websocket.addEventListener("open", () => this.onOpenConnection())
         websocket.addEventListener("message", (event) => this.onMessage(event))

@@ -1,0 +1,22 @@
+services:
+  backend:
+    image: py_skull
+    pull_policy: never
+    ports:
+      - "8000:8000"
+    networks:
+      - appnet
+
+  frontend:
+    image: skull_front
+    pull_policy: never
+    ports:
+      - "4200:8080"
+    depends_on:
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge

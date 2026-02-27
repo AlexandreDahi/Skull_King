@@ -8,8 +8,4 @@ import { Lobby } from './pages/lobby/lobby';
 
 export const routes: Routes = [
   {path: '', component:Home3Component,},
-  {path: 'room', component:Room,},
-  { path : 'join-room/:id',component: JoinRoom },
-  { path : 'game/:id',component: Game },
-  { path : 'lobby/:id',component: Lobby }
 ];
