@@ -1,8 +1,12 @@
-
+from app.managers import manager
 from typing import Dict
 from app.entities import Room
 from app.entities import Player
+from datetime import datetime
 from app.entities import Game
+import asyncio
+
+
 
 
 class RoomManager:
@@ -39,6 +43,55 @@ class RoomManager:
         room = self.get_room(room_uuid)
         # Création de la game
         room.start_game()
+    
+    async def game_loop(self, room_uuid: str) -> None:
+
+        while True:
+            room = self.get_room(room_uuid)
+            
+
+            if room is None:
+                print("Room introuvable")
+                return
+
+            game = room.game
+            now = datetime.utcnow()
+            print("SERVER NOW:", now)
+            print("NEXT STAMP:", game.next_time_stamp)
+            print("DIFF:", game.next_time_stamp - now)
+
+            if game.state == "betting":
+                
+                if now >= game.next_time_stamp:
+                    print("📢❌ un ou plusieurs joueur n'ont pas misé !!!")
+                    game.end_betting_round()
+                    await manager.broadcast_to_room(room_uuid, {
+                            "type": "ROUND_START_EVENT",
+                            "message": "Début de la manche !",
+                            "turn_bet":room.game.all_bets_placed(),
+                            "player_timer" : str(room.game.next_time_stamp.isoformat()),
+                            "time" : room.game.time_duration_in_seconde,
+                        })
+                    print("les paries ont bien été envoyé au front ! ")
+                    
+
+            elif game.state == "playing":
+                
+                if now >= game.next_time_stamp:
+                    print("📢❌ Le joueur n'a pas joué de carte !!!")
+                    message = game.auto_playing()
+                    if message.get("type") == "CARD_PLAYED_SUCCESS":
+                        await manager.broadcast_to_room(room_uuid, message)
+                        print("la partie peut continuer ! ")
+                    elif message.get("type") == "TURN_END":
+                        # inner_message = message.get("message", "")
+                        await manager.broadcast_to_room(room_uuid, message)
+                        print("prochain tour ou round! ")
+
+            await asyncio.sleep(0.5)
+
+
+
 
 ### Création de l'instance roomManager globale
 roomManager = RoomManager()

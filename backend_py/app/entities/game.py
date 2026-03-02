@@ -6,11 +6,15 @@ from datetime import datetime, timedelta
 
 filename = 'C:/Users/adahi/Projects/Skull_king/backend_py/index_carte.json'
 
+
+
 from app.entities.player import Player
 
 class Game:
     MAX_ROUND: int = 10
     TOTALE_CARDS: int = 74
+    TIME_FOR_BETTING = 30
+    TIME_TO_PLAY = 18
 
     def __init__(self):
         # Liste des joueurs
@@ -38,7 +42,9 @@ class Game:
 
         # Le timer  en time stamp:
         self.next_time_stamp = Optional[datetime]
-        self.time_duration_in_seconde = int 
+        self.time_duration_in_seconde = int
+
+        self.state =""
 
     
     # -------------------
@@ -62,17 +68,27 @@ class Game:
         self.first_player_uuid = rnd.choice(self.current_players_order) # désigne le joueur qui commence la première manche de manière aléatoire
         self.player_round_order() # réordonne les joueurs pour que le joueur qui commence soit en premier dans l'ordre de jeu
         self.give_players_cards(list(self.players.values())) # distribue les cartes aux joueurs en fonction du numéro de la manche courante
-        self.next_time_stamp= datetime.utcnow() + timedelta(seconds=60*5)
-        self.time_duration_in_seconde = 300
-
+        self.next_time_stamp= datetime.utcnow() + timedelta(seconds= self.TIME_FOR_BETTING)
+        self.time_duration_in_seconde = self.TIME_FOR_BETTING
+        self.state = "betting"
     
     ### permet de lancer le tour quand tous les joueurs ont miser
     def all_bets_placed(self):
         if any(p.bet is None for p in self.players.values()):
             return []
-        self.next_time_stamp= datetime.utcnow() + timedelta(seconds=60*3)
-        self.time_duration_in_seconde = 180 
+        self.next_time_stamp= datetime.utcnow() + timedelta(seconds=self.TIME_TO_PLAY)
+        self.time_duration_in_seconde = self.TIME_TO_PLAY
+        self.state = "playing"
         return [(str(p.uuid), p.bet) for p in self.players.values()]
+    
+    #### en cas de time out :
+    def end_betting_round(self):
+        for player in self.players.values():
+            if player.bet is None :
+                player.bet = 0
+        self.next_time_stamp = datetime.utcnow() + timedelta(seconds=self.TIME_TO_PLAY)
+        self.time_duration_in_seconde = self.TIME_TO_PLAY
+        self.state = "playing"
 
     ### Logique de jeu lorsq'un joueur joue une carte 
     def card_played_event(self, player_uuid: uuid.UUID, card_id: int) -> None:
@@ -89,23 +105,26 @@ class Game:
         print(f"{self.current_players_order},{self.current_player.uuid}")
         if self.current_player.uuid != self.current_players_order[-1]: # Si ce n'est pas le dernier joueur de l'ordre
             self.current_player = self.players[self.current_players_order[self.current_players_order.index(self.current_player.uuid) + 1]]
-            self.next_time_stamp= datetime.utcnow() + timedelta(seconds=60*3)
-            self.time_duration_in_seconde = 180
-            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid),"card_id": card_id, "player_timer" : str(self.next_time_stamp.isoformat()),"duration": self.time_duration_in_seconde}
+            self.next_time_stamp= datetime.utcnow() + timedelta(seconds=self.TIME_TO_PLAY)
+            self.time_duration_in_seconde = self.TIME_TO_PLAY
+            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid),"card_id": card_id,"time": self.time_duration_in_seconde}
         else:
             print("fin du tour, d'une manche ou de la partie")
-            message = self.end_turn()
+            message = self.end_turn(card_id)
             return {"type":"TURN_END", "message": message}
     
     ##### Fonction de fin de tour/round :
 
-    def end_turn(self) -> Tuple[Optional[uuid.UUID], Dict[str, int]]:
+    def end_turn(self, card_id: int) -> Tuple[Optional[uuid.UUID], Dict[str, int]]:
         self.last_turn_winner = self.turn_winner()
         
         if self.current_turn < self.current_round:
             self.current_turn += 1
             self.turn_cards = {}
-            return {"type": "TURN_ENDED", "current_player":str(self.last_turn_winner),"number_of_wins": self.players[self.last_turn_winner].number_of_wins,"turn_number":self.current_turn, "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}"}
+            self.next_time_stamp= datetime.utcnow() + timedelta(seconds=self.TIME_TO_PLAY)
+            self.time_duration_in_seconde = self.TIME_TO_PLAY
+
+            return {"type": "TURN_ENDED","card_id": card_id, "current_player":str(self.last_turn_winner),"number_of_wins": self.players[self.last_turn_winner].number_of_wins,"turn_number":self.current_turn, "message": f"Fin du tour {self.current_turn-1} de la manche {self.current_round}","time": self.time_duration_in_seconde}
         elif self.current_turn == self.current_round and self.current_round < self.MAX_ROUND:
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             self.current_round += 1
@@ -117,7 +136,10 @@ class Game:
                 player.number_of_wins = 0 # Réinitialise le nombre de plis gagnés par les joueurs pour la nouvelle manche
                 player.cards = []
             self.give_players_cards(list(self.players.values()))
-            return {"type": "ROUND_ENDED", "current_player":str(self.current_player.uuid),"List_score": {str(p.uuid): p.score for p in self.players.values()},"round_number":self.current_round, "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}"}
+            self.next_time_stamp= datetime.utcnow() + timedelta(seconds=self.TIME_FOR_BETTING)
+            self.time_duration_in_seconde = self.TIME_FOR_BETTING
+            self.state = "betting"
+            return {"type": "ROUND_ENDED", "current_player":str(self.current_player.uuid),"List_score": {str(p.uuid): p.score for p in self.players.values()},"round_number":self.current_round, "message": f"Fin de la manche {self.current_round-1}, début de la manche {self.current_round}","time": self.time_duration_in_seconde}
         else :
             self.add_bet_points() # Ajoute les points des paris aux joueurs à la fin de la manche
             for player in self.players.values():
@@ -125,7 +147,26 @@ class Game:
                 player.number_of_wins = 0 
                 player.cards = []
             winner = self.score_winner()
+            self.state = "game_end"
             return {"type": "GAME_ENDED", "message": f"Fin de la partie !, le gagant est {winner.name} avec {winner.score} points !","List_score": {str(p.uuid): p.score for p in self.players.values()},"round_number":self.current_round,}
+
+    #### en cas de time-out pour un joueur qui ne joue pas
+    def auto_playing (self):
+        card_id = self.current_player.cards[0]
+        self.turn_cards[self.current_player.uuid] = card_id
+        # Supprimer la carte de la main du joueur
+        self.current_player.remove_card(card_id)
+        if self.current_player.uuid != self.current_players_order[-1]: # Si ce n'est pas le dernier joueur de l'ordre
+            self.current_player = self.players[self.current_players_order[self.current_players_order.index(self.current_player.uuid) + 1]]
+            self.next_time_stamp= datetime.utcnow() + timedelta(seconds=self.TIME_TO_PLAY)
+            self.time_duration_in_seconde = self.TIME_TO_PLAY
+            return {"type":"CARD_PLAYED_SUCCESS","current_player": str(self.current_player.uuid),"card_id": card_id,"time": self.time_duration_in_seconde}
+        else :
+            print("fin du tour, d'une manche ou de la partie")
+            message = self.end_turn(card_id)
+            return {"type":"TURN_END", "message": message}
+
+
 
     ## Fonction pour ajouter les points des paris :
     def add_bet_points(self) -> None:

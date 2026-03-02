@@ -17,7 +17,6 @@ import { HeadUpDisplay } from '../../components/hud/head-up-display/head-up-disp
 import { PlayerPanel } from '../../components/hud/player-panel/player-panel';
 
 import { WebSocketService } from '../../service/websocket/websocket.service';
-import { RoomService } from '../../service/room/room.service';
 
 interface Player {
   uuid: string;
@@ -33,8 +32,6 @@ interface GameState {
   turnNumber: number;
   currentTurnPlayer: string; // UUID du joueur dont c'est le tour
   currentPlayerOrder: string[]; // Ordre des joueurs pour la manche en cours
-  // phase: 'GIVING_CARD' | 'BETTING' | 'PLAYING' | 'ROUND_END' | 'GAME_END';
-  timerStamp: number;
 }
 
 
@@ -88,8 +85,6 @@ export class Game implements OnInit, OnDestroy {
     turnNumber: 1,
     currentTurnPlayer: '',
     currentPlayerOrder: [],
-    // phase: 'GIVING_CARD'
-    timerStamp: 0,
   };
   
   // Abonnements WebSocket
@@ -107,7 +102,6 @@ export class Game implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private wsService: WebSocketService,
-    private roomService: RoomService,
   ) {}
 
   /* --------------------------
@@ -142,38 +136,42 @@ export class Game implements OnInit, OnDestroy {
       this.wsService.sendGameMessage({
         type: 'game_info'
       });
-      // 3. mettre à jour le timer
-      this.startTimer();
     });
   }
 
 
   startTimer() {
-    this.ngZone.run(() => {
-      
-      this.intervalId = setInterval(() => {
-        
-        console.log("⏲️ le timer!",this.timer, this.totalTime)
+    const startTime = Date.now();
+    const startValue = this.timer;
 
-        if (this.timer > 0) {
-          this.timer--;
-          this.timerProgress = (this.timer / this.totalTime) * 100;
+    this.ngZone.runOutsideAngular(() => {
+      const tick = () => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const newTimer = startValue - elapsed;
 
-          // met à jour les Observables
-          this.timer$.next(this.timer);
-          this.timerProgress$.next(this.timerProgress);
+        if (newTimer > 0) {
+          this.ngZone.run(() => {
+            this.timer = newTimer;
+            this.timerProgress = (this.timer / this.totalTime) * 100;
+            this.timer$.next(this.timer);
+            this.timerProgress$.next(this.timerProgress);
+          });
+          this.intervalId = setTimeout(tick, 1000); // 👈 replanifie seulement si actif
         } else {
-          this.resetTimer();
-          this.wsService.sendGameMessage({
-        type: 'game_info'
-      });
+          this.ngZone.run(() => {
+            this.timer = 0;
+            this.resetTimer();
+          });
         }
-      }, 1000);
+      };
+
+      this.intervalId = setTimeout(tick, 1000);
     });
   }
 
   resetTimer() {
-    clearInterval(this.intervalId);
+    clearTimeout(this.intervalId);
+    this.intervalId = null;
   }
 
   // Getter : isPlayerTurn dépend de currentTurnPlayer
@@ -228,9 +226,10 @@ export class Game implements OnInit, OnDestroy {
         this.gameState.turnNumber = data.current_turn  ;
         this.gameState.currentTurnPlayer = data.current_player;
         this.gameState.currentPlayerOrder = data.current_players_order;
-        // this.gameState.timerStamp = new Date(data.timer).getTime();
-        this.totalTime = data.total_time
+        this.totalTime = data.time
         this.timer = data.time
+
+        this.startTimer();
 
         // Récupérer et séparer les joueurs
         if (data.players && Array.isArray(data.players)) {
@@ -238,13 +237,14 @@ export class Game implements OnInit, OnDestroy {
             uuid: p.uuid || p.get('uuid'),
             name: p.name || p.get('name'),
             score: p.score || 0,
-            bet: p.bet ?? null,
+            bet: p.bet ?? undefined,
             obtained: p.obtained || 0
           }));
           this.playerSelf = allPlayers.find((p: Player) => p.uuid === this.playerUuid) || null;
           this.otherPlayers = allPlayers.filter((p: Player) => p.uuid !== this.playerUuid);
         }
         break;
+        
       case 'CARD_PLAYED_ERROR':
         console.warn('⚠️ Erreur lors du jeu de la carte:', data.error_message);
         this.onCardPlayedError(data.error_message);
@@ -272,26 +272,43 @@ export class Game implements OnInit, OnDestroy {
         console.log('🎯 Nouvelle manche commencée !', data.message);
         const turn_bet = data.turn_bet || [];
 
-        this.otherPlayers = this.otherPlayers.map(p => {
-          const tb = turn_bet.find((t: any) => t[0] === p.uuid);
-          return tb ? { ...p, bet: tb[1] } : p;
-        });
+        const betMap = new Map<string, number>(turn_bet);
+
+        this.otherPlayers = this.otherPlayers.map(p => ({
+          ...p,
+          bet: betMap.get(p.uuid) ?? p.bet
+        }));
+
+        if (this.playerSelf) {
+          this.playerSelf = {
+            ...this.playerSelf,
+            bet: betMap.get(this.playerSelf.uuid) ?? this.playerSelf.bet
+          };
+        }
 
         this.resetTimer();
-        this.gameState.timerStamp = new Date(data.player_timer).getTime();
         this.totalTime = data.time;
-        this.startTimer()
+        this.timer = data.time;
+        this.startTimer();
 
         break;
         case 'CARD_PLAYED_SUCCESS':
           console.log('🃏 Une carte a été jouée avec succès !', data.type);
           if (!this.dropZoneCards.includes(data.card_id)) {
             this.dropZoneCards.push(data.card_id);
-          }
+          };
+          const index = this.handCards.indexOf(data.card_id);
+          if (index !== -1) this.handCards.splice(index, 1);
+
           this.gameState = {
             ...this.gameState,
             currentTurnPlayer: data.current_player
           };
+          this.resetTimer();
+          this.totalTime = data.time;
+          this.timer = data.time;
+          this.startTimer();
+
           break;
 
         case 'TURN_END':
@@ -307,6 +324,13 @@ export class Game implements OnInit, OnDestroy {
               };
               //  IL FAUT remettre à zero les compteur de plis gagner, enlever les cartes sur la table, remettre les paris en undifine et player.cards = []
               this.dropZoneCards = [...[]];
+              // supprimer la carte si elle y est encore
+              if (this.handCards.includes(inner_message.card_id)) {
+                const index = this.handCards.indexOf(inner_message.card_id);
+                if (index !== -1) {
+                  this.handCards.splice(index, 1);
+                }
+              };
 
               if (this.playerSelf && this.playerSelf.uuid === inner_message.current_player) {
                 this.playerSelf = {
@@ -320,7 +344,12 @@ export class Game implements OnInit, OnDestroy {
                   }
                   return p;
                 });
-              }
+              };
+              this.resetTimer();
+              this.totalTime = inner_message.time;
+              this.timer = inner_message.time;
+              this.startTimer();
+
               break;
             
             case 'ROUND_ENDED':
@@ -356,10 +385,22 @@ export class Game implements OnInit, OnDestroy {
               this.wsService.sendGameMessage({
                 type: 'ask_card',
               });
+
+              this.resetTimer();
+              this.totalTime = inner_message.time;
+              this.timer = inner_message.time;
+              this.startTimer();
+
               break;
 
             case 'GAME_ENDED':
               console.log(inner_message.message)
+
+              this.resetTimer();
+              this.totalTime = inner_message.time;
+              this.timer = inner_message.time;
+              this.startTimer();
+
               break;
 
             default:
