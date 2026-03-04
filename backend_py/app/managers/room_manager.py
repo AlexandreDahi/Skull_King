@@ -56,10 +56,7 @@ class RoomManager:
 
             game = room.game
             now = datetime.utcnow()
-            print("SERVER NOW:", now)
-            print("NEXT STAMP:", game.next_time_stamp)
-            print("DIFF:", game.next_time_stamp - now)
-
+          
             if game.state == "betting":
                 
                 if now >= game.next_time_stamp:

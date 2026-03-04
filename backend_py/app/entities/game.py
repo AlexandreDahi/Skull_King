@@ -13,8 +13,9 @@ from app.entities.player import Player
 class Game:
     MAX_ROUND: int = 10
     TOTALE_CARDS: int = 74
-    TIME_FOR_BETTING = 30
-    TIME_TO_PLAY = 18
+    TIME_FOR_BETTING = 300
+    TIME_TO_PLAY = 180
+    TIME_BETWIN_ROUND = 3
 
     def __init__(self):
         # Liste des joueurs
